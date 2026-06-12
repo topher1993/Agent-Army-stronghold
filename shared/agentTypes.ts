@@ -1,0 +1,9 @@
+export type AgentRequestStatus = 'draft'|'pending_review'|'approved'|'queued'|'dispatching'|'running'|'awaiting_human_review'|'completed'|'failed'|'cancelled'|'rejected';
+export type AgentRequestKind = 'mission.plan'|'task.breakdown'|'code.review'|'security.review'|'architecture.proposal'|'status.summary'|'artifact.review';
+export type AgentRunStatus = 'queued'|'running'|'succeeded'|'failed'|'cancelled'|'timed_out';
+export type AgentArtifactKind = 'plan'|'review'|'summary'|'patch-proposal'|'risk-report';
+export type AgentInputRef = { kind: string; label: string; ref: string };
+export type AgentRequest = { id:string; kind:AgentRequestKind; status:AgentRequestStatus; title:string; prompt:string; requestedBy:string; targetAgent:string; missionId?:string; taskId?:string; reviewers:string[]; sandboxPolicyId:string; allowedInputs:AgentInputRef[]; expectedOutputSchema:string; createdAt:string; updatedAt:string; approvedAt?:string; approvedBy?:string; failureReason?:string };
+export type AgentRun = { id:string; requestId:string; status:AgentRunStatus; wrapper:'mock'|'hermes'; targetAgent:string; startedAt?:string; finishedAt?:string; timeoutMs:number; inputHash:string; outputHash?:string; auditEventIds:string[] };
+export type AgentArtifact = { id:string; requestId:string; runId:string; kind:AgentArtifactKind; content:string; redactionApplied:boolean; createdAt:string; requiresHumanApply:boolean };
+export type SandboxPolicy = { id:string; network:'none'|'allowlisted'; filesystem:'none'|'read-stronghold-snapshot-only'|'read-approved-context-bundle'; writeMode:'artifact-only'; maxRuntimeMs:number; maxInputBytes:number; maxOutputBytes:number; allowedContextKinds:string[]; deniedPatterns:string[]; redactionRequired:boolean };

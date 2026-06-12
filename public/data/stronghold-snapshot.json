@@ -1,0 +1,3753 @@
+{
+  "generatedAt": "2026-06-12T08:59:03.654Z",
+  "phase": "Phase 1 MVP",
+  "readOnly": true,
+  "owner": "Igris",
+  "coordinator": "Belion",
+  "dataSources": {
+    "hermesRoot": "%LOCALAPPDATA%/hermes",
+    "profilesRoot": "%LOCALAPPDATA%/hermes/profiles",
+    "cronJobs": "%LOCALAPPDATA%/hermes/cron/jobs.json",
+    "wrappers": "~/.local/bin",
+    "missionRegistry": "data/missions.json"
+  },
+  "counts": {
+    "agents": 10,
+    "profiles": 16,
+    "wrappersAvailable": 10,
+    "skills": 1275,
+    "cronJobs": 5,
+    "missions": 2,
+    "blockedMissions": 0
+  },
+  "roster": [
+    {
+      "name": "Belion",
+      "role": "Coordinator",
+      "wrapper": "belion",
+      "reportsTo": "Chris",
+      "responsibilities": [
+        "Coordinate agent army",
+        "Route work to Igris",
+        "Report final outcomes"
+      ],
+      "wrapperStatus": {
+        "wrapper": "belion",
+        "available": true,
+        "extensionless": true,
+        "bat": true
+      }
+    },
+    {
+      "name": "Igris",
+      "role": "Engineering Director",
+      "wrapper": "igris",
+      "reportsTo": "Belion",
+      "responsibilities": [
+        "Own engineering delivery",
+        "Assign specialists",
+        "Final technical review"
+      ],
+      "wrapperStatus": {
+        "wrapper": "igris",
+        "available": true,
+        "extensionless": true,
+        "bat": true
+      }
+    },
+    {
+      "name": "Atlas",
+      "role": "Architecture Specialist",
+      "wrapper": "atlas",
+      "reportsTo": "Igris",
+      "responsibilities": [
+        "Architecture",
+        "Data contracts",
+        "System design"
+      ],
+      "wrapperStatus": {
+        "wrapper": "atlas",
+        "available": true,
+        "extensionless": true,
+        "bat": true
+      }
+    },
+    {
+      "name": "Clix",
+      "role": "Frontend Specialist",
+      "wrapper": "clix",
+      "reportsTo": "Igris",
+      "responsibilities": [
+        "UI implementation",
+        "Responsive layout",
+        "Accessibility"
+      ],
+      "wrapperStatus": {
+        "wrapper": "clix",
+        "available": true,
+        "extensionless": true,
+        "bat": true
+      }
+    },
+    {
+      "name": "Forge",
+      "role": "Backend Specialist",
+      "wrapper": "forge",
+      "reportsTo": "Igris",
+      "responsibilities": [
+        "Read-only collectors",
+        "Data normalization",
+        "Local API/snapshot"
+      ],
+      "wrapperStatus": {
+        "wrapper": "forge",
+        "available": true,
+        "extensionless": true,
+        "bat": true
+      }
+    },
+    {
+      "name": "Pulse",
+      "role": "QA Specialist",
+      "wrapper": "pulse",
+      "reportsTo": "Igris",
+      "responsibilities": [
+        "Test plan",
+        "Validation",
+        "Quality report"
+      ],
+      "wrapperStatus": {
+        "wrapper": "pulse",
+        "available": true,
+        "extensionless": true,
+        "bat": true
+      }
+    },
+    {
+      "name": "Sentinel",
+      "role": "Security Specialist",
+      "wrapper": "sentinel",
+      "reportsTo": "Igris",
+      "responsibilities": [
+        "Secret safety",
+        "Read-only review",
+        "OWASP checks"
+      ],
+      "wrapperStatus": {
+        "wrapper": "sentinel",
+        "available": true,
+        "extensionless": true,
+        "bat": true
+      }
+    },
+    {
+      "name": "Vector",
+      "role": "DevOps Specialist",
+      "wrapper": "vector",
+      "reportsTo": "Igris",
+      "responsibilities": [
+        "Local deployment",
+        "Ops guide",
+        "Runtime checks"
+      ],
+      "wrapperStatus": {
+        "wrapper": "vector",
+        "available": true,
+        "extensionless": true,
+        "bat": true
+      }
+    },
+    {
+      "name": "Nexus",
+      "role": "AI/LLM Specialist",
+      "wrapper": "nexus",
+      "reportsTo": "Igris",
+      "responsibilities": [
+        "AI documentation",
+        "Knowledge structure",
+        "Phase 2 backlog"
+      ],
+      "wrapperStatus": {
+        "wrapper": "nexus",
+        "available": true,
+        "extensionless": true,
+        "bat": true
+      }
+    },
+    {
+      "name": "Cipher",
+      "role": "Database Specialist",
+      "wrapper": "cipher-agent",
+      "reportsTo": "Igris",
+      "responsibilities": [
+        "Data modeling",
+        "Query design",
+        "Storage review"
+      ],
+      "wrapperStatus": {
+        "wrapper": "cipher-agent",
+        "available": true,
+        "extensionless": true,
+        "bat": true
+      }
+    }
+  ],
+  "profiles": [
+    {
+      "name": "default",
+      "pathLabel": "%LOCALAPPDATA%/hermes",
+      "hasSkills": true,
+      "skillCount": 81,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Sensei lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies. Legacy skill name kept for compatibility after Beru became Learning General.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Engineering Division registry and operating model under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "atlas",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/atlas",
+      "hasSkills": true,
+      "skillCount": 80,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Operating model and registry for Chris's Engineering Division under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "beru",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/beru",
+      "hasSkills": true,
+      "skillCount": 79,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        },
+        {
+          "name": "lesson-history",
+          "description": "Beru routing skill for Japanese learning progress. Sensei owns Japanese lesson history; Beru uses it only for high-level learning strategy.",
+          "relativePath": "japanese/lesson-history/SKILL.md"
+        },
+        {
+          "name": "llama-cpp",
+          "description": "llama.cpp local GGUF inference + HF Hub model discovery.",
+          "relativePath": "mlops/inference/llama-cpp/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "cipher",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/cipher",
+      "hasSkills": true,
+      "skillCount": 80,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Operating model and registry for Chris's Engineering Division under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "clix",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/clix",
+      "hasSkills": true,
+      "skillCount": 80,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Operating model and registry for Chris's Engineering Division under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "forge",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/forge",
+      "hasSkills": true,
+      "skillCount": 80,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Operating model and registry for Chris's Engineering Division under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "igris",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/igris",
+      "hasSkills": true,
+      "skillCount": 80,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Operating model and registry for Chris's Engineering Division under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "kaisel",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/kaisel",
+      "hasSkills": true,
+      "skillCount": 77,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "gmail-maintenance-organization",
+          "description": "Use when Kaisel is asked to review, classify, label, archive, clean up, maintain, or organize Gmail. Prioritize safety, accuracy, and user visibility over aggressive inbox reduction.",
+          "relativePath": "productivity/gmail-maintenance-organization/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "japanese-study-drive-archive",
+          "description": "Create Google Drive study documents from Beru Japanese lessons.",
+          "relativePath": "productivity/japanese-study-drive-archive/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        },
+        {
+          "name": "llama-cpp",
+          "description": "llama.cpp local GGUF inference + HF Hub model discovery.",
+          "relativePath": "mlops/inference/llama-cpp/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "kamish",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/kamish",
+      "hasSkills": true,
+      "skillCount": 79,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "ai-cost-limit-monitoring",
+          "description": "Monitor Hermes AI usage, ChatGPT Plus efficiency, costs, quotas, limits, and budget risks.",
+          "relativePath": "monitoring/ai-cost-limit-monitoring/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "nexus",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/nexus",
+      "hasSkills": true,
+      "skillCount": 80,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Operating model and registry for Chris's Engineering Division under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "nova",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/nova",
+      "hasSkills": true,
+      "skillCount": 80,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Operating model and registry for Chris's Engineering Division under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "pulse",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/pulse",
+      "hasSkills": true,
+      "skillCount": 80,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Operating model and registry for Chris's Engineering Division under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "sensei",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/sensei",
+      "hasSkills": true,
+      "skillCount": 79,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        },
+        {
+          "name": "lesson-history",
+          "description": "Track Chris's Japanese lessons, review items, mistakes, and next topics across Sensei sessions.",
+          "relativePath": "japanese/lesson-history/SKILL.md"
+        },
+        {
+          "name": "llama-cpp",
+          "description": "llama.cpp local GGUF inference + HF Hub model discovery.",
+          "relativePath": "mlops/inference/llama-cpp/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "sentinel",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/sentinel",
+      "hasSkills": true,
+      "skillCount": 80,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Operating model and registry for Chris's Engineering Division under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "titan",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/titan",
+      "hasSkills": true,
+      "skillCount": 80,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Operating model and registry for Chris's Engineering Division under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    },
+    {
+      "name": "vector",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/vector",
+      "hasSkills": true,
+      "skillCount": 80,
+      "skills": [
+        {
+          "name": "agent-config-github-backups",
+          "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
+          "relativePath": "devops/agent-config-github-backups/SKILL.md"
+        },
+        {
+          "name": "airtable",
+          "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+          "relativePath": "productivity/airtable/SKILL.md"
+        },
+        {
+          "name": "apple-notes",
+          "description": "\"Manage Apple Notes via memo CLI: create, search, edit.\"",
+          "relativePath": "apple/apple-notes/SKILL.md"
+        },
+        {
+          "name": "apple-reminders",
+          "description": "\"Apple Reminders via remindctl: add, list, complete.\"",
+          "relativePath": "apple/apple-reminders/SKILL.md"
+        },
+        {
+          "name": "architecture-diagram",
+          "description": "\"Dark-themed SVG architecture/cloud/infra diagrams as HTML.\"",
+          "relativePath": "creative/architecture-diagram/SKILL.md"
+        },
+        {
+          "name": "arxiv",
+          "description": "\"Search arXiv papers by keyword, author, category, or ID.\"",
+          "relativePath": "research/arxiv/SKILL.md"
+        },
+        {
+          "name": "ascii-art",
+          "description": "\"ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\"",
+          "relativePath": "creative/ascii-art/SKILL.md"
+        },
+        {
+          "name": "ascii-video",
+          "description": "\"ASCII video: convert video/audio to colored ASCII MP4/GIF.\"",
+          "relativePath": "creative/ascii-video/SKILL.md"
+        },
+        {
+          "name": "audiocraft-audio-generation",
+          "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
+          "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "baoyu-infographic",
+          "description": "\"Infographics: 21 layouts x 21 styles (信息图, 可视化).\"",
+          "relativePath": "creative/baoyu-infographic/SKILL.md"
+        },
+        {
+          "name": "beru-kaisel-japanese-study-workflow",
+          "description": "Coordinate Beru lesson creation and Kaisel Google Drive archiving for Chris's Japanese studies.",
+          "relativePath": "productivity/beru-kaisel-japanese-study-workflow/SKILL.md"
+        },
+        {
+          "name": "blogwatcher",
+          "description": "\"Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\"",
+          "relativePath": "research/blogwatcher/SKILL.md"
+        },
+        {
+          "name": "claude-code",
+          "description": "\"Delegate coding to Claude Code CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/claude-code/SKILL.md"
+        },
+        {
+          "name": "claude-design",
+          "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+          "relativePath": "creative/claude-design/SKILL.md"
+        },
+        {
+          "name": "codebase-inspection",
+          "description": "\"Inspect codebases w/ pygount: LOC, languages, ratios.\"",
+          "relativePath": "github/codebase-inspection/SKILL.md"
+        },
+        {
+          "name": "codex",
+          "description": "\"Delegate coding to OpenAI Codex CLI (features, PRs).\"",
+          "relativePath": "autonomous-ai-agents/codex/SKILL.md"
+        },
+        {
+          "name": "comfyui",
+          "description": "\"Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.\"",
+          "relativePath": "creative/comfyui/SKILL.md"
+        },
+        {
+          "name": "design-md",
+          "description": "Author/validate/export Google's DESIGN.md token spec files.",
+          "relativePath": "creative/design-md/SKILL.md"
+        },
+        {
+          "name": "dogfood",
+          "description": "\"Exploratory QA of web apps: find bugs, evidence, reports.\"",
+          "relativePath": "dogfood/SKILL.md"
+        },
+        {
+          "name": "engineering-division",
+          "description": "Operating model and registry for Chris's Engineering Division under Belion and Igris.",
+          "relativePath": "software-development/engineering-division/SKILL.md"
+        },
+        {
+          "name": "evaluating-llms-harness",
+          "description": "\"lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\"",
+          "relativePath": "mlops/evaluation/lm-evaluation-harness/SKILL.md"
+        },
+        {
+          "name": "excalidraw",
+          "description": "\"Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\"",
+          "relativePath": "creative/excalidraw/SKILL.md"
+        },
+        {
+          "name": "findmy",
+          "description": "\"Track Apple devices/AirTags via FindMy.app on macOS.\"",
+          "relativePath": "apple/findmy/SKILL.md"
+        },
+        {
+          "name": "gif-search",
+          "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
+          "relativePath": "media/gif-search/SKILL.md"
+        },
+        {
+          "name": "github-code-review",
+          "description": "\"Review PRs: diffs, inline comments via gh or REST.\"",
+          "relativePath": "github/github-code-review/SKILL.md"
+        },
+        {
+          "name": "github-issues",
+          "description": "\"Create, triage, label, assign GitHub issues via gh or REST.\"",
+          "relativePath": "github/github-issues/SKILL.md"
+        },
+        {
+          "name": "github-pr-workflow",
+          "description": "\"GitHub PR lifecycle: branch, commit, open, CI, merge.\"",
+          "relativePath": "github/github-pr-workflow/SKILL.md"
+        },
+        {
+          "name": "github-repo-management",
+          "description": "\"Clone/create/fork repos; manage remotes, releases.\"",
+          "relativePath": "github/github-repo-management/SKILL.md"
+        },
+        {
+          "name": "godmode",
+          "description": "\"Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\"",
+          "relativePath": "red-teaming/godmode/SKILL.md"
+        },
+        {
+          "name": "google-workspace",
+          "description": "\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\"",
+          "relativePath": "productivity/google-workspace/SKILL.md"
+        },
+        {
+          "name": "heartmula",
+          "description": "\"HeartMuLa: Suno-like song generation from lyrics + tags.\"",
+          "relativePath": "media/heartmula/SKILL.md"
+        },
+        {
+          "name": "hermes-agent",
+          "description": "\"Configure, extend, or contribute to Hermes Agent.\"",
+          "relativePath": "autonomous-ai-agents/hermes-agent/SKILL.md"
+        },
+        {
+          "name": "hermes-subagent-profiles",
+          "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
+          "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
+        },
+        {
+          "name": "himalaya",
+          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
+          "relativePath": "email/himalaya/SKILL.md"
+        },
+        {
+          "name": "huggingface-hub",
+          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
+          "relativePath": "mlops/huggingface-hub/SKILL.md"
+        },
+        {
+          "name": "humanizer",
+          "description": "\"Humanize text: strip AI-isms and add real voice.\"",
+          "relativePath": "creative/humanizer/SKILL.md"
+        },
+        {
+          "name": "imessage",
+          "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+          "relativePath": "apple/imessage/SKILL.md"
+        },
+        {
+          "name": "jupyter-live-kernel",
+          "description": "\"Iterative Python via live Jupyter kernel (hamelnb).\"",
+          "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
+        },
+        {
+          "name": "kanban-orchestrator",
+          "description": "Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+          "relativePath": "devops/kanban-orchestrator/SKILL.md"
+        },
+        {
+          "name": "kanban-worker",
+          "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+          "relativePath": "devops/kanban-worker/SKILL.md"
+        }
+      ],
+      "hasCronDir": true
+    }
+  ],
+  "wrappers": [
+    {
+      "wrapper": "belion",
+      "available": true,
+      "extensionless": true,
+      "bat": true
+    },
+    {
+      "wrapper": "igris",
+      "available": true,
+      "extensionless": true,
+      "bat": true
+    },
+    {
+      "wrapper": "atlas",
+      "available": true,
+      "extensionless": true,
+      "bat": true
+    },
+    {
+      "wrapper": "clix",
+      "available": true,
+      "extensionless": true,
+      "bat": true
+    },
+    {
+      "wrapper": "forge",
+      "available": true,
+      "extensionless": true,
+      "bat": true
+    },
+    {
+      "wrapper": "pulse",
+      "available": true,
+      "extensionless": true,
+      "bat": true
+    },
+    {
+      "wrapper": "sentinel",
+      "available": true,
+      "extensionless": true,
+      "bat": true
+    },
+    {
+      "wrapper": "vector",
+      "available": true,
+      "extensionless": true,
+      "bat": true
+    },
+    {
+      "wrapper": "nexus",
+      "available": true,
+      "extensionless": true,
+      "bat": true
+    },
+    {
+      "wrapper": "cipher-agent",
+      "available": true,
+      "extensionless": true,
+      "bat": true
+    }
+  ],
+  "cronJobs": [
+    {
+      "id": "0646d5c0211e",
+      "name": "Daily Agent Army Morning Checkup",
+      "schedule": "0 7 * * *",
+      "profile": "default",
+      "deliver": "[configured]",
+      "enabled": true,
+      "noAgent": false,
+      "skills": [
+        "hermes-agent"
+      ],
+      "toolsets": [
+        "terminal",
+        "file",
+        "cronjob",
+        "skills"
+      ],
+      "safety": "metadata-only: bodies redacted"
+    },
+    {
+      "id": "12bd56eb8975",
+      "name": "Kaisel Archive Sensei Japanese Lesson to Google Drive",
+      "schedule": "10 8 * * *",
+      "profile": "kaisel",
+      "deliver": "[configured]",
+      "enabled": true,
+      "noAgent": false,
+      "skills": [
+        "google-workspace",
+        "japanese-study-drive-archive"
+      ],
+      "toolsets": [
+        "terminal",
+        "file",
+        "skills"
+      ],
+      "safety": "metadata-only: bodies redacted"
+    },
+    {
+      "id": "a83855395113",
+      "name": "Kamish Daily AI Usage and Cost Report",
+      "schedule": "30 7 * * *",
+      "profile": "kamish",
+      "deliver": "[configured]",
+      "enabled": true,
+      "noAgent": false,
+      "skills": [
+        "ai-cost-limit-monitoring",
+        "local-ollama-helper"
+      ],
+      "toolsets": [
+        "terminal",
+        "file",
+        "cronjob",
+        "skills"
+      ],
+      "safety": "metadata-only: bodies redacted"
+    },
+    {
+      "id": "e90094c57b64",
+      "name": "Nightly Hermes GitHub backup",
+      "schedule": "0 3 * * *",
+      "profile": "default",
+      "deliver": "[configured]",
+      "enabled": true,
+      "noAgent": true,
+      "skills": [],
+      "toolsets": [],
+      "safety": "metadata-only: bodies redacted"
+    },
+    {
+      "id": "da3378be9991",
+      "name": "SENSEI Japanese N5-to-N2 Daily Tutor",
+      "schedule": "0 8 * * *",
+      "profile": "sensei",
+      "deliver": "[configured]",
+      "enabled": true,
+      "noAgent": false,
+      "skills": [
+        "word-explainer",
+        "lesson-history"
+      ],
+      "toolsets": [
+        "web",
+        "terminal",
+        "file",
+        "skills"
+      ],
+      "safety": "metadata-only: bodies redacted"
+    }
+  ],
+  "missions": [
+    {
+      "id": "stronghold-phase-1",
+      "title": "Agent-Army Stronghold Phase 1 MVP",
+      "owner": "Igris",
+      "status": "active",
+      "priority": "high",
+      "summary": "Build the read-only mission control dashboard for the Engineering Division and agent army.",
+      "specialists": [
+        "Atlas",
+        "Clix",
+        "Forge",
+        "Pulse",
+        "Sentinel",
+        "Vector",
+        "Nexus"
+      ]
+    },
+    {
+      "id": "stronghold-phase-2-backlog",
+      "title": "Phase 2 write-control backlog",
+      "owner": "Igris",
+      "status": "planned",
+      "priority": "medium",
+      "summary": "Design future gated write-capable controls only after Phase 1 acceptance.",
+      "specialists": [
+        "Atlas",
+        "Sentinel",
+        "Pulse"
+      ]
+    }
+  ],
+  "safetyFindings": [
+    {
+      "id": "read-only-ui",
+      "level": "ok",
+      "title": "Read-only UI boundary",
+      "detail": "Phase 1 has no browser write controls or command execution controls."
+    },
+    {
+      "id": "secret-denylist",
+      "level": "ok",
+      "title": "Sensitive data denylist active",
+      "detail": "15 sensitive markers are denied/redacted by the snapshot collector."
+    },
+    {
+      "id": "localhost-only",
+      "level": "ok",
+      "title": "Localhost-only runtime",
+      "detail": "Vite dev and preview configs bind to 127.0.0.1 with strict ports."
+    },
+    {
+      "id": "cron-redaction",
+      "level": "ok",
+      "title": "Cron bodies redacted",
+      "detail": "5 cron jobs summarized without prompts, scripts, or output bodies."
+    }
+  ]
+}

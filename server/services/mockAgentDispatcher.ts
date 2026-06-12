@@ -1,0 +1,9 @@
+import crypto from 'node:crypto';
+import type { AgentArtifact, AgentRun } from '../../shared/agentTypes';
+import { readJsonArray, atomicWriteJson, sha256 } from './storage';
+import { appendAgentRunLog } from './agentRunLog';
+import { markAgentRequestStatus } from './agentRequestService';
+import type { AgentRequest } from '../../shared/agentTypes';
+import { redactDeep } from '../safety/redaction';
+export type AgentFiles={requests:string;runs:string;artifacts:string;runLog:string;audit:string};
+export function dispatchMockAgentRequest(files:AgentFiles, requestId:string):{run:AgentRun; artifact:AgentArtifact}{ const requests=readJsonArray<AgentRequest>(files.requests); const request=requests.find(r=>r.id===requestId); if(!request) throw new Error('agent request not found'); if(request.status!=='queued') throw new Error('agent request must be approved and queued before dispatch'); markAgentRequestStatus(files.requests, request.id, 'running'); const start=new Date().toISOString(); const content=String(redactDeep(`Mock ${request.targetAgent} artifact for ${request.title}: ${request.prompt}`)); const run:AgentRun={id:crypto.randomUUID(),requestId:request.id,status:'succeeded',wrapper:'mock',targetAgent:request.targetAgent,startedAt:start,finishedAt:new Date().toISOString(),timeoutMs:120000,inputHash:sha256(request),outputHash:sha256(content),auditEventIds:[]}; const artifact:AgentArtifact={id:crypto.randomUUID(),requestId:request.id,runId:run.id,kind:'plan',content,redactionApplied:true,createdAt:new Date().toISOString(),requiresHumanApply:true}; atomicWriteJson(files.runs,[...readJsonArray<AgentRun>(files.runs),run]); atomicWriteJson(files.artifacts,[...readJsonArray<AgentArtifact>(files.artifacts),artifact]); appendAgentRunLog(files.runLog, run); markAgentRequestStatus(files.requests, request.id, 'awaiting_human_review'); return {run, artifact}; }

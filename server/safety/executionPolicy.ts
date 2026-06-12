@@ -1,0 +1,3 @@
+const SHELL_PATTERNS = [/\b(bash|powershell|cmd|sh|python|node|npm|git|curl|ssh|scp|rm|del)\b/i, /[;&|`$<>]/, /\.\./];
+export function assertNoShellPayload(text:string){ if(SHELL_PATTERNS.some(p=>p.test(text))) throw new Error('Shell/command-like payload denied'); }
+export const DEFAULT_SANDBOX_POLICY = { id:'phase3-default-artifact-only', network:'none', filesystem:'read-approved-context-bundle', writeMode:'artifact-only', maxRuntimeMs:120000, maxInputBytes:16000, maxOutputBytes:65536, allowedContextKinds:['snapshot','mission','task'], deniedPatterns:['secret','token','oauth','credential'], redactionRequired:true } as const;

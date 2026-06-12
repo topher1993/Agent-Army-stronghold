@@ -1,0 +1,20 @@
+[
+  {
+    "id": "stronghold-phase-1",
+    "title": "Agent-Army Stronghold Phase 1 MVP",
+    "owner": "Igris",
+    "status": "active",
+    "priority": "high",
+    "summary": "Build the read-only mission control dashboard for the Engineering Division and agent army.",
+    "specialists": ["Atlas", "Clix", "Forge", "Pulse", "Sentinel", "Vector", "Nexus"]
+  },
+  {
+    "id": "stronghold-phase-2-backlog",
+    "title": "Phase 2 write-control backlog",
+    "owner": "Igris",
+    "status": "planned",
+    "priority": "medium",
+    "summary": "Design future gated write-capable controls only after Phase 1 acceptance.",
+    "specialists": ["Atlas", "Sentinel", "Pulse"]
+  }
+]

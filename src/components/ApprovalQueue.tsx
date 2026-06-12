@@ -1,0 +1,1 @@
+export function ApprovalQueue() { return <section className="panel"><h2>Approval Queue</h2><p>Phase 2 requests move from proposed → approved/rejected → applied. No direct writes from the dashboard.</p></section>; }

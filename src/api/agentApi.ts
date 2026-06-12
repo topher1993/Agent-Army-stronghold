@@ -1,0 +1,1 @@
+export async function orchestrationHealth(): Promise<{ ok: boolean; phase?: number; killSwitch?: string; dispatchGate?: string }> { try { const r=await fetch('http://127.0.0.1:5175/api/orchestration/health',{cache:'no-store'}); if(!r.ok) return {ok:false}; return r.json(); } catch { return {ok:false, killSwitch:'unknown'}; } }

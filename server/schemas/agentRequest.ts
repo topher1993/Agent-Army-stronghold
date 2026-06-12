@@ -1,0 +1,7 @@
+import type { ValidationResult } from '../../shared/types';
+import type { AgentRequestKind } from '../../shared/agentTypes';
+import { containsSensitiveValue } from '../safety/redaction';
+import { assertAllowedAgentTarget } from '../safety/agentAllowlist';
+import { assertNoShellPayload } from '../safety/executionPolicy';
+const kinds: AgentRequestKind[] = ['mission.plan','task.breakdown','code.review','security.review','architecture.proposal','status.summary','artifact.review'];
+export function validateAgentRequestInput(input:unknown): ValidationResult { const errors:string[]=[]; if(!input||typeof input!=='object'||Array.isArray(input)) return {ok:false, errors:['agent request must be object']}; const i=input as Record<string,unknown>; if(!kinds.includes(i.kind as AgentRequestKind)) errors.push('invalid agent request kind'); if(typeof i.title!=='string'||i.title.trim().length<3) errors.push('title required'); if(typeof i.prompt!=='string'||i.prompt.trim().length<3) errors.push('prompt required'); if(typeof i.requestedBy!=='string') errors.push('requestedBy required'); try{ assertAllowedAgentTarget(String(i.targetAgent||'')); }catch(e){ errors.push((e as Error).message); } try{ assertNoShellPayload(String(i.prompt||'')); }catch(e){ errors.push((e as Error).message); } if(containsSensitiveValue(i)) errors.push('sensitive content denied'); return errors.length?{ok:false,errors}:{ok:true,errors:[]}; }
