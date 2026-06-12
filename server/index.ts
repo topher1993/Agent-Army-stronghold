@@ -14,7 +14,7 @@ import { isOrchestrationDisabled, disableOrchestration, enableOrchestration } fr
 
 type InjectRequest = { method: string; url: string; body?: unknown };
 type InjectResponse = { statusCode: number; body: string; headers: Record<string, string> };
-function json(statusCode: number, body: unknown): InjectResponse { return { statusCode, body: JSON.stringify(body), headers: { 'content-type': 'application/json', 'access-control-allow-origin': 'http://127.0.0.1:4174', 'access-control-allow-methods': 'GET,POST,OPTIONS', 'access-control-allow-headers': 'content-type' } }; }
+function json(statusCode: number, body: unknown): InjectResponse { return { statusCode, body: JSON.stringify(body), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-methods': 'GET,POST,OPTIONS', 'access-control-allow-headers': 'content-type' } }; }
 async function parseBody(req: http.IncomingMessage): Promise<unknown> {
   let raw = ''; for await (const chunk of req) raw += chunk; return raw ? JSON.parse(raw) : {};
 }
