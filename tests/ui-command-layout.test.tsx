@@ -6,6 +6,7 @@ import snapshot from '../public/data/stronghold-snapshot.json';
 import { App } from '../src/App';
 
 beforeEach(() => {
+  document.body.innerHTML = '';
   vi.stubGlobal('fetch', vi.fn(async (url: string) => {
     if (!String(url).includes('/api/')) return { ok: true, json: async () => snapshot };
     const path = new URL(String(url)).pathname;
@@ -49,5 +50,29 @@ describe('Stronghold command-center layout', () => {
     expect(text).toContain('no shell');
     expect(text).not.toContain('shell command');
     expect(text).not.toContain('execute command');
+  });
+
+  it('reduces information density with collapsed intel, monitoring, and mission detail panels', async () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    await act(async () => { createRoot(el).render(<App />); });
+
+    const collapsiblePanels = Array.from(document.querySelectorAll('details.uxDisclosure')) as HTMLDetailsElement[];
+    expect(collapsiblePanels.length).toBeGreaterThanOrEqual(6);
+
+    const rosterPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Engineering Division Roster'));
+    const inventoryPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Agent Army Inventory'));
+    const auditPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Audit Trail'));
+
+    expect(rosterPanel?.open).toBe(false);
+    expect(inventoryPanel?.open).toBe(false);
+    expect(auditPanel?.open).toBe(false);
+
+    const missionDetails = document.querySelector('details.missionDisclosure') as HTMLDetailsElement | null;
+    expect(missionDetails).toBeTruthy();
+    expect(missionDetails?.open).toBe(false);
+
+    expect(document.body.textContent).toContain('Phase 2/3 gate locked');
+    expect(document.body.textContent?.toLowerCase()).not.toContain('generic command');
   });
 });

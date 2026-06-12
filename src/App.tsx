@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { loadSnapshot } from './data';
 import type { CronJobSummary, Mission, StrongholdSnapshot } from './types';
 import { backendHealth } from './api/strongholdApi';
@@ -58,38 +58,45 @@ export function App() {
       <div className={`commandGrid active-${activeMobileSection}`}>
         <aside className="sidePanel leftRail" aria-label="Stronghold context">
           <section id="intel-section" className="mobileSection mobileIntel" aria-label="Stronghold intelligence" aria-hidden={!isActive('intel')}>
-            <Overview snapshot={snapshot} />
-            <Roster snapshot={snapshot} />
-            <Inventory snapshot={snapshot} />
+            <Disclosure title="Stronghold Telemetry" defaultOpen><Overview snapshot={snapshot} /></Disclosure>
+            <Disclosure title="Engineering Division Roster"><Roster snapshot={snapshot} /></Disclosure>
+            <Disclosure title="Agent Army Inventory"><Inventory snapshot={snapshot} /></Disclosure>
           </section>
         </aside>
         <section className="centerDeck" aria-label="Primary command workflows">
           <section id="command-section" className="mobileSection mobileCommand" aria-label="Primary command workflows" aria-hidden={!isActive('command')}>
             <SafetyBoundary backendOk={backendOk} />
-            <AgentOrchestration killSwitch={killSwitch} onCreatedChangeRequest={refreshApprovals} />
+            <Disclosure title="Phase 3 Agent Orchestration"><AgentOrchestration killSwitch={killSwitch} onCreatedChangeRequest={refreshApprovals} /></Disclosure>
           </section>
           <section id="missions-section" className="mobileSection mobileMissions" aria-label="Mission planning" aria-hidden={!isActive('missions')}>
             <section className="proposalGrid" aria-label="Mission and task proposal workspace">
-              <MissionEditor onCreated={refreshApprovals} />
-              <TaskEditor onCreated={refreshApprovals} />
+              <Disclosure title="Mission Proposal"><MissionEditor onCreated={refreshApprovals} /></Disclosure>
+              <Disclosure title="Task Proposal"><TaskEditor onCreated={refreshApprovals} /></Disclosure>
             </section>
             <MissionBoard missions={snapshot.missions} />
           </section>
         </section>
         <aside className="sidePanel rightRail" aria-label="Approvals, audit, and safety monitoring">
           <section id="approvals-section" className="mobileSection mobileApprovals" aria-label="Approvals and audit" aria-hidden={!isActive('approvals')}>
-            <ApprovalQueue refreshKey={refreshKey} />
-            <AuditTrail refreshKey={refreshKey} />
+            <Disclosure title="Approval Queue" defaultOpen><ApprovalQueue refreshKey={refreshKey} /></Disclosure>
+            <Disclosure title="Audit Trail"><AuditTrail refreshKey={refreshKey} /></Disclosure>
           </section>
           <section id="safety-section" className="mobileSection mobileSafety" aria-label="Safety and operations" aria-hidden={!isActive('safety')}>
-            <CronMonitor jobs={snapshot.cronJobs} />
-            <Safety snapshot={snapshot} />
-            <OperatorNotes snapshot={snapshot} />
+            <Disclosure title="Cron / Schedule Monitor" defaultOpen><CronMonitor jobs={snapshot.cronJobs} /></Disclosure>
+            <Disclosure title="Safety & Readiness"><Safety snapshot={snapshot} /></Disclosure>
+            <Disclosure title="Operator Notes"><OperatorNotes snapshot={snapshot} /></Disclosure>
           </section>
         </aside>
       </div>
     </main>
   );
+}
+
+function Disclosure({ title, children, defaultOpen = false }: { title: string; children: ReactNode; defaultOpen?: boolean }) {
+  return <details className="uxDisclosure" open={defaultOpen}>
+    <summary>{title}<span aria-hidden="true">▾</span></summary>
+    <div className="uxDisclosureContent">{children}</div>
+  </details>;
 }
 
 function Hero({ snapshot, backendOk, killSwitch }: { snapshot: StrongholdSnapshot; backendOk: boolean; killSwitch: string }) {
@@ -139,9 +146,9 @@ function Safety({ snapshot }: { snapshot: StrongholdSnapshot }) {
 
 function MissionBoard({ missions }: { missions: Mission[] }) {
   const grouped = useMemo(() => Object.fromEntries(lanes.map(lane => [lane, missions.filter(m => m.status === lane)])) as Record<Mission['status'], Mission[]>, [missions]);
-  return <section className="panel wide"><h2>Mission Board</h2><div className="lanes">{lanes.map(lane => <div className="lane" key={lane}><h3>{lane}</h3>{grouped[lane].map(m => <article className="mission" key={m.id}>
-    <strong>{m.title}</strong><p>{m.summary}</p><small>{m.owner} · {m.priority} · {m.specialists.join(', ')}</small>
-  </article>)}</div>)}</div></section>;
+  return <section className="panel wide"><h2>Mission Board</h2><div className="lanes">{lanes.map(lane => <div className="lane" key={lane}><h3>{lane}</h3>{grouped[lane].map(m => <details className="mission missionDisclosure" key={m.id}>
+    <summary><strong>{m.title}</strong><span aria-hidden="true">▾</span></summary><p>{m.summary}</p><small>{m.owner} · {m.priority} · {m.specialists.join(', ')}</small>
+  </details>)}</div>)}</div></section>;
 }
 
 function CronMonitor({ jobs }: { jobs: CronJobSummary[] }) {

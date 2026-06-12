@@ -33,6 +33,17 @@ h2 { color: #dff5ff; }
 dt { color: #8ab3d8; font-size: .78rem; } dd { margin: 0; font-weight: 700; }
 .stat, .panel { background: rgba(8, 20, 36, .84); border: 1px solid #203f61; border-radius: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
 .panel { padding: 22px; margin-top: 0; }
+.uxDisclosure { background: rgba(8, 20, 36, .84); border: 1px solid #203f61; border-radius: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.18); overflow: hidden; }
+.uxDisclosure > summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px; color: #dff5ff; font-weight: 900; }
+.uxDisclosure > summary::-webkit-details-marker { display: none; }
+.uxDisclosure > summary span { color: #80d8ff; transition: transform .18s ease; }
+.uxDisclosure[open] > summary span { transform: rotate(180deg); }
+.uxDisclosureContent { padding: 0 16px 16px; }
+.uxDisclosureContent > .panel { box-shadow: none; border-radius: 16px; padding: 0; border: 0; background: transparent; }
+.missionDisclosure { cursor: pointer; }
+.missionDisclosure > summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.missionDisclosure > summary::-webkit-details-marker { display: none; }
+.missionDisclosure > summary span { color: #80d8ff; }
 .telemetryPanel .stats, .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 12px 0 0; }
 .stat { padding: 14px; }
 .stat span { color: #94b7d6; display: block; font-size: .78rem; }
