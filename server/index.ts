@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { HOST, PORT } from './config';
 import { readSnapshot } from './services/snapshotBridge';
 import { approvedDataPath } from './safety/pathGuard';
-import { readJsonArray } from './services/storage';
+import { atomicWriteJson, readJsonArray } from './services/storage';
+import type { ChangeRequest } from '../shared/types';
 import { readAuditEvents } from './services/auditLog';
 import { createChangeRequest, approveChangeRequest, rejectChangeRequest, applyApprovedChangeRequest } from './services/approvalWorkflow';
 import { listAgentRequests, createAgentRequest, approveAgentRequest, rejectAgentRequest, enqueueAgentRequest } from './services/agentRequestService';
@@ -51,16 +52,23 @@ async function route(method: string, url: string, body?: unknown): Promise<Injec
     if (!artifact) return json(404, { error: 'artifact not found' });
     return json(201, artifactToChangeRequestPayload(artifact as never, 'Chris'));
   }
-  if (method === 'POST' && url === '/api/change-requests') return json(201, createChangeRequest(body as never));
+  if (method === 'POST' && url === '/api/change-requests') {
+    const created = createChangeRequest(body as never);
+    const existing = readJsonArray<ChangeRequest>(approvedDataPath('changeRequests'));
+    atomicWriteJson(approvedDataPath('changeRequests'), [...existing, created]);
+    return json(201, created);
+  }
   const approve = url.match(/^\/api\/change-requests\/([^/]+)\/(approve|reject|apply)$/);
   if (method === 'POST' && approve) {
-    const request = (body as { request?: never; actor?: string; reason?: string })?.request;
-    if (!request) return json(400, { error: 'request body requires request' });
+    const requests = readJsonArray<ChangeRequest>(approvedDataPath('changeRequests'));
+    const index = requests.findIndex(request => request.id === approve[1]);
+    const request = index >= 0 ? requests[index] : (body as { request?: ChangeRequest })?.request;
+    if (!request) return json(404, { error: 'change request not found' });
     const actor = (body as { actor?: string }).actor || 'Igris';
     const reason = (body as { reason?: string }).reason || 'approved by operator';
-    if (approve[2] === 'approve') return json(200, approveChangeRequest(request, actor, reason));
-    if (approve[2] === 'reject') return json(200, rejectChangeRequest(request, actor, reason));
-    return json(200, applyApprovedChangeRequest(request, actor));
+    const updated = approve[2] === 'approve' ? approveChangeRequest(request, actor, reason) : approve[2] === 'reject' ? rejectChangeRequest(request, actor, reason) : applyApprovedChangeRequest(request, actor);
+    if (index >= 0) { requests[index] = updated; atomicWriteJson(approvedDataPath('changeRequests'), requests); }
+    return json(200, updated);
   }
   return json(404, { error: 'not found', safe: 'no generic command/write endpoint exists' });
 }

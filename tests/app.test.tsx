@@ -10,12 +10,12 @@ beforeEach(() => {
 });
 
 describe('App', () => {
-  it('renders mission control and read-only label', async () => {
+  it('renders mission control and guarded label', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
     expect(document.body.textContent).toContain('Agent-Army Mission Control');
-    expect(document.body.textContent).toContain('READ ONLY');
+    expect(document.body.textContent).toContain('GUARDED');
     expect(document.body.textContent).toContain('Engineering Division Roster');
   });
 });

@@ -17,6 +17,7 @@ export function App() {
   const [error, setError] = useState<string | null>(null);
   const [backendOk, setBackendOk] = useState(false);
   const [killSwitch, setKillSwitch] = useState('unknown');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     loadSnapshot().then(setSnapshot).catch((err: Error) => setError(err.message));
@@ -34,14 +35,14 @@ export function App() {
       <Hero snapshot={snapshot} />
       <Overview snapshot={snapshot} />
       <SafetyBoundary backendOk={backendOk} />
-      <AgentOrchestration killSwitch={killSwitch} />
+      <AgentOrchestration killSwitch={killSwitch} onCreatedChangeRequest={() => setRefreshKey(value => value + 1)} />
       <section className="grid two">
-        <MissionEditor />
-        <TaskEditor />
+        <MissionEditor onCreated={() => setRefreshKey(value => value + 1)} />
+        <TaskEditor onCreated={() => setRefreshKey(value => value + 1)} />
       </section>
       <section className="grid two">
-        <ApprovalQueue />
-        <AuditTrail />
+        <ApprovalQueue refreshKey={refreshKey} />
+        <AuditTrail refreshKey={refreshKey} />
       </section>
       <section className="grid two">
         <Roster snapshot={snapshot} />
@@ -62,9 +63,9 @@ function Hero({ snapshot }: { snapshot: StrongholdSnapshot }) {
     <div>
       <p className="eyebrow">Engineering Division Stronghold</p>
       <h1>Agent-Army Mission Control</h1>
-      <p className="subtitle">Igris-owned Phase 1 dashboard for read-only visibility into agents, missions, cron work, profiles, safety, and readiness.</p>
+      <p className="subtitle">Igris-owned Stronghold cockpit for visibility, guarded proposals, approval workflows, and safe mock agent orchestration.</p>
     </div>
-    <div className="readOnlyBadge">READ ONLY<br /><span>No commands · No writes · No secrets</span></div>
+    <div className="readOnlyBadge">GUARDED<br /><span>Approvals · Artifacts · No shell</span></div>
     <dl className="meta">
       <div><dt>Owner</dt><dd>{snapshot.owner}</dd></div>
       <div><dt>Coordinator</dt><dd>{snapshot.coordinator}</dd></div>
