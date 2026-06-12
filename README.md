@@ -60,6 +60,7 @@ The hosted UI uses the generated snapshot in `public/data/stronghold-snapshot.js
 - `docs/phase-3-security.md`
 - `docs/phase-3-operations.md`
 - `docs/phase-3-5-interactive-ui.md`
+- `docs/phase-4-mobile-app-compatibility.md`
 
 ## Data sources
 

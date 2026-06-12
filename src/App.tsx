@@ -11,6 +11,14 @@ import { AgentOrchestration } from './components/AgentOrchestration';
 import { orchestrationHealth } from './api/agentApi';
 
 const lanes: Mission['status'][] = ['planned', 'active', 'blocked', 'review', 'complete'];
+type MobileSection = 'command' | 'approvals' | 'missions' | 'intel' | 'safety';
+const mobileTabs: Array<{ id: MobileSection; label: string }> = [
+  { id: 'command', label: 'Command' },
+  { id: 'approvals', label: 'Approvals' },
+  { id: 'missions', label: 'Missions' },
+  { id: 'intel', label: 'Intel' },
+  { id: 'safety', label: 'Safety' },
+];
 
 export function App() {
   const [snapshot, setSnapshot] = useState<StrongholdSnapshot | null>(null);
@@ -18,6 +26,7 @@ export function App() {
   const [backendOk, setBackendOk] = useState(false);
   const [killSwitch, setKillSwitch] = useState('unknown');
   const [refreshKey, setRefreshKey] = useState(0);
+  const [activeMobileSection, setActiveMobileSection] = useState<MobileSection>('command');
 
   useEffect(() => {
     loadSnapshot().then(setSnapshot).catch((err: Error) => setError(err.message));
@@ -31,31 +40,52 @@ export function App() {
   if (!snapshot) return <main className="commandShell"><p className="loading">Loading Stronghold...</p></main>;
 
   const refreshApprovals = () => setRefreshKey(value => value + 1);
+  const isActive = (section: MobileSection) => activeMobileSection === section;
 
   return (
     <main className="commandShell">
       <Hero snapshot={snapshot} backendOk={backendOk} killSwitch={killSwitch} />
-      <div className="commandGrid">
+      <nav className="mobileTabNav" aria-label="Mobile command sections">
+        {mobileTabs.map(tab => <button
+          type="button"
+          key={tab.id}
+          className={isActive(tab.id) ? 'active' : ''}
+          aria-selected={isActive(tab.id)}
+          aria-controls={`${tab.id}-section`}
+          onClick={() => setActiveMobileSection(tab.id)}
+        >{tab.label}</button>)}
+      </nav>
+      <div className={`commandGrid active-${activeMobileSection}`}>
         <aside className="sidePanel leftRail" aria-label="Stronghold context">
-          <Overview snapshot={snapshot} />
-          <Roster snapshot={snapshot} />
-          <Inventory snapshot={snapshot} />
+          <section id="intel-section" className="mobileSection mobileIntel" aria-label="Stronghold intelligence" aria-hidden={!isActive('intel')}>
+            <Overview snapshot={snapshot} />
+            <Roster snapshot={snapshot} />
+            <Inventory snapshot={snapshot} />
+          </section>
         </aside>
         <section className="centerDeck" aria-label="Primary command workflows">
-          <SafetyBoundary backendOk={backendOk} />
-          <AgentOrchestration killSwitch={killSwitch} onCreatedChangeRequest={refreshApprovals} />
-          <section className="proposalGrid" aria-label="Mission and task proposal workspace">
-            <MissionEditor onCreated={refreshApprovals} />
-            <TaskEditor onCreated={refreshApprovals} />
+          <section id="command-section" className="mobileSection mobileCommand" aria-label="Primary command workflows" aria-hidden={!isActive('command')}>
+            <SafetyBoundary backendOk={backendOk} />
+            <AgentOrchestration killSwitch={killSwitch} onCreatedChangeRequest={refreshApprovals} />
           </section>
-          <MissionBoard missions={snapshot.missions} />
+          <section id="missions-section" className="mobileSection mobileMissions" aria-label="Mission planning" aria-hidden={!isActive('missions')}>
+            <section className="proposalGrid" aria-label="Mission and task proposal workspace">
+              <MissionEditor onCreated={refreshApprovals} />
+              <TaskEditor onCreated={refreshApprovals} />
+            </section>
+            <MissionBoard missions={snapshot.missions} />
+          </section>
         </section>
         <aside className="sidePanel rightRail" aria-label="Approvals, audit, and safety monitoring">
-          <ApprovalQueue refreshKey={refreshKey} />
-          <AuditTrail refreshKey={refreshKey} />
-          <CronMonitor jobs={snapshot.cronJobs} />
-          <Safety snapshot={snapshot} />
-          <OperatorNotes snapshot={snapshot} />
+          <section id="approvals-section" className="mobileSection mobileApprovals" aria-label="Approvals and audit" aria-hidden={!isActive('approvals')}>
+            <ApprovalQueue refreshKey={refreshKey} />
+            <AuditTrail refreshKey={refreshKey} />
+          </section>
+          <section id="safety-section" className="mobileSection mobileSafety" aria-label="Safety and operations" aria-hidden={!isActive('safety')}>
+            <CronMonitor jobs={snapshot.cronJobs} />
+            <Safety snapshot={snapshot} />
+            <OperatorNotes snapshot={snapshot} />
+          </section>
         </aside>
       </div>
     </main>
