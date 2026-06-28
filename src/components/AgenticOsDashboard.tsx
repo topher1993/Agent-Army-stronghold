@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import type { ActivityEntry, QcRound, StrongholdSnapshot, WorkItem } from '../types';
+import { ActivityGraphPanel } from './ActivityGraphPanel';
 import { DiscordCoordinationPanel } from './DiscordCoordinationPanel';
 
 export type AgenticOsCardStatus = 'placeholder' | 'live' | 'stale' | 'empty';
@@ -470,6 +471,12 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
       {/* Discord #agent-army coordination panel (Phase D1).
           Self-contained read-only feed; polls every 60s, pausable. */}
       <DiscordCoordinationPanel />
+
+      {/* Routing Flow — Phase D4 activity graph (read-only).
+          Polls /api/activity-graph every 60s and renders the hand-off graph
+          as a pure SVG with three rows of nodes (Belion top, Igris middle,
+          specialists bottom) and pulse-animated edges for active routes. */}
+      <ActivityGraphPanel />
     </section>
   );
 }
