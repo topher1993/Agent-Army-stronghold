@@ -3,7 +3,7 @@ export type MissionPriority = 'low' | 'medium' | 'high' | 'critical';
 export type TaskStatus = 'todo' | 'active' | 'blocked' | 'review' | 'done' | 'cancelled';
 export type ChangeRequestStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'cancelled' | 'applied';
 export type ChangeRequestKind = 'mission.create' | 'mission.update' | 'task.create' | 'task.update' | 'assignment.update';
-export type AuditOutcome = 'requested' | 'validated' | 'approved' | 'rejected' | 'applied' | 'denied' | 'failed';
+export type AuditOutcome = 'requested' | 'validated' | 'approved' | 'rejected' | 'applied' | 'denied' | 'failed' | 'ok';
 
 export type ValidationResult = { ok: true; errors: [] } | { ok: false; errors: string[] };
 
@@ -62,7 +62,7 @@ export type AuditEvent = {
   actor: string;
   capability: string;
   action: string;
-  targetType: 'mission' | 'task' | 'changeRequest' | 'system';
+  targetType: 'mission' | 'task' | 'changeRequest' | 'system' | 'discord-channel';
   targetId?: string;
   targetPath?: string;
   outcome: AuditOutcome;

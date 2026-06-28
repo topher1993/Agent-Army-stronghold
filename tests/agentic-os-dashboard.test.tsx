@@ -352,12 +352,14 @@ describe('Agentic OS dashboard compact layout (Igris compact brief — Phase E)'
     expect(html).not.toMatch(/class="muted agenticOsFooter"/);
   });
 
-  it('keeps the hero row + QC + work-items + activity as the only rendered sections', () => {
+  it('keeps the hero row + QC + work-items + activity + discord-coordination as the only rendered sections', () => {
     const html = renderToStaticMarkup(<AgenticOsDashboardPanel snapshot={captured} />);
     const sectionMarkers = html.match(/data-section="[^"]+"/g) || [];
-    // Exactly 3 data-section markers: qc-history, work-items, activity.
+    // Exactly 4 data-section markers: qc-history, work-items, activity,
+    // and discord-coordination (Phase D1 — added by the Discord routing map).
     expect(sectionMarkers.sort()).toEqual([
       'data-section="activity"',
+      'data-section="discord-coordination"',
       'data-section="qc-history"',
       'data-section="work-items"',
     ].sort());
