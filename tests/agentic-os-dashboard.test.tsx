@@ -26,7 +26,9 @@ describe('Agentic OS dashboard placeholder (compact Phase E baseline)', () => {
     // The activity section is still rendered (now with a 4-column table).
     expect(html).toContain('data-section="activity"');
     // No "Memory & Skills" or "Roadmap" sections — those were deleted.
-    expect(html).not.toContain('Memory');
+    // Note: "Memory Status" is now a real panel (Phase D3) — only the
+    // removed sections' specific copy is asserted absent.
+    expect(html).not.toContain('Memory &amp; Skills');
     expect(html).not.toContain('Roadmap');
     expect(html).not.toContain('App Health');
     // Placeholder copy should still be present so users see clear empty-state.
