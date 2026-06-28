@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import type { ActivityEntry, QcRound, StrongholdSnapshot, WorkItem } from '../types';
 import { ActivityGraphPanel } from './ActivityGraphPanel';
+import { MemoryStatusPanel } from './MemoryStatusPanel';
 import { DiscordCoordinationPanel } from './DiscordCoordinationPanel';
 
 export type AgenticOsCardStatus = 'placeholder' | 'live' | 'stale' | 'empty';
@@ -477,6 +478,7 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
           as a pure SVG with three rows of nodes (Belion top, Igris middle,
           specialists bottom) and pulse-animated edges for active routes. */}
       <ActivityGraphPanel />
+      <MemoryStatusPanel />
     </section>
   );
 }

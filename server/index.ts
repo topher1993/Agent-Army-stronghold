@@ -17,6 +17,7 @@ import { resolveApproval, listApprovals } from './services/approvalActions';
 import { callHermesCron, validateCronInput, type CronAction, type CronDispatchError } from './services/cronService';
 import { fetchRecentAgentArmyMessages } from './services/discordFeed';
 import { buildActivityGraph } from './services/activityGraph';
+import { readMemoryStatus, defaultMemoryPath } from './services/memoryStatus';
 
 // Stronghold is a localhost-only dashboard. The Vite dev server binds to
 // 127.0.0.1:5174 (see vite.config.ts). CORS is restricted to that exact origin
@@ -107,8 +108,10 @@ const RATE_LIMIT_FAMILY_MAX: Record<string, number> = {
   'cron': 30,
   'discord-read': 30,
   'activity-graph': 60,
+  'memory-status': 30,
 };
-type RateLimitFamily = 'change-requests' | 'agent-requests' | 'orchestration' | 'approvals' | 'cron' | 'discord-read' | 'activity-graph';
+
+type RateLimitFamily = 'change-requests' | 'agent-requests' | 'orchestration' | 'approvals' | 'cron' | 'discord-read' | 'activity-graph' | 'memory-status';
 type RateLimiters = Record<RateLimitFamily, ReturnType<typeof createRateLimiter>>;
 function buildRateLimiters(): RateLimiters {
   const make = (family: RateLimitFamily) => createRateLimiter({ maxPerWindow: RATE_LIMIT_FAMILY_MAX[family], windowMs: RATE_LIMIT_WINDOW_MS });
@@ -120,6 +123,7 @@ function buildRateLimiters(): RateLimiters {
     'cron': make('cron'),
     'discord-read': make('discord-read'),
     'activity-graph': make('activity-graph'),
+    'memory-status': make('memory-status'),
   };
 }
 function makeRoute(limiters: RateLimiters) {
@@ -607,6 +611,45 @@ function makeRoute(limiters: RateLimiters) {
       return json(500, { error: 'activity graph build failed', detail: message }, origin);
     }
   }
+
+  // GET /api/memory-status — Phase D3
+  // Read-only audit/lint view of the Hermes MEMORY.md file. Returns
+  // file size, last-modified timestamp, per-section breakdown (title,
+  // char count, first sentence, line range), and the raw text for
+  // clipboard copy. The route never writes; the audit entry records
+  // every read so the dashboard's own visibility is auditable.
+  if (method === 'GET' && url === '/api/memory-status') {
+    const limited = enforceRateLimit('memory-status', origin); if (limited) return limited;
+    const memoryPath = process.env.HERMES_MEMORY_PATH || defaultMemoryPath();
+    try {
+      const status = readMemoryStatus(memoryPath);
+      appendAuditEvent(approvedDataPath('audit'), {
+        action: 'memory-status.read',
+        capability: 'memory:read',
+        actor: 'Stronghold',
+        targetType: 'memory-file',
+        targetId: 'MEMORY.md',
+        outcome: 'ok',
+        reason: `memory status read: ${status.sections.length} sections, ${status.sizeBytes} bytes`,
+        metadata: { sections: status.sections.length, sizeBytes: status.sizeBytes, exists: status.exists },
+      });
+      return json(200, status, origin);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      appendAuditEvent(approvedDataPath('audit'), {
+        action: 'memory-status.read',
+        capability: 'memory:read',
+        actor: 'Stronghold',
+        targetType: 'memory-file',
+        targetId: 'MEMORY.md',
+        outcome: 'failed',
+        reason: `memory status read failed: ${message}`,
+        metadata: { error: message },
+      });
+      return json(500, { error: 'memory status read failed', detail: message }, origin);
+    }
+  }
+
   return json(404, { error: 'not found', safe: 'no generic command/write endpoint exists' }, origin);
   };
 }
