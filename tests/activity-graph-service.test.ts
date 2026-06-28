@@ -14,7 +14,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildActivityGraph } from '../server/services/activityGraph';
 import { appendAuditEvent } from '../server/services/auditLog';
 
@@ -225,5 +225,110 @@ describe('buildActivityGraph', () => {
     const g = buildActivityGraph(file, { windowHours: 24, now: new Date() });
     expect(g.edges).toHaveLength(1);
     expect(g.edges[0].count).toBe(2);
+  });
+
+  it('readTail only reads the last N bytes of the file (seek-from-end, not full-file load)', () => {
+    // Phase D4 P2 QC: the brief required a bounded tail using
+    // seek-and-read-from-end so the service stays memory-safe as the
+    // audit log grows. The previous implementation used
+    // fs.readFileSync(whole-file) + slice, which loads the whole file
+    // into memory first. This test pins the contract: the implementation
+    // must open the file, stat it, and read from a seek offset measured
+    // from the END of the file (not from offset 0).
+    //
+    // We construct a synthetic log that is much larger than the
+    // intended tail budget so a naive readFileSync implementation would
+    // touch every byte, while a seek-from-end implementation only reads
+    // the trailing 256 KB window.
+    const TAIL_BUDGET = 256 * 1024; // mirrors TAIL_BYTES in the service
+    const PAD_LINE = JSON.stringify({
+      id: 'pad',
+      timestamp: '2025-01-01T00:00:00.000Z',
+      actor: 'Pad',
+      capability: 'pad:noop',
+      action: 'pad',
+      targetType: 'changeRequest',
+      outcome: 'requested',
+      // A payload that pushes each pad line well past 200 bytes so
+      // thousands of them blow past the 256 KB tail budget by a wide margin.
+      comment: 'x'.repeat(400),
+    });
+
+    const padLines: string[] = [];
+    let padBytes = 0;
+    while (padBytes < TAIL_BUDGET * 4) {
+      padLines.push(PAD_LINE);
+      padBytes += PAD_LINE.length + 1;
+    }
+
+    const tailEntries = [];
+    for (let i = 0; i < 200; i++) {
+      tailEntries.push({
+        id: `t-${i}`,
+        timestamp: isoOffset(2),
+        actor: 'Igris',
+        capability: 'engineering:backend',
+        action: 'dispatch',
+        targetType: 'changeRequest',
+        outcome: 'requested',
+      });
+    }
+
+    const allLines = [...padLines, ...tailEntries];
+    const file = auditFile();
+    fs.writeFileSync(file, allLines.map(l => JSON.stringify(l)).join('\n') + '\n', 'utf8');
+    const fileSize = fs.statSync(file).size;
+    // Sanity: this file must be bigger than the tail budget so a
+    // seek-from-end implementation measurably differs from a full-file
+    // read.
+    expect(fileSize).toBeGreaterThan(TAIL_BUDGET);
+
+    // Spy on fs.openSync and fs.readSync. A seek-from-end implementation
+    // will (a) stat the file, (b) open it, (c) read with a non-zero
+    // `position` argument equal to (fileSize - tailBytes). A naive
+    // readFileSync implementation will never call fs.openSync /
+    // fs.readSync at all — so just observing the call is itself the
+    // proof of the seek path. The position argument pins the from-end
+    // direction.
+    const openSpy = vi.spyOn(fs, 'openSync');
+    const readSpy = vi.spyOn(fs, 'readSync');
+
+    try {
+      const g = buildActivityGraph(file, { windowHours: 24, now: new Date() });
+      // Functional check: the 200 tail entries fire exactly one edge.
+      expect(g.totalEntries).toBe(200);
+      expect(g.edges).toHaveLength(1);
+      expect(g.edges[0].from).toBe('Igris');
+      expect(g.edges[0].to).toBe('Forge');
+
+      // Structural check: openSync was called (proof we use the open
+      // path, not readFileSync).
+      expect(openSpy).toHaveBeenCalled();
+      const openCalls = openSpy.mock.calls.filter(
+        ([p]) => typeof p === 'string' && p === file,
+      );
+      expect(openCalls.length).toBeGreaterThan(0);
+
+      // Structural check: readSync was called at least once with a
+      // `position` argument that points near the END of the file, not
+      // offset 0. Signature: (fd, buffer, offset, length, position).
+      expect(readSpy).toHaveBeenCalled();
+      const readCalls = readSpy.mock.calls;
+      const fromEndCall = readCalls.find((args) => {
+        const position = args[4];
+        // position must be a number strictly greater than 0 and within
+        // (fileSize - TAIL_BUDGET) .. fileSize — i.e. a backward seek.
+        return (
+          typeof position === 'number' &&
+          position > 0 &&
+          position >= fileSize - TAIL_BUDGET - 1 &&
+          position <= fileSize
+        );
+      });
+      expect(fromEndCall, 'readSync must be called with a seek position from the end of the file').toBeDefined();
+    } finally {
+      openSpy.mockRestore();
+      readSpy.mockRestore();
+    }
   });
 });

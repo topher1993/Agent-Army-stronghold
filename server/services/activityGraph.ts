@@ -19,6 +19,12 @@
 //     activity at typical operator pace (and a full day during a busy phase).
 //   - For each entry, we run `matchHandoffRules(actor, capability)`. The
 //     table has ~20 rules; total work is O(N × R) where N ≤ 200.
+//   - We read ONLY the last TAIL_BYTES (256 KB) of the audit log rather than
+//     loading the whole file. 256 KB fits thousands of audit lines — far more
+//     than the 200-entry cap — but is small enough that the worst-case memory
+//     footprint of buildActivityGraph() is bounded, regardless of how the
+//     audit log grows. The implementation opens the file and seeks from the
+//     end before reading; see readTail() below.
 //
 // Determinism:
 //   - edges[] is sorted by (from, to) lexicographically so two identical
@@ -64,6 +70,16 @@ export type BuildActivityGraphOptions = {
 
 const DEFAULT_MAX_ENTRIES = 200;
 const RECENT_WINDOW_MS = 60 * 60_000;
+/**
+ * Upper bound on the number of bytes readTail() will pull from the audit
+ * log in a single pass. 256 KB is chosen because:
+ *   - it is comfortably larger than 200 typical audit JSONL entries
+ *     (each entry is ~200-400 bytes), so the last-200 logic is never
+ *     truncated by the byte budget in practice;
+ *   - it is small enough that the worst-case memory footprint of
+ *     buildActivityGraph() is bounded regardless of log growth.
+ */
+const TAIL_BYTES = 256 * 1024;
 
 type RawAuditLine = {
   id?: string;
@@ -167,19 +183,59 @@ export function buildActivityGraph(
  * (best-effort; malformed lines are silently dropped). Returns [] for
  * missing files or empty files.
  *
- * We read the whole file (it's small) and slice from the end rather than
- * doing a streaming tail — keeps the implementation simple and the test
- * surface tiny.
+ * Implementation: bounded tail via seek-and-read-from-end. We stat the file
+ * to get its total size, open it for reading, and pull at most TAIL_BYTES
+ * (256 KB) starting at `Math.max(0, size - TAIL_BYTES)`. This caps the
+ * memory footprint regardless of how large the audit log grows — unlike a
+ * naive `fs.readFileSync(path) + slice(...)`, which loads the whole file
+ * before discarding most of it.
+ *
+ * If the file is smaller than TAIL_BYTES we simply read the whole thing.
  */
 function readTail(path: string, maxEntries: number): RawAuditLine[] {
-  let text: string;
+  let size: number;
   try {
-    text = fs.readFileSync(path, 'utf8');
+    size = fs.statSync(path).size;
   } catch {
     return [];
   }
+  if (size <= 0) return [];
+
+  const readLen = Math.min(size, TAIL_BYTES);
+  // Position is measured from the start of the file. A seek-from-end
+  // implementation sets `position = max(0, size - TAIL_BYTES)`, i.e. a
+  // backward window into the trailing TAIL_BYTES of the file.
+  const position = Math.max(0, size - TAIL_BYTES);
+
+  const fd = fs.openSync(path, 'r');
+  let bytesRead = 0;
+  let text = '';
+  try {
+    const buf = Buffer.alloc(readLen);
+    bytesRead = fs.readSync(fd, buf, 0, readLen, position);
+    text = buf.subarray(0, bytesRead).toString('utf8');
+  } catch {
+    return [];
+  } finally {
+    try { fs.closeSync(fd); } catch { /* ignore */ }
+  }
   if (!text) return [];
-  const allLines = text.split(/\r?\n/).filter(Boolean);
+
+  // We may have started mid-line (if `position > 0`); drop the partial
+  // first line so we never feed an incomplete JSONL entry to JSON.parse.
+  let body = text;
+  if (position > 0) {
+    const firstNewline = body.indexOf('\n');
+    if (firstNewline >= 0) {
+      body = body.slice(firstNewline + 1);
+    } else {
+      // The trailing window is shorter than one line; we have no
+      // complete entries to parse.
+      return [];
+    }
+  }
+
+  const allLines = body.split('\n').filter((line) => line.length > 0);
   const slice = allLines.slice(Math.max(0, allLines.length - maxEntries));
   // Reverse so the newest entry is processed first; this lets the FIRST
   // write of an edge pin `recent` to the most-recent timestamp without

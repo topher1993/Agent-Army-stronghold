@@ -101,7 +101,8 @@ grep -n "activity-edge-pulse" src/styles.css
   rule list — there is no auto-discovery.
 - The service reads the **last 200 audit entries** (`DEFAULT_MAX_ENTRIES`)
   before filtering by window. Configurable per call via the `maxEntries`
-  option but bounded for performance.
+  option but bounded by `TAIL_BYTES` (256 KB upper bound) via
+  seek-and-read-from-end — safe for arbitrarily large audit logs.
 
 ## QC verdict
 
