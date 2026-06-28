@@ -62,7 +62,7 @@ export type AuditEvent = {
   actor: string;
   capability: string;
   action: string;
-  targetType: 'mission' | 'task' | 'changeRequest' | 'system' | 'discord-channel';
+  targetType: 'mission' | 'task' | 'changeRequest' | 'system' | 'discord-channel' | 'activity-graph';
   targetId?: string;
   targetPath?: string;
   outcome: AuditOutcome;

@@ -16,6 +16,7 @@ import { createRateLimiter } from './safety/rateLimiter';
 import { resolveApproval, listApprovals } from './services/approvalActions';
 import { callHermesCron, validateCronInput, type CronAction, type CronDispatchError } from './services/cronService';
 import { fetchRecentAgentArmyMessages } from './services/discordFeed';
+import { buildActivityGraph } from './services/activityGraph';
 
 // Stronghold is a localhost-only dashboard. The Vite dev server binds to
 // 127.0.0.1:5174 (see vite.config.ts). CORS is restricted to that exact origin
@@ -92,18 +93,33 @@ function extractOrigin(headers: http.IncomingHttpHeaders | Record<string, string
 //
 // Buckets are constructed per-server (not module-level) so test isolation and
 // per-instance hot-reload do not leak state between server instances.
-const RATE_LIMIT_MAX_PER_WINDOW = 30;
 const RATE_LIMIT_WINDOW_MS = 60_000;
-type RateLimitFamily = 'change-requests' | 'agent-requests' | 'orchestration' | 'approvals' | 'cron' | 'discord-read';
+// Per-family rate-limit ceilings (requests per minute). Most families share
+// the conservative 30/min default. The activity-graph endpoint, which is
+// polled every 60s by the Routing Flow panel, gets a higher 60/min ceiling
+// so a single dashboard tab doesn't risk bursting the bucket. Documented
+// inline where enforced.
+const RATE_LIMIT_FAMILY_MAX: Record<string, number> = {
+  'change-requests': 30,
+  'agent-requests': 30,
+  'orchestration': 30,
+  'approvals': 30,
+  'cron': 30,
+  'discord-read': 30,
+  'activity-graph': 60,
+};
+type RateLimitFamily = 'change-requests' | 'agent-requests' | 'orchestration' | 'approvals' | 'cron' | 'discord-read' | 'activity-graph';
 type RateLimiters = Record<RateLimitFamily, ReturnType<typeof createRateLimiter>>;
 function buildRateLimiters(): RateLimiters {
+  const make = (family: RateLimitFamily) => createRateLimiter({ maxPerWindow: RATE_LIMIT_FAMILY_MAX[family], windowMs: RATE_LIMIT_WINDOW_MS });
   return {
-    'change-requests': createRateLimiter({ maxPerWindow: RATE_LIMIT_MAX_PER_WINDOW, windowMs: RATE_LIMIT_WINDOW_MS }),
-    'agent-requests': createRateLimiter({ maxPerWindow: RATE_LIMIT_MAX_PER_WINDOW, windowMs: RATE_LIMIT_WINDOW_MS }),
-    'orchestration': createRateLimiter({ maxPerWindow: RATE_LIMIT_MAX_PER_WINDOW, windowMs: RATE_LIMIT_WINDOW_MS }),
-    'approvals': createRateLimiter({ maxPerWindow: RATE_LIMIT_MAX_PER_WINDOW, windowMs: RATE_LIMIT_WINDOW_MS }),
-    'cron': createRateLimiter({ maxPerWindow: RATE_LIMIT_MAX_PER_WINDOW, windowMs: RATE_LIMIT_WINDOW_MS }),
-    'discord-read': createRateLimiter({ maxPerWindow: RATE_LIMIT_MAX_PER_WINDOW, windowMs: RATE_LIMIT_WINDOW_MS }),
+    'change-requests': make('change-requests'),
+    'agent-requests': make('agent-requests'),
+    'orchestration': make('orchestration'),
+    'approvals': make('approvals'),
+    'cron': make('cron'),
+    'discord-read': make('discord-read'),
+    'activity-graph': make('activity-graph'),
   };
 }
 function makeRoute(limiters: RateLimiters) {
@@ -531,6 +547,64 @@ function makeRoute(limiters: RateLimiters) {
       if (code === 'UNAUTHORIZED') return json(503, { error: 'discord bot token rejected', code: 'UNAUTHORIZED' }, origin);
       if (code === 'RATE_LIMITED') return json(503, { error: 'discord rate limited', code: 'RATE_LIMITED', retryAfter: tagged?.retryAfter }, origin);
       return json(502, { error: 'discord fetch failed', detail: message }, origin);
+    }
+  }
+  // FEATURE — Phase D4 Activity Graph (read-only).
+  //
+  // Mirrors the Discord-read route shape exactly: localhost origin guard,
+  // per-family rate limit ('activity-graph', 60/min), one audit entry per
+  // request (ok on success, failed on error), and a JSON envelope with the
+  // graph payload.
+  //
+  // The route is READ-ONLY: no POST/PATCH/DELETE handlers exist for
+  // /api/activity-graph/* — activity is reconstructed from the audit log
+  // on demand, never mutated from this surface.
+  if (method === 'GET' && url.startsWith('/api/activity-graph')) {
+    const limited = enforceRateLimit('activity-graph', origin); if (limited) return limited;
+    // Parse + clamp windowHours. The service has its own clampWindowHours
+    // helper; we run it on the parsed number so non-numeric and negative
+    // inputs land on the default of 24h. The service returns a windowHours
+    // field in the response so the UI can verify what was actually applied.
+    const rawWindowHours = (() => {
+      const q = url.split('?')[1] || '';
+      const params = new URLSearchParams(q);
+      const v = params.get('windowHours');
+      if (!v) return 24;
+      const n = Number(v);
+      // Treat non-numeric, NaN, AND negative values as invalid — they
+      // fall back to the 24h default rather than 400'ing the UI.
+      if (!Number.isFinite(n) || n < 0) return 24;
+      return n;
+    })();
+    // Clamp a valid number to [1, 168] (one hour .. one week). The service
+    // applies the same clamp so callers always see a sane windowHours.
+    const requestedWindowHours = Math.min(168, Math.max(1, Math.floor(rawWindowHours)));
+    try {
+      const graph = buildActivityGraph(approvedDataPath('audit'), { windowHours: requestedWindowHours });
+      appendAuditEvent(approvedDataPath('audit'), {
+        action: 'activity-graph.read',
+        capability: 'graph:read',
+        actor: 'Stronghold',
+        targetType: 'activity-graph',
+        targetId: 'main',
+        outcome: 'ok',
+        reason: `activity graph read: ${graph.edges.length} edges across ${graph.divisions.length} divisions (window=${graph.windowHours}h)`,
+        metadata: { windowHours: graph.windowHours, edges: graph.edges.length, divisions: graph.divisions.length, totalEntries: graph.totalEntries },
+      });
+      return json(200, graph, origin);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      appendAuditEvent(approvedDataPath('audit'), {
+        action: 'activity-graph.read',
+        capability: 'graph:read',
+        actor: 'Stronghold',
+        targetType: 'activity-graph',
+        targetId: 'main',
+        outcome: 'failed',
+        reason: `activity graph read failed: ${message}`,
+        metadata: { error: message },
+      });
+      return json(500, { error: 'activity graph build failed', detail: message }, origin);
     }
   }
   return json(404, { error: 'not found', safe: 'no generic command/write endpoint exists' }, origin);
