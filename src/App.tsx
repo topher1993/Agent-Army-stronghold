@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { loadSnapshot } from './data';
-import type { CronJobSummary, Mission, StrongholdSnapshot } from './types';
+import type { Mission, StrongholdSnapshot } from './types';
 import { backendHealth } from './api/strongholdApi';
 import { SafetyBoundary } from './components/SafetyBoundary';
 import { ApprovalQueue } from './components/ApprovalQueue';
@@ -8,16 +8,21 @@ import { AuditTrail } from './components/AuditTrail';
 import { MissionEditor } from './components/MissionEditor';
 import { TaskEditor } from './components/TaskEditor';
 import { AgentOrchestration } from './components/AgentOrchestration';
+import { AgenticOsDashboardPanel } from './components/AgenticOsDashboard';
 import { orchestrationHealth } from './api/agentApi';
+import { CronManager } from './components/CronManager';
 
 const lanes: Mission['status'][] = ['planned', 'active', 'blocked', 'review', 'complete'];
-type MobileSection = 'command' | 'approvals' | 'missions' | 'intel' | 'safety';
-const mobileTabs: Array<{ id: MobileSection; label: string }> = [
-  { id: 'command', label: 'Command' },
-  { id: 'approvals', label: 'Approvals' },
-  { id: 'missions', label: 'Missions' },
-  { id: 'intel', label: 'Intel' },
-  { id: 'safety', label: 'Safety' },
+
+/**
+ * Two top-level tabs for Stronghold:
+ *  - `dashboard` (default) — Agentic OS Dashboard rendered full width.
+ *  - `operations`          — proposals, orchestration, mission board, safety.
+ */
+type TabId = 'dashboard' | 'operations';
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'operations', label: 'Operations' },
 ];
 
 export function App() {
@@ -26,7 +31,7 @@ export function App() {
   const [backendOk, setBackendOk] = useState(false);
   const [killSwitch, setKillSwitch] = useState('unknown');
   const [refreshKey, setRefreshKey] = useState(0);
-  const [activeMobileSection, setActiveMobileSection] = useState<MobileSection>('command');
+  const [activeTab, setActiveTab] = useState<TabId>('dashboard');
 
   useEffect(() => {
     loadSnapshot().then(setSnapshot).catch((err: Error) => setError(err.message));
@@ -40,53 +45,61 @@ export function App() {
   if (!snapshot) return <main className="commandShell"><p className="loading">Loading Stronghold...</p></main>;
 
   const refreshApprovals = () => setRefreshKey(value => value + 1);
-  const isActive = (section: MobileSection) => activeMobileSection === section;
+  const operationsActive = activeTab === 'operations';
 
   return (
     <main className="commandShell">
       <Hero snapshot={snapshot} backendOk={backendOk} killSwitch={killSwitch} />
-      <nav className="mobileTabNav" aria-label="Mobile command sections">
-        {mobileTabs.map(tab => <button
+      <nav className="mobileTabNav" aria-label="Stronghold sections">
+        {tabs.map(tab => <button
           type="button"
           key={tab.id}
-          className={isActive(tab.id) ? 'active' : ''}
-          aria-selected={isActive(tab.id)}
+          className={activeTab === tab.id ? 'active' : ''}
+          aria-selected={activeTab === tab.id}
           aria-controls={`${tab.id}-section`}
-          onClick={() => setActiveMobileSection(tab.id)}
+          onClick={() => setActiveTab(tab.id)}
         >{tab.label}</button>)}
       </nav>
-      <div className={`commandGrid active-${activeMobileSection}`}>
-        <aside className="sidePanel leftRail" aria-label="Stronghold context">
-          <section id="intel-section" className="mobileSection mobileIntel" aria-label="Stronghold intelligence" aria-hidden={!isActive('intel')}>
-            <Disclosure title="Stronghold Telemetry" defaultOpen><Overview snapshot={snapshot} /></Disclosure>
-            <Disclosure title="Engineering Division Roster"><Roster snapshot={snapshot} /></Disclosure>
-            <Disclosure title="Agent Army Inventory"><Inventory snapshot={snapshot} /></Disclosure>
-          </section>
-        </aside>
-        <section className="centerDeck" aria-label="Primary command workflows">
-          <section id="command-section" className="mobileSection mobileCommand" aria-label="Primary command workflows" aria-hidden={!isActive('command')}>
-            <SafetyBoundary backendOk={backendOk} />
-            <Disclosure title="Phase 3 Agent Orchestration"><AgentOrchestration killSwitch={killSwitch} onCreatedChangeRequest={refreshApprovals} /></Disclosure>
-          </section>
-          <section id="missions-section" className="mobileSection mobileMissions" aria-label="Mission planning" aria-hidden={!isActive('missions')}>
-            <section className="proposalGrid" aria-label="Mission and task proposal workspace">
-              <Disclosure title="Mission Proposal"><MissionEditor onCreated={refreshApprovals} /></Disclosure>
-              <Disclosure title="Task Proposal"><TaskEditor onCreated={refreshApprovals} /></Disclosure>
-            </section>
-            <MissionBoard missions={snapshot.missions} />
-          </section>
+      {/*
+        The Agentic OS Dashboard is the default main view. The commandGrid
+        is now a 2-column layout on desktop: [main | right rail]. On mobile
+        we render Dashboard or Operations as the active section and hide
+        the rest.
+      */}
+      <div className={`commandGrid active-${activeTab}`}>
+        <section
+          id="dashboard-section"
+          className="mobileSection mobileDashboard"
+          aria-label="Agentic OS dashboard"
+          aria-hidden={operationsActive}
+        >
+          <AgenticOsDashboardPanel snapshot={snapshot} />
         </section>
-        <aside className="sidePanel rightRail" aria-label="Approvals, audit, and safety monitoring">
-          <section id="approvals-section" className="mobileSection mobileApprovals" aria-label="Approvals and audit" aria-hidden={!isActive('approvals')}>
-            <Disclosure title="Approval Queue" defaultOpen><ApprovalQueue refreshKey={refreshKey} /></Disclosure>
-            <Disclosure title="Audit Trail"><AuditTrail refreshKey={refreshKey} /></Disclosure>
-          </section>
-          <section id="safety-section" className="mobileSection mobileSafety" aria-label="Safety and operations" aria-hidden={!isActive('safety')}>
-            <Disclosure title="Cron / Schedule Monitor" defaultOpen><CronMonitor jobs={snapshot.cronJobs} /></Disclosure>
-            <Disclosure title="Safety & Readiness"><Safety snapshot={snapshot} /></Disclosure>
-            <Disclosure title="Operator Notes"><OperatorNotes snapshot={snapshot} /></Disclosure>
-          </section>
+
+        <aside
+          className="sidePanel rightRail"
+          aria-label="Approvals, audit, and operations monitoring"
+          aria-hidden={operationsActive}
+        >
+          <Disclosure title="Approval Queue" defaultOpen><ApprovalQueue refreshKey={refreshKey} /></Disclosure>
+          <Disclosure title="Audit Trail"><AuditTrail refreshKey={refreshKey} /></Disclosure>
+          <Disclosure title="Cron / Schedule Manager" defaultOpen><CronManager snapshotJobs={snapshot.cronJobs} refreshKey={refreshKey} /></Disclosure>
         </aside>
+
+        <section
+                  id="operations-section"
+                  className="mobileSection mobileOperations"
+                  aria-label="Operations: proposals, orchestration, mission board, and safety"
+                  aria-hidden={!operationsActive}
+                >
+                  <SafetyBoundary backendOk={backendOk} />
+                  <Disclosure title="Mission Proposal"><MissionEditor onCreated={refreshApprovals} /></Disclosure>
+                  <Disclosure title="Task Proposal"><TaskEditor onCreated={refreshApprovals} /></Disclosure>
+                  <Disclosure title="Phase 3 Agent Orchestration"><AgentOrchestration killSwitch={killSwitch} onCreatedChangeRequest={refreshApprovals} /></Disclosure>
+                  <MissionBoard missions={snapshot.missions} />
+                  <Disclosure title="Safety & Readiness" defaultOpen><Safety snapshot={snapshot} /></Disclosure>
+                  <Disclosure title="Operator Notes"><OperatorNotes snapshot={snapshot} /></Disclosure>
+                </section>
       </div>
     </main>
   );
@@ -117,27 +130,6 @@ function Hero({ snapshot, backendOk, killSwitch }: { snapshot: StrongholdSnapsho
   </header>;
 }
 
-function Overview({ snapshot }: { snapshot: StrongholdSnapshot }) {
-  const cards = [
-    ['Agents', snapshot.counts.agents],
-    ['Profiles', snapshot.counts.profiles],
-    ['Wrappers Ready', snapshot.counts.wrappersAvailable],
-    ['Skills Indexed', snapshot.counts.skills],
-    ['Cron Jobs', snapshot.counts.cronJobs],
-    ['Missions', snapshot.counts.missions],
-  ];
-  return <section className="panel telemetryPanel"><h2>Stronghold Telemetry</h2><div className="stats">{cards.map(([label, value]) => <article className="stat" key={label}><span>{label}</span><strong>{value}</strong></article>)}</div></section>;
-}
-
-function Roster({ snapshot }: { snapshot: StrongholdSnapshot }) {
-  return <section className="panel"><h2>Engineering Division Roster</h2><div className="cards rosterCards">{snapshot.roster.map(agent => <article className="agent" key={agent.name}>
-    <div className="agentTop"><h3>{agent.name}</h3><Status ok={agent.wrapperStatus.available} label={agent.wrapperStatus.available ? 'wrapper ready' : 'wrapper missing'} /></div>
-    <p className="role">{agent.role}</p>
-    <p className="reports">Reports to {agent.reportsTo} · <code>{agent.wrapper}</code></p>
-    <ul>{agent.responsibilities.map(item => <li key={item}>{item}</li>)}</ul>
-  </article>)}</div></section>;
-}
-
 function Safety({ snapshot }: { snapshot: StrongholdSnapshot }) {
   return <section className="panel"><h2>Safety & Readiness</h2>{snapshot.safetyFindings.map(finding => <article className={`finding ${finding.level}`} key={finding.id}>
     <h3>{finding.title}</h3><p>{finding.detail}</p>
@@ -151,28 +143,15 @@ function MissionBoard({ missions }: { missions: Mission[] }) {
   </details>)}</div>)}</div></section>;
 }
 
-function CronMonitor({ jobs }: { jobs: CronJobSummary[] }) {
-  return <section className="panel"><h2>Cron / Schedule Monitor</h2><div className="list">{jobs.slice(0, 12).map(job => <article className="row" key={job.id}>
-    <div><strong>{job.name}</strong><p>{job.profile} · {job.schedule}</p><small>{job.safety}</small></div><Status ok={job.enabled} label={job.enabled ? 'enabled' : 'paused'} />
-  </article>)}</div>{jobs.length > 12 && <p className="muted">Showing 12 of {jobs.length} jobs.</p>}</section>;
-}
-
-function Inventory({ snapshot }: { snapshot: StrongholdSnapshot }) {
-  return <section className="panel inventoryPanel"><h2>Agent Army Inventory</h2><div className="profileGrid">{snapshot.profiles.map(profile => <article className="profile" key={profile.name}>
-    <h3>{profile.name}</h3><p><code>{profile.pathLabel}</code></p><p>{profile.skillCount} skills indexed · cron dir {profile.hasCronDir ? 'present' : 'not present'}</p>
-    <div className="chips">{profile.skills.slice(0, 5).map(skill => <span title={skill.description} key={skill.name}>{skill.name}</span>)}</div>
-  </article>)}</div></section>;
+function Status({ ok, label }: { ok: boolean; label: string }) {
+  return <span className={ok ? 'status ok' : 'status warn'}>{label}</span>;
 }
 
 function OperatorNotes({ snapshot }: { snapshot: StrongholdSnapshot }) {
   return <section className="panel"><h2>Operator Notes</h2><ul className="notes">
-    <li>Use the center deck for guarded proposals and mock orchestration.</li>
-    <li>Use the right panel for approvals, audit, cron monitoring, and safety state.</li>
+    <li>The Agentic OS Dashboard is the default landing view — it surfaces live test/build/audit/cron numbers.</li>
+    <li>Use the <strong>Operations</strong> tab for guarded proposals, mock orchestration, mission board, and safety state.</li>
     <li>Refresh data with <code>npm run snapshot</code>.</li>
     <li>Data source labels are sanitized: {Object.values(snapshot.dataSources).join(' · ')}</li>
   </ul></section>;
-}
-
-function Status({ ok, label }: { ok: boolean; label: string }) {
-  return <span className={ok ? 'status ok' : 'status warn'}>{label}</span>;
 }

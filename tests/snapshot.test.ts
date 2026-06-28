@@ -20,6 +20,11 @@ describe('Stronghold snapshot', () => {
     expect(snapshot.safetyFindings.length).toBeGreaterThanOrEqual(3);
   });
 
+  it('uses unique profile names even when profiles/default exists for Belion SOUL notes', () => {
+    const names = snapshot.profiles.map(profile => profile.name);
+    expect(new Set(names).size).toBe(names.length);
+  });
+
   it('does not expose cron prompt or script bodies', () => {
     const asText = JSON.stringify(snapshot.cronJobs).toLowerCase();
     expect(asText).not.toContain('prompt');

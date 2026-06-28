@@ -1,6 +1,6 @@
 # Agent-Army Stronghold
 
-Phase 3 guarded mission control dashboard for Chris's Hermes agent army and Engineering Division.
+Phase 3 guarded mission control dashboard for Chris's Hermes agent army and Engineering Division roster.
 
 ## Safety posture
 
@@ -14,7 +14,7 @@ The default dashboard remains safe and local. Phase 2 adds approval-gated missio
 - Vite dev/preview servers bind to `127.0.0.1` only.
 
 The local snapshot generator writes only to this project's `public/data/stronghold-snapshot.json` file so the dashboard can render current metadata. Phase 2 backend writes are restricted to Stronghold-owned data files only.
-Phase 3 agent outputs are artifact-only and must become Phase 2 change requests before anything is applied.
+Phase 3 agent outputs are artifact-only and must become Phase 2 change requests before anything is applied. Engineering Division targets are roster labels in the current mock mode; choosing Atlas, Clix, Forge, Pulse, Sentinel, Vector, Nexus, or Igris does not dispatch a real wrapper or enable specialist-specific execution.
 
 ## Quick start
 
@@ -73,14 +73,16 @@ The snapshot generator safely summarizes:
 - Static Engineering Division roster owned by Igris.
 - File-backed mission registry at `data/missions.json`.
 
-## Division ownership
+## Division ownership / Phase 3 target labels
+
+Stronghold currently treats Engineering Division names as ownership and routing labels only. The code records `mock-label-only` metadata on division artifacts and routes all approved queued requests through the same shared mock dispatcher (`wrapper: mock`). Real wrapper dispatch and behaviorally distinct specialist execution remain out of scope for Phase 3 and require a future Sentinel-reviewed feature flag.
 
 - Owner: Igris, Engineering Director
 - Coordinator: Belion
-- Architecture: Atlas
-- Frontend: Clix
-- Backend/snapshot collectors: Forge
-- Security: Sentinel
-- QA: Pulse
-- Ops: Vector
-- Documentation: Nexus
+- Architecture label: Atlas
+- Frontend label: Clix
+- Backend/snapshot collectors label: Forge
+- Security label: Sentinel
+- QA label: Pulse
+- Ops label: Vector
+- Documentation label: Nexus

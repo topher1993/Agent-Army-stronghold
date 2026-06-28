@@ -12,10 +12,20 @@ button { border: 1px solid rgba(73,255,199,.45); border-radius: 12px; padding: 9
 button:hover { background: rgba(73,255,199,.2); }
 button.secondary { border-color: rgba(255,196,87,.45); background: rgba(255,196,87,.12); color: #ffe6a8; }
 .commandShell, .shell { width: min(1800px, 96vw); margin: 0 auto; padding: 24px 0 48px; }
-.commandGrid { display: grid; grid-template-columns: minmax(220px, .72fr) minmax(420px, 1.85fr) minmax(260px, .92fr); gap: 18px; align-items: start; margin-top: 18px; }
+/*
+  The Agentic OS Dashboard is now the default main view. The commandGrid
+  uses a simple 2-column layout on desktop:
+    [main content (dashboard | operations) 1fr | right rail 320px]
+  The left rail (Telemetry/Roster/Inventory) is gone.
+*/
+.commandGrid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; align-items: start; margin-top: 18px; }
 .sidePanel, .centerDeck { display: grid; gap: 18px; }
 .mobileSection { display: grid; gap: 18px; }
 .mobileTabNav { display: none; }
+/* On desktop, hide whichever section isn't the active tab so it doesn't leak
+   into the grid alongside the dominant section. */
+.commandGrid.active-dashboard #operations-section,
+.commandGrid.active-operations #dashboard-section { display: none; }
 .leftRail, .rightRail { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto; padding-right: 4px; scrollbar-color: #315579 transparent; }
 .centerDeck, .centerDeck .panel, .centerDeck article { min-width: 0; }
 .hero { display: grid; grid-template-columns: 1fr auto; gap: 20px; padding: 28px; border: 1px solid #27496d; border-radius: 28px; background: linear-gradient(135deg, rgba(22,53,91,.88), rgba(6,13,25,.94)); box-shadow: 0 28px 80px rgba(0,0,0,.35); }
@@ -105,19 +115,17 @@ dt { color: #8ab3d8; font-size: .78rem; } dd { margin: 0; font-weight: 700; }
   .meta div { padding: 7px 9px; border-radius: 10px; }
   dt { font-size: .64rem; }
   dd { font-size: .78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .mobileTabNav { position: fixed; left: 8px; bottom: 10px; width: calc(100vw - 16px); z-index: 20; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding: 7px; border: 1px solid #203f61; border-radius: 20px; background: rgba(4, 9, 17, .94); box-shadow: 0 12px 36px rgba(0,0,0,.45); backdrop-filter: blur(14px); overflow: hidden; }
-  .mobileTabNav button { min-width: 0; width: 100%; min-height: 44px; padding: 8px 1px; border-radius: 14px; border-color: rgba(128,216,255,.28); background: rgba(255,255,255,.04); color: #a7bdd3; font-size: .62rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .mobileTabNav button.active, .mobileTabNav button[aria-selected="true"] { border-color: rgba(73,255,199,.72); background: rgba(73,255,199,.16); color: #dffff4; }
-  .commandGrid { display: block; margin-top: 10px; }
-  .commandGrid, .mobileSection, .panel, .agent, .profile, .mission, .row, .finding, .mini { max-width: 100%; min-width: 0; overflow-wrap: anywhere; }
-  .mobileSection { display: none; }
-  .commandGrid.active-command #command-section,
-  .commandGrid.active-approvals #approvals-section,
-  .commandGrid.active-missions #missions-section,
-  .commandGrid.active-intel #intel-section,
-  .commandGrid.active-safety #safety-section { display: grid; max-height: calc(100dvh - 190px); overflow: auto; padding-bottom: 92px; }
-  .leftRail, .rightRail { position: static; max-height: none; overflow: visible; padding-right: 0; }
-  .sidePanel, .centerDeck { gap: 0; }
+  .mobileTabNav { position: fixed; left: 8px; bottom: 10px; width: calc(100vw - 16px); z-index: 20; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 7px; border: 1px solid #203f61; border-radius: 20px; background: rgba(4, 9, 17, .94); box-shadow: 0 12px 36px rgba(0,0,0,.45); backdrop-filter: blur(14px); overflow: hidden; }
+    .mobileTabNav button { min-width: 0; width: 100%; min-height: 44px; padding: 8px 1px; border-radius: 14px; border-color: rgba(128,216,255,.28); background: rgba(255,255,255,.04); color: #a7bdd3; font-size: .72rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mobileTabNav button.active, .mobileTabNav button[aria-selected="true"] { border-color: rgba(73,255,199,.72); background: rgba(73,255,199,.16); color: #dffff4; }
+    .commandGrid { display: block; margin-top: 10px; }
+    .commandGrid, .mobileSection, .panel, .agent, .profile, .mission, .row, .finding, .mini { max-width: 100%; min-width: 0; overflow-wrap: anywhere; }
+    .mobileSection { display: none; }
+    /* On mobile only the active tab's section is revealed. */
+    .commandGrid.active-dashboard #dashboard-section,
+    .commandGrid.active-operations #operations-section { display: grid; max-height: calc(100dvh - 190px); overflow: auto; padding-bottom: 92px; }
+    .leftRail, .rightRail { position: static; max-height: none; overflow: visible; padding-right: 0; }
+    .sidePanel, .centerDeck { gap: 0; }
   .panel { padding: 14px; border-radius: 16px; box-shadow: 0 12px 32px rgba(0,0,0,.22); }
   .sidePanel .panel { padding: 14px; border-radius: 16px; }
   .panel > p, .guard > ul, .notes { font-size: .86rem; }
@@ -141,7 +149,326 @@ dt { color: #8ab3d8; font-size: .78rem; } dd { margin: 0; font-weight: 700; }
   .status { font-size: .64rem; padding: 4px 7px; }
   .lanes { display: flex; gap: 9px; overflow-x: auto; padding-bottom: 4px; scroll-snap-type: x proximity; }
   .lane { min-width: 78vw; min-height: 140px; padding: 10px; scroll-snap-align: start; }
-  .lane h3 { font-size: .7rem; }
-  .chips { gap: 6px; }
-  .chips span { font-size: .7rem; padding: 4px 7px; }
-}
+    .lane h3 { font-size: .7rem; }
+    .chips { gap: 6px; }
+    .chips span { font-size: .7rem; padding: 4px 7px; }
+  }
+
+  /* Agentic OS placeholder dashboard — compact one-viewport layout
+     (igris-compact-dashboard-brief). */
+  .agenticOsPanel { display: flex; flex-direction: column; gap: 12px; }
+  .agenticOsHeader { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .agenticOsHeader h2 { margin: 0; font-size: 1.15rem; }
+  .agenticOsHeader .subtitle { margin: 2px 0 0; color: #b8c5d6; font-size: .78rem; }
+  .agenticOsHeader .eyebrow { color: #80d8ff; font-size: .7rem; letter-spacing: .12em; margin: 0; text-transform: uppercase; }
+  .agenticOsPanel .notice { background: rgba(8, 20, 36, .65); border: 1px dashed #49ffc7; padding: 12px 16px; border-radius: 12px; color: #dff5ff; margin: 0; }
+  .agenticOsSections { display: flex; flex-direction: column; gap: 14px; }
+  .agenticOsSection { display: flex; flex-direction: column; gap: 8px; }
+  .agenticOsSection h3 { margin: 0; font-size: .85rem; color: #dff5ff; letter-spacing: .04em; font-weight: 700; }
+  .agenticOsSection .muted { margin: 0; color: #8aa0bb; font-size: .75rem; }
+  .agenticOsCards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .agenticOsCard { background: rgba(8, 20, 36, .72); border: 1px solid #203f61; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .agenticOsCardTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .agenticOsCardTop h4 { margin: 0; font-size: .9rem; color: #dff5ff; }
+  .agenticOsCard .muted { margin: 0; color: #8aa0bb; font-size: .78rem; }
+  .agenticOsPrimary { margin: 0; font-weight: 700; color: #80d8ff; font-size: .82rem; }
+  .agenticOsSecondary { margin: 0; color: #b8c5d6; font-size: .78rem; }
+  .agenticOsBullets { margin: 0; padding-left: 18px; color: #b8c5d6; font-size: .76rem; }
+  .agenticOsBullets li { margin: 2px 0; }
+  .agenticOsCard[data-status="placeholder"] { border-color: #49ffc7; box-shadow: 0 0 0 1px rgba(73, 255, 199, .25) inset; }
+  .status.placeholder { background: rgba(73, 255, 199, .14); color: #49ffc7; }
+  @media (max-width: 720px) {
+    .agenticOsCards { grid-template-columns: 1fr; }
+    .agenticOsHeader { flex-direction: column; }
+  }
+
+  /* ------------------------------------------------------------------
+       Agentic OS Dashboard — default landing view.
+       The dashboard now lives in the main column of the .commandGrid
+       and is ALWAYS the default visible content (no tab click needed).
+       A right rail with Approvals / Audit / Cron sits beside it.
+       ------------------------------------------------------------------ */
+    :root {
+      --accent: #49ffc7;
+      --warn: #ffc457;
+      --panel-bg: rgba(8, 20, 36, .84);
+      --panel-border: #203f61;
+    }
+
+    /*
+      Backwards-compat shim: if a future change re-introduces the
+      .agenticOsDominant class (e.g. for a special "focused dashboard" mode)
+      we still want the layout to behave correctly — only show the dashboard
+      in column 1 and hide everything else. Today this is unreachable but
+      keeps the CSS idempotent.
+    */
+    .commandGrid.agenticOsDominant {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .commandGrid.agenticOsDominant .leftRail,
+    .commandGrid.agenticOsDominant .centerDeck,
+    .commandGrid.agenticOsDominant .rightRail > #agentic-os-section { display: none; }
+    .mobileAgenticOsDominant {
+      display: grid;
+      gap: 18px;
+      grid-column: 1 / -1;
+    }
+
+  /* Hero stats row — 4 equal cards, full width, compact. */
+  .agenticOsHeroRow {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .agenticOsHeroStat {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .18);
+  }
+  .agenticOsHeroStat[data-status="live"] { border-color: rgba(73, 255, 199, .35); }
+  .agenticOsHeroStat[data-status="placeholder"],
+  .agenticOsHeroStat[data-status="empty"] { border-style: dashed; }
+  .agenticOsHeroLabel {
+    color: #80d8ff;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    font-weight: 800;
+    font-size: .68rem;
+  }
+  .agenticOsHeroValue {
+    font-size: 1.8rem;
+    font-weight: 900;
+    line-height: 1.05;
+    color: #dff5ff;
+    font-variant-numeric: tabular-nums;
+    margin-top: 2px;
+  }
+  .agenticOsHeroValueInline {
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: #dff5ff;
+    font-variant-numeric: tabular-nums;
+  }
+  .agenticOsHeroDetail {
+    margin: 0;
+    color: #a7bdd3;
+    font-size: .7rem;
+    line-height: 1.3;
+  }
+
+  /* Section header (used by QC, Work Items, Activity) */
+  .agenticOsSectionHeader { display: flex; align-items: baseline; gap: 8px; margin: 0; }
+  .agenticOsSectionHeader h3 {
+    margin: 0;
+    font-size: .85rem;
+    font-weight: 700;
+    color: #dff5ff;
+    letter-spacing: .02em;
+  }
+  .agenticOsSectionHeader .muted { margin: 0; color: #8aa0bb; font-size: .75rem; }
+
+  /* App Health: 3 cards across. */
+  .agenticOsThreeUp {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .agenticOsCard {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .agenticOsCardTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .agenticOsCardTop h4 { margin: 0; font-size: .95rem; font-weight: 700; color: #dff5ff; }
+  .agenticOsCard .agenticOsPrimary {
+    margin: 0;
+    font-weight: 700;
+    color: #80d8ff;
+    font-size: .92rem;
+  }
+  .agenticOsCard .agenticOsSecondary { margin: 0; color: #b8c5d6; font-size: .8rem; }
+
+  /* Memory: 2 cards across. */
+  .agenticOsTwoUp {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  /* QC Score History — compact band, single line + small sparkline. */
+  .agenticOsQcPanel {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+  }
+  .agenticOsQcRecent { display: flex; align-items: center; gap: 10px; min-width: 0; flex-wrap: wrap; }
+  .agenticOsQcRecentLine { margin: 0; color: #dff5ff; font-size: .9rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .agenticOsQcRecentLine strong { color: #fff; font-weight: 700; }
+  .agenticOsQcSparklineWrap { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .agenticOsSparkline { display: block; max-width: 100%; height: auto; }
+  .agenticOsSparklineBlock { display: flex; align-items: center; gap: 10px; }
+  .agenticOsSparklineCaption {
+    margin: 0;
+    color: #a7bdd3;
+    font-size: .72rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* Two-column grid for Work Items + Activity (compact dashboard). */
+  .agenticOsTwoCol {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(0, 1.5fr);
+    gap: 14px;
+    align-items: start;
+  }
+
+  /* Work items — three independent cards in a row (compact). */
+  .agenticOsWorkGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .agenticOsWorkCard {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+  .agenticOsWorkCard[data-status="active"] { border-color: rgba(73, 255, 199, .4); }
+  .agenticOsWorkCard[data-status="review"] { border-color: rgba(255, 196, 87, .4); }
+  .agenticOsWorkTop { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+  .agenticOsWorkBadge {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .68rem;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(73, 255, 199, .14);
+    color: #49ffc7;
+    border: 1px solid rgba(73, 255, 199, .35);
+    font-weight: 800;
+    letter-spacing: .04em;
+  }
+  .agenticOsWorkTitle { margin: 0; font-size: .82rem; font-weight: 700; color: #dff5ff; line-height: 1.25;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .agenticOsWorkMeta { display: flex; justify-content: space-between; gap: 6px; align-items: center; }
+  .agenticOsWorkMeta .muted { color: #8aa0bb; font-size: .7rem; }
+  .agenticOsMono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #c6def4; font-size: .72rem; }
+  .agenticOsWorkPriority { margin: 0; color: #ffc457; font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+
+  /* Activity table — compact 4-column, 5 rows max. */
+  .agenticOsTableWrap {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 0;
+    overflow-x: auto;
+  }
+  .agenticOsTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .78rem;
+    min-width: 0;
+  }
+  .agenticOsTable th, .agenticOsTable td {
+    padding: 6px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(73, 255, 199, .08);
+    vertical-align: middle;
+  }
+  .agenticOsTable th {
+    color: #80d8ff;
+    font-size: .66rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    background: rgba(73, 255, 199, .06);
+    font-weight: 800;
+  }
+  .agenticOsTable tbody tr:hover { background: rgba(73, 255, 199, .04); }
+  .agenticOsTable td.muted { color: #8aa0bb; }
+  .agenticOsTable .agenticOsMono { font-size: .72rem; }
+
+  /* Roadmap */
+  .agenticOsRoadmap {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .agenticOsRoadmapItem {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .agenticOsRoadmapTag {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .76rem;
+    font-weight: 800;
+    color: #80d8ff;
+    border: 1px solid rgba(128, 216, 255, .35);
+    border-radius: 8px;
+    padding: 3px 7px;
+    background: rgba(128, 216, 255, .08);
+  }
+  .agenticOsRoadmapTitle { color: #dff5ff; font-weight: 700; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Header: phase + subtitle + LIVE pill + Recheck button */
+  .agenticOsHeaderTitle { display: grid; gap: 4px; min-width: 0; }
+  .agenticOsSubNote { margin: 0; color: #8aa0bb; font-size: .8rem; }
+  .agenticOsHeaderActions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .agenticOsRecheck {
+    border: 1px solid rgba(255, 196, 87, .45);
+    background: rgba(255, 196, 87, .12);
+    color: #ffe6a8;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .agenticOsRecheck:hover { background: rgba(255, 196, 87, .2); }
+  .status.live { background: rgba(73, 255, 199, .14); color: #49ffc7; border: 1px solid rgba(73, 255, 199, .5); }
+  .agenticOsFooter { margin: 4px 0 0; font-size: .82rem; }
+
+  /* Responsive — collapse the new layout on narrow viewports. */
+  @media (max-width: 1180px) {
+    .agenticOsHeroRow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .agenticOsThreeUp { grid-template-columns: 1fr; }
+    .agenticOsTwoUp { grid-template-columns: 1fr; }
+    .agenticOsWorkGrid { grid-template-columns: 1fr; }
+    .agenticOsRoadmap { grid-template-columns: 1fr; }
+    .agenticOsQcPanel { grid-template-columns: minmax(0, 1fr); }
+    .agenticOsQcSparklineWrap { align-items: flex-start; }
+    .agenticOsSparklineCaption { text-align: left; }
+    .agenticOsTwoCol { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    .agenticOsHeroValue { font-size: 1.6rem; }
+    .agenticOsHeaderActions { flex-wrap: wrap; }
+  }
+

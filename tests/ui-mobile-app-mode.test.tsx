@@ -23,50 +23,82 @@ beforeEach(() => {
   }));
 });
 
-describe('Phase 4 mobile app mode', () => {
-  it('renders bottom mobile tab navigation with command selected by default', async () => {
+describe('Stronghold Agentic OS default + Operations tab layout', () => {
+  it('renders the bottom mobile tab navigation with Dashboard selected by default', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
 
-    const nav = document.querySelector('[aria-label="Mobile command sections"]');
+    const nav = document.querySelector('[aria-label="Stronghold sections"]');
     expect(nav).toBeTruthy();
 
     const tabs = Array.from(nav?.querySelectorAll('button') ?? []);
-    expect(tabs).toHaveLength(5);
-    expect(tabs.map(tab => tab.textContent)).toEqual(['Command', 'Approvals', 'Missions', 'Intel', 'Safety']);
+    expect(tabs).toHaveLength(2);
+    expect(tabs.map(tab => tab.textContent)).toEqual(['Dashboard', 'Operations']);
 
-    expect(document.querySelector('.commandGrid')?.className).toContain('active-command');
-    const commandTab = tabs.find(tab => tab.textContent === 'Command');
-    expect(commandTab?.getAttribute('aria-selected')).toBe('true');
-    expect(commandTab?.getAttribute('aria-controls')).toBe('command-section');
+    expect(document.querySelector('.commandGrid')?.className).toContain('active-dashboard');
+    const dashboardTab = tabs.find(tab => tab.textContent === 'Dashboard');
+    expect(dashboardTab?.getAttribute('aria-selected')).toBe('true');
+    expect(dashboardTab?.getAttribute('aria-controls')).toBe('dashboard-section');
   });
 
-  it('switches app sections while keeping guarded content and no shell controls', async () => {
+  it('shows the Agentic OS dashboard by default with no tab click required', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
 
-    const tabs = Array.from(document.querySelectorAll('[aria-label="Mobile command sections"] button'));
-    const approvalsTab = tabs.find(tab => tab.textContent === 'Approvals')!;
-    const intelTab = tabs.find(tab => tab.textContent === 'Intel')!;
+    // The dashboard section is visible by default; the operations section is hidden.
+    const dashboardSection = document.querySelector('#dashboard-section');
+    const operationsSection = document.querySelector('#operations-section');
+    expect(dashboardSection).toBeTruthy();
+    expect(operationsSection).toBeTruthy();
+    expect(dashboardSection?.getAttribute('aria-hidden')).toBe('false');
+    expect(operationsSection?.getAttribute('aria-hidden')).toBe('true');
 
-    await act(async () => { approvalsTab.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
-    expect(document.querySelector('.commandGrid')?.className).toContain('active-approvals');
-    expect(document.querySelector('#approvals-section')?.getAttribute('aria-hidden')).toBe('false');
-    expect(document.querySelector('#command-section')?.getAttribute('aria-hidden')).toBe('true');
-
-    await act(async () => { intelTab.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
-    expect(document.querySelector('.commandGrid')?.className).toContain('active-intel');
-    expect(document.querySelector('#intel-section')?.getAttribute('aria-hidden')).toBe('false');
-
+    // The Agentic OS dashboard hero is rendered in the main area by default.
     const text = document.body.textContent || '';
+    expect(text).toContain('Agentic OS Dashboard');
+    // Compact dashboard (Phase E — igris-compact-dashboard-brief): the App
+    // Health section was deleted. QC Score History is still rendered.
+    expect(text).toContain('QC Score History');
+    expect(text).not.toContain('App Health');
+
+    // No fake/stale static components.
+    expect(text).not.toContain('Stronghold Telemetry');
+    expect(text).not.toContain('Engineering Division Roster');
+    expect(text).not.toContain('Agent Army Inventory');
+
+    // Guarded posture is still present.
     expect(text).toContain('GUARDED');
     expect(text).toContain('No shell');
     expect(text).toContain('Approval Queue');
-    expect(text).toContain('Stronghold Telemetry');
+    expect(text).toContain('Audit Trail');
+    expect(text).toContain('Cron / Schedule Manager');
     expect(text.toLowerCase()).not.toContain('execute command');
     expect(text.toLowerCase()).not.toContain('shell command');
+  });
+
+  it('switches to the Operations section when the Operations tab is clicked', async () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    await act(async () => { createRoot(el).render(<App />); });
+
+    const tabs = Array.from(document.querySelectorAll('[aria-label="Stronghold sections"] button'));
+    const operationsTab = tabs.find(tab => tab.textContent === 'Operations')!;
+    expect(operationsTab).toBeTruthy();
+
+    await act(async () => { operationsTab.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
+    expect(document.querySelector('.commandGrid')?.className).toContain('active-operations');
+    expect(document.querySelector('#operations-section')?.getAttribute('aria-hidden')).toBe('false');
+    expect(document.querySelector('#dashboard-section')?.getAttribute('aria-hidden')).toBe('true');
+
+    const text = document.body.textContent || '';
+    expect(text).toContain('Phase 2 Guarded Controls');
+    expect(text).toContain('Mission Proposal');
+    expect(text).toContain('Task Proposal');
+    expect(text).toContain('Phase 3 Agent Orchestration');
+    expect(text).toContain('Mission Board');
+    expect(text).toContain('Safety & Readiness');
   });
 
   it('uses mobile-specific section ids and viewport classes for app-like scrolling', async () => {
@@ -74,10 +106,7 @@ describe('Phase 4 mobile app mode', () => {
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
 
-    expect(document.querySelector('#command-section')?.className).toContain('mobileSection');
-    expect(document.querySelector('#approvals-section')?.className).toContain('mobileSection');
-    expect(document.querySelector('#missions-section')?.className).toContain('mobileSection');
-    expect(document.querySelector('#intel-section')?.className).toContain('mobileSection');
-    expect(document.querySelector('#safety-section')?.className).toContain('mobileSection');
+    expect(document.querySelector('#dashboard-section')?.className).toContain('mobileSection');
+    expect(document.querySelector('#operations-section')?.className).toContain('mobileSection');
   });
 });

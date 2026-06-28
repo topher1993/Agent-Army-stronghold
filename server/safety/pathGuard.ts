@@ -12,8 +12,8 @@ function normalizeRel(target: string): string {
   return target.replaceAll('\\', '/').replace(/^\.\//, '');
 }
 
-export function approvedDataPath(kind: 'missions' | 'tasks' | 'changeRequests' | 'audit' | 'agentRequests' | 'agentRuns' | 'agentArtifacts' | 'agentRunLog'): string {
-  const map = { missions: 'data/missions.json', tasks: 'data/tasks.json', changeRequests: 'data/change-requests.json', audit: 'data/audit-log.jsonl', agentRequests: 'data/agent-requests.json', agentRuns: 'data/agent-runs.json', agentArtifacts: 'data/agent-artifacts.json', agentRunLog: 'data/agent-runs.jsonl' } as const;
+export function approvedDataPath(kind: 'missions' | 'tasks' | 'changeRequests' | 'audit' | 'agentRequests' | 'agentRuns' | 'agentArtifacts' | 'agentRunLog' | 'approvals'): string {
+  const map = { missions: 'data/missions.json', tasks: 'data/tasks.json', changeRequests: 'data/change-requests.json', audit: 'data/audit-log.jsonl', agentRequests: 'data/agent-requests.json', agentRuns: 'data/agent-runs.json', agentArtifacts: 'data/agent-artifacts.json', agentRunLog: 'data/agent-runs.jsonl', approvals: 'data/approvals.json' } as const;
   return assertApprovedWritePath(map[kind]);
 }
 

@@ -23,7 +23,7 @@ Phase 3.5 turns the visible Stronghold cockpit from mostly static status panels 
 
 ## Safety boundary
 
-Phase 3.5 does not add shell execution or real wrapper dispatch. It only exposes the already-approved guarded backend workflows.
+Phase 3.5 does not add shell execution or real wrapper dispatch. It only exposes the already-approved guarded backend workflows. The target dropdown lists Engineering Division labels for ownership/routing visibility; it does not select behaviorally distinct agents.
 
 Still forbidden:
 

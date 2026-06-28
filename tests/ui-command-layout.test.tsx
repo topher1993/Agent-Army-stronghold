@@ -23,8 +23,8 @@ beforeEach(() => {
   }));
 });
 
-describe('Stronghold command-center layout', () => {
-  it('organizes the cockpit into context, primary workflow, and monitoring side panels without shell controls', async () => {
+describe('Stronghold Agentic OS default landing layout', () => {
+  it('puts the Agentic OS dashboard in the main column with Approvals/Audit/Cron in the right rail (no left rail)', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
@@ -32,42 +32,63 @@ describe('Stronghold command-center layout', () => {
     expect(document.querySelector('.commandShell')).toBeTruthy();
     expect(document.querySelector('.commandGrid')).toBeTruthy();
 
-    const leftRail = document.querySelector('[aria-label="Stronghold context"]');
-    const centerDeck = document.querySelector('[aria-label="Primary command workflows"]');
-    const rightRail = document.querySelector('[aria-label="Approvals, audit, and safety monitoring"]');
+    // The left rail is gone — no 'Stronghold context' aside.
+    expect(document.querySelector('[aria-label="Stronghold context"]')).toBeNull();
 
-    expect(leftRail?.textContent).toContain('Stronghold Telemetry');
-    expect(leftRail?.textContent).toContain('Engineering Division Roster');
-    expect(centerDeck?.textContent).toContain('Phase 3 Agent Orchestration');
-    expect(centerDeck?.textContent).toContain('Mission Proposal');
-    expect(centerDeck?.textContent).toContain('Mission Board');
+    // The Agentic OS dashboard is the dominant content in the main area.
+    const dashboardSection = document.querySelector('#dashboard-section');
+    expect(dashboardSection).toBeTruthy();
+    expect(dashboardSection?.textContent).toContain('Agentic OS Dashboard');
+    // Compact dashboard (Phase E): App Health was deleted, QC Score History is
+    // the first content section rendered.
+    expect(dashboardSection?.textContent).toContain('QC Score History');
+    expect(dashboardSection?.textContent).toContain('Activity');
+
+    // The right rail contains operational tools only.
+    const rightRail = document.querySelector('[aria-label="Approvals, audit, and operations monitoring"]');
+    expect(rightRail).toBeTruthy();
     expect(rightRail?.textContent).toContain('Approval Queue');
     expect(rightRail?.textContent).toContain('Audit Trail');
-    expect(rightRail?.textContent).toContain('Cron / Schedule Monitor');
+    expect(rightRail?.textContent).toContain('Cron / Schedule Manager');
 
+    // Operations section contains the proposal/orchestration/mission/safety content.
+    const operationsSection = document.querySelector('#operations-section');
+    expect(operationsSection).toBeTruthy();
+    expect(operationsSection?.textContent).toContain('Mission Proposal');
+    expect(operationsSection?.textContent).toContain('Task Proposal');
+    expect(operationsSection?.textContent).toContain('Phase 3 Agent Orchestration');
+
+    // No fake / stale static components in the default view.
     const text = document.body.textContent?.toLowerCase() || '';
+    expect(text).not.toContain('stronghold telemetry');
+    expect(text).not.toContain('engineering division roster');
+    expect(text).not.toContain('agent army inventory');
+
+    // Guarded posture is still present.
     expect(text).toContain('guarded');
     expect(text).toContain('no shell');
     expect(text).not.toContain('shell command');
     expect(text).not.toContain('execute command');
   });
 
-  it('reduces information density with collapsed intel, monitoring, and mission detail panels', async () => {
+  it('reduces information density with collapsed disclosures and collapsed mission details', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
 
-    const collapsiblePanels = Array.from(document.querySelectorAll('details.uxDisclosure')) as HTMLDetailsElement[];
-    expect(collapsiblePanels.length).toBeGreaterThanOrEqual(6);
+    // Right rail has 3 disclosures (Approval Queue, Audit Trail, Cron).
+    const collapsiblePanels = Array.from(document.querySelectorAll('aside.rightRail details.uxDisclosure')) as HTMLDetailsElement[];
+    expect(collapsiblePanels.length).toBe(3);
 
-    const rosterPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Engineering Division Roster'));
-    const inventoryPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Agent Army Inventory'));
+    const approvalPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Approval Queue'));
     const auditPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Audit Trail'));
+    const cronPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Cron / Schedule Manager'));
 
-    expect(rosterPanel?.open).toBe(false);
-    expect(inventoryPanel?.open).toBe(false);
+    expect(approvalPanel?.open).toBe(true);
     expect(auditPanel?.open).toBe(false);
+    expect(cronPanel?.open).toBe(true);
 
+    // Mission Board missions are still rendered as collapsed <details>.
     const missionDetails = document.querySelector('details.missionDisclosure') as HTMLDetailsElement | null;
     expect(missionDetails).toBeTruthy();
     expect(missionDetails?.open).toBe(false);

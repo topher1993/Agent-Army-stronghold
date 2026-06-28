@@ -43,7 +43,7 @@ curl -s -X POST http://127.0.0.1:5175/api/agent-requests \
   -d '{"kind":"mission.plan","title":"Smoke request","prompt":"Summarize current Stronghold status","requestedBy":"Chris","targetAgent":"igris"}'
 ```
 
-Then approve, enqueue, and mock-dispatch via the explicit agent request endpoints. No generic command endpoint exists.
+Then approve, enqueue, and mock-dispatch via the explicit agent request endpoints. No generic command endpoint exists. Division targets are labels for roster ownership/routing visibility only; selecting a specialist name does not invoke that specialist's wrapper.
 
 ## Kill switch
 
@@ -52,4 +52,4 @@ curl -s -X POST http://127.0.0.1:5175/api/orchestration/disable
 curl -s -X POST http://127.0.0.1:5175/api/orchestration/enable
 ```
 
-Phase 3 defaults to mock dispatch only.
+Phase 3 defaults to mock dispatch only. Engineering Division artifacts record `divisionExecutionMode: "mock-label-only"`, `wrapper: "mock"`, and `behavior: "shared-mock-dispatcher"` to prevent accidental assumptions that division labels have real execution behavior.
