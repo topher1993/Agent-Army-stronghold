@@ -15,6 +15,7 @@ import { isOrchestrationDisabled, disableOrchestration, enableOrchestration } fr
 import { createRateLimiter } from './safety/rateLimiter';
 import { resolveApproval, listApprovals } from './services/approvalActions';
 import { callHermesCron, validateCronInput, type CronAction, type CronDispatchError } from './services/cronService';
+import { fetchRecentAgentArmyMessages } from './services/discordFeed';
 
 // Stronghold is a localhost-only dashboard. The Vite dev server binds to
 // 127.0.0.1:5174 (see vite.config.ts). CORS is restricted to that exact origin
@@ -93,7 +94,7 @@ function extractOrigin(headers: http.IncomingHttpHeaders | Record<string, string
 // per-instance hot-reload do not leak state between server instances.
 const RATE_LIMIT_MAX_PER_WINDOW = 30;
 const RATE_LIMIT_WINDOW_MS = 60_000;
-type RateLimitFamily = 'change-requests' | 'agent-requests' | 'orchestration' | 'approvals' | 'cron';
+type RateLimitFamily = 'change-requests' | 'agent-requests' | 'orchestration' | 'approvals' | 'cron' | 'discord-read';
 type RateLimiters = Record<RateLimitFamily, ReturnType<typeof createRateLimiter>>;
 function buildRateLimiters(): RateLimiters {
   return {
@@ -102,6 +103,7 @@ function buildRateLimiters(): RateLimiters {
     'orchestration': createRateLimiter({ maxPerWindow: RATE_LIMIT_MAX_PER_WINDOW, windowMs: RATE_LIMIT_WINDOW_MS }),
     'approvals': createRateLimiter({ maxPerWindow: RATE_LIMIT_MAX_PER_WINDOW, windowMs: RATE_LIMIT_WINDOW_MS }),
     'cron': createRateLimiter({ maxPerWindow: RATE_LIMIT_MAX_PER_WINDOW, windowMs: RATE_LIMIT_WINDOW_MS }),
+    'discord-read': createRateLimiter({ maxPerWindow: RATE_LIMIT_MAX_PER_WINDOW, windowMs: RATE_LIMIT_WINDOW_MS }),
   };
 }
 function makeRoute(limiters: RateLimiters) {
@@ -469,6 +471,66 @@ function makeRoute(limiters: RateLimiters) {
       } catch (err) {
         return mapCronError(err, origin);
       }
+    }
+  }
+  // FEATURE — Discord #agent-army read-only consumer (Phase D1).
+  //
+  // READ-ONLY: only GET is wired. No POST/PATCH/DELETE handlers exist for
+  // /api/discord/* — Discord state cannot be mutated from Stronghold. The
+  // route wraps `fetchRecentAgentArmyMessages` from server/services/discordFeed.ts
+  // and adds:
+  //   - localhost origin guard (existing CORS layer)
+  //   - per-family rate limit ('discord-read', 30/min default — same shape
+  //     as every other state-changing family; the GET endpoint would not
+  //     normally be rate-limited per the inline comment in buildRateLimiters,
+  //     but Phase D1 explicitly requires a dedicated bucket to protect the
+  //     Discord rate-limit window from a runaway dashboard loop)
+  //   - exactly one audit-log entry per request, with outcome=ok on success
+  //     or outcome=failed on error.
+  if (method === 'GET' && url.startsWith('/api/discord/agent-army')) {
+    const limited = enforceRateLimit('discord-read', origin); if (limited) return limited;
+    // Parse + clamp ?limit. Default 10, max 50. Anything non-numeric or
+    // out-of-range falls back to the default rather than 400'ing the UI.
+    const rawLimit = (() => {
+      const q = url.split('?')[1] || '';
+      const params = new URLSearchParams(q);
+      const v = params.get('limit');
+      if (!v) return 10;
+      const n = Number(v);
+      if (!Number.isFinite(n) || n < 1) return 10;
+      return Math.min(50, Math.floor(n));
+    })();
+    const channelId = process.env.DISCORD_HOME_CHANNEL || '';
+    try {
+      const messages = await fetchRecentAgentArmyMessages(rawLimit);
+      appendAuditEvent(approvedDataPath('audit'), {
+        action: 'discord.read',
+        capability: 'discord:read:agent-army',
+        actor: 'Stronghold',
+        targetType: 'discord-channel',
+        targetId: channelId,
+        outcome: 'ok',
+        reason: `read ${messages.length} messages from #agent-army`,
+        metadata: { limit: rawLimit, returned: messages.length },
+      });
+      return json(200, { messages, fetchedAt: new Date().toISOString() }, origin);
+    } catch (err) {
+      const tagged = err as { code?: string; status?: number; retryAfter?: number; message?: string };
+      const code = tagged?.code || 'DISCORD_FAILURE';
+      const message = tagged?.message || String(err);
+      appendAuditEvent(approvedDataPath('audit'), {
+        action: 'discord.read',
+        capability: 'discord:read:agent-army',
+        actor: 'Stronghold',
+        targetType: 'discord-channel',
+        targetId: channelId,
+        outcome: 'failed',
+        reason: `discord read failed: ${code}`,
+        metadata: { limit: rawLimit, code, status: tagged?.status, retryAfter: tagged?.retryAfter, error: message },
+      });
+      if (code === 'UNAUTHORIZED') return json(503, { error: 'discord bot token rejected', code: 'UNAUTHORIZED' }, origin);
+      if (code === 'RATE_LIMITED') return json(503, { error: 'discord rate limited', code: 'RATE_LIMITED', retryAfter: tagged?.retryAfter }, origin);
+      return json(502, { error: 'discord fetch failed', detail: message }, origin);
     }
   }
   return json(404, { error: 'not found', safe: 'no generic command/write endpoint exists' }, origin);

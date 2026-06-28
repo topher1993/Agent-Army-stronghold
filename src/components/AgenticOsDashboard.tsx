@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import type { ActivityEntry, QcRound, StrongholdSnapshot, WorkItem } from '../types';
+import { DiscordCoordinationPanel } from './DiscordCoordinationPanel';
 
 export type AgenticOsCardStatus = 'placeholder' | 'live' | 'stale' | 'empty';
 
@@ -465,6 +466,10 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
           </div>
         </section>
       </div>
+
+      {/* Discord #agent-army coordination panel (Phase D1).
+          Self-contained read-only feed; polls every 60s, pausable. */}
+      <DiscordCoordinationPanel />
     </section>
   );
 }
