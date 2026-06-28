@@ -251,7 +251,7 @@ function renderSparkline(qcHistory: QcRound[]) {
         <polyline
           points={points}
           fill="none"
-          stroke="var(--accent, #49ffc7)"
+          stroke="var(--accent)"
           strokeWidth={2}
           strokeLinejoin="round"
           strokeLinecap="round"

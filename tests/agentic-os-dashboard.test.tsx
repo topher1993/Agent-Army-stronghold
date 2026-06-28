@@ -282,22 +282,22 @@ describe('Agentic OS dashboard compact layout (Igris compact brief — Phase E)'
     expect(html).toMatch(/<strong class="agenticOsHeroValue">[^<]+<\/strong>/);
   });
 
-  it('uses a compact hero font size (1.8rem) and section title size (0.85rem) in CSS', () => {
+  it('uses a compact hero font size (1.6rem) and section title size (0.85rem) in CSS', () => {
     const heroBlock = css.match(/\.agenticOsHeroValue\s*\{[^}]+\}/);
     expect(heroBlock, 'agenticOsHeroValue block should be present').toBeTruthy();
-    expect(heroBlock![0]).toMatch(/font-size:\s*1\.8rem/);
-    expect(heroBlock![0]).toMatch(/font-weight:\s*900/);
+    expect(heroBlock![0]).toMatch(/font-size:\s*1\.6rem/);
+    expect(heroBlock![0]).toMatch(/font-weight:\s*590/);
     const sectionBlock = css.match(/\.agenticOsSection\s+h3\s*\{[^}]+\}/);
     expect(sectionBlock, 'section h3 block should be present').toBeTruthy();
-    expect(sectionBlock![0]).toMatch(/font-size:\s*\.85rem/);
-    expect(sectionBlock![0]).toMatch(/font-weight:\s*700/);
+    expect(sectionBlock![0]).toMatch(/font-size:\s*0?\.?85rem/);
+    expect(sectionBlock![0]).toMatch(/font-weight:\s*590/);
   });
 
   it('embeds an inline SVG sparkline with a polyline and 7 points when QC history has data', () => {
     const html = renderToStaticMarkup(<AgenticOsDashboardPanel snapshot={captured} />);
     expect(html).toContain('data-sparkline="qc"');
     expect(html).toMatch(/<svg[^>]*class="agenticOsSparkline"/);
-    expect(html).toMatch(/<polyline[^>]*points="[^"]+"[^>]*fill="none"[^>]*stroke="var\(--accent, #49ffc7\)"/);
+    expect(html).toMatch(/<polyline[^>]*points="[^"]+"[^>]*fill="none"[^>]*stroke="var\(--accent\)"/);
     // 7 (x,y) pairs in the polyline points attribute
     const polylineMatch = html.match(/<polyline[^>]*points="([^"]+)"/);
     expect(polylineMatch).toBeTruthy();

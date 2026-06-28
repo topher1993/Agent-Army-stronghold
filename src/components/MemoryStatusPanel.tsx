@@ -77,7 +77,9 @@ export function MemoryStatusPanel() {
 
   const stats = useMemo(() => {
     if (!status) return null;
-    return `${status.sizeBytes} bytes · ${status.sections.length} sections · last modified ${relativeTime(status.lastModified)}`;
+    const sectionsCount = Array.isArray(status.sections) ? status.sections.length : 0;
+    const sizeBytes = typeof status.sizeBytes === 'number' ? status.sizeBytes : 0;
+    return `${sizeBytes} bytes · ${sectionsCount} sections · last modified ${relativeTime(status.lastModified)}`;
   }, [status]);
 
   const onCopy = useCallback(async () => {
