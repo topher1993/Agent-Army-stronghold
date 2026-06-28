@@ -4,6 +4,9 @@ import type { ActivityEntry, QcRound, StrongholdSnapshot, WorkItem } from '../ty
 import { ActivityGraphPanel } from './ActivityGraphPanel';
 import { MemoryStatusPanel } from './MemoryStatusPanel';
 import { DiscordCoordinationPanel } from './DiscordCoordinationPanel';
+import { StatusBanner, type SystemHealth, type AlertCounts } from './StatusBanner';
+import { AgentHierarchy, type AgentNodeData } from './AgentHierarchy';
+import { ActiveMissions, type Mission } from './ActiveMissions';
 
 export type AgenticOsCardStatus = 'placeholder' | 'live' | 'stale' | 'empty';
 
@@ -355,8 +358,75 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
 
   const qcLatest = qcForSparkline[0];
 
+  // Phase E2 — agent roster wired from snapshot (falls back to defaults).
+  // Filter out the root (Belion) since it's already shown as the hierarchy root.
+  const agentsForHierarchy: AgentNodeData[] = useMemo(() => {
+    const rootId = 'belion';
+    const roster = (live?.roster ?? []).filter((r) => {
+      const id = r.name?.toLowerCase().replace(/\s+/g, '-');
+      return id !== rootId;
+    });
+    const liveAgents = roster.slice(0, 6).map((r) => ({
+      id: r.name?.toLowerCase().replace(/\s+/g, '-') || 'unknown',
+      name: r.name,
+      role: r.role,
+      status: (r.wrapperStatus?.available === false ? 'idle' : 'healthy') as AgentNodeData['status'],
+    }));
+    if (liveAgents.length >= 6) return liveAgents;
+    // Fallback to the canonical 6-agent roster (Belion excluded since it's the root).
+    return [
+      { id: 'igris', name: 'Igris', role: 'Engineering', status: 'healthy' },
+      { id: 'beru', name: 'Beru', role: 'Learning', status: 'healthy' },
+      { id: 'greed', name: 'GREED', role: 'Financial', status: 'idle' },
+      { id: 'kaisel', name: 'Kaisel', role: 'Tool Division', status: 'healthy' },
+      { id: 'tusk', name: 'Tusk', role: 'QC', status: 'warning', busyLabel: '1 QC in flight' },
+      { id: 'sensei', name: 'Sensei', role: 'Japanese Tutor', status: 'ai' },
+    ];
+  }, [live]);
+
+  // Phase E2 — derive banner state from snapshot (defensive against partial data).
+  const e2Health: SystemHealth = live
+    && live.health?.tests?.status === 'pass'
+    && live.health?.build?.status === 'pass'
+    ? 'healthy' : 'warning';
+  const e2Alerts: AlertCounts = useMemo(() => {
+    const critical = qcForSparkline[0] && qcForSparkline[0].verdict?.toLowerCase().includes('fail') ? 1 : 0;
+    const failed = live?.health?.tests?.failedTests ?? 0;
+    const warning = failed > 0 ? failed : 0;
+    const info = Math.min(99, activityForTable.length);
+    return { critical, warning, info };
+  }, [qcForSparkline, live?.health?.tests?.failedTests, activityForTable.length]);
+  const e2AiOpsActive = agentsForHierarchy.filter(a => a.status !== 'idle').length;
+
+  // Phase E2 — active missions derived from work items (open = active).
+  const missionsForList: Mission[] = useMemo(() => {
+    if (!workItemsForCards || workItemsForCards.length === 0) return [];
+    return workItemsForCards.map((w, i) => ({
+      id: w?.id || `mission-${i}`,
+      name: w?.title || w?.id || `mission-${i}`,
+      priority: w?.priority === 'P0' ? 'P0' : w?.priority === 'P1' ? 'P1' : w?.priority === 'P2' ? 'P2' : 'P3',
+      assignedAgent: w?.owner,
+      eta: w?.modifiedAt ? shortDate(w.modifiedAt) : undefined,
+    }));
+  }, [workItemsForCards]);
+
   return (
     <section className="panel wide agenticOsPanel" aria-label="Agentic OS dashboard" data-agentic-os-panel>
+      {/* Phase E2 — Layer 0: Status Banner (always visible, full-width) */}
+      <StatusBanner
+        health={e2Health}
+        alerts={e2Alerts}
+        aiOpsActive={e2AiOpsActive}
+        onOpenAlertCenter={() => { /* wired in sub-PR 2 */ }}
+        onActivateKillSwitch={() => { /* wired in sub-PR 2 */ }}
+      />
+
+      {/* Phase E2 — Layer 1: Agent Hierarchy + Active Missions side by side */}
+      <div className="layer1Grid" data-section="layer1">
+        <AgentHierarchy agents={agentsForHierarchy} />
+        <ActiveMissions missions={missionsForList} />
+      </div>
+
       <header className="agenticOsHeader">
         <div className="agenticOsHeaderTitle">
           <h2>Agentic OS Dashboard</h2>
