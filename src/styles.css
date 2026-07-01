@@ -44,9 +44,62 @@
   --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 2px 8px rgba(0, 0, 0, 0.2);
   --shadow-elevated: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(0, 0, 0, 0.3);
 
-  /* Typography */
-  --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  /* Typography — Geist first (anti-Inter default), Inter as legacy fallback.
+     Geist is a self-hostable geometric grotesque with strong tabular figures,
+     suitable for dense mission-control displays. */
+  --font: 'Geist', 'Geist Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* ===========================================================================
+   * Phase E2 — Semantic color tokens (operator-monitor overlay)
+   * Used only for status/state, not interactive elements.
+   * Accent violet is reserved for "click me"; semantic colors mean "this is happening".
+   * =========================================================================== */
+  --semantic-healthy: #10b981;       /* green: tests pass, agent ready, idle */
+  --semantic-healthy-bg: rgba(16, 185, 129, 0.10);
+  --semantic-healthy-border: rgba(16, 185, 129, 0.18);
+
+  --semantic-info: #3b82f6;          /* blue: informational events */
+  --semantic-info-bg: rgba(59, 130, 246, 0.10);
+  --semantic-info-border: rgba(59, 130, 246, 0.18);
+
+  --semantic-warning: #f59e0b;       /* amber: warnings, degraded, slow */
+  --semantic-warning-bg: rgba(245, 158, 11, 0.10);
+  --semantic-warning-border: rgba(245, 158, 11, 0.18);
+
+  --semantic-critical: #ef4444;      /* red: errors, P0/P1, kill switch */
+  --semantic-critical-bg: rgba(239, 68, 68, 0.10);
+  --semantic-critical-border: rgba(239, 68, 68, 0.20);
+
+  --semantic-ai: #a855f7;            /* purple: AI ops (LLM calls, model load) */
+  --semantic-ai-bg: rgba(168, 85, 247, 0.10);
+  --semantic-ai-border: rgba(168, 85, 247, 0.18);
+
+  /* Offline / paused / unknown */
+  --semantic-neutral: #62666d;
+  --semantic-neutral-bg: rgba(98, 102, 109, 0.10);
+  --semantic-neutral-border: rgba(98, 102, 109, 0.20);
+
+  /* ===========================================================================
+   * Phase E2 — 8 px grid system
+   * All margins/paddings/gaps should snap to one of these.
+   * =========================================================================== */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-8: 64px;
+
+  /* ===========================================================================
+   * Phase E2 — Elevation tiers (replacing per-card borders)
+   * Tier 0 = canvas, Tier 1 = default panel, Tier 2 = elevated (drawers/modals).
+   * Cards default to Tier 1; no border, just shadow + bg step.
+   * =========================================================================== */
+  --elevation-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --elevation-2: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --elevation-3: 0 12px 32px rgba(0, 0, 0, 0.6);
 }
 
 /* ===========================================================================
@@ -201,7 +254,7 @@ label {
 
 .commandGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
   align-items: start;
   margin-top: 18px;
@@ -1198,3 +1251,231 @@ dd { margin: 0; font-weight: 500; color: var(--text-primary); font-size: 13px; l
 .cronSchedule, .approvalMeta { color: var(--text-tertiary); font-size: 12px; font-family: var(--font-mono); }
 .cronActions, .approvalActions { display: flex; gap: 6px; flex-shrink: 0; }
 .cronActions button, .approvalActions button { padding: 4px 10px; font-size: 12px; }
+
+/* ===========================================================================
+ * Phase E2 — Layer 0: Status Banner
+ * Full-width strip across the top of the dashboard. Always visible.
+ * Renders: system health · alert counts · AI ops heartbeat · timestamp
+ * =========================================================================== */
+.statusBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: var(--elevation-1);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  min-height: 48px;
+}
+
+.statusBanner__group { display: flex; align-items: center; gap: var(--space-1); }
+.statusBanner__group--right { margin-left: auto; }
+
+.statusBanner__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 510;
+  letter-spacing: 0.02em;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+.statusBanner__pill .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--semantic-neutral);
+}
+.statusBanner__pill--healthy .dot { background: var(--semantic-healthy); }
+.statusBanner__pill--warning .dot { background: var(--semantic-warning); }
+.statusBanner__pill--critical .dot { background: var(--semantic-critical); animation: pulseDot 2s ease-in-out infinite; }
+.statusBanner__pill--ai .dot { background: var(--semantic-ai); animation: pulseDot 3s ease-in-out infinite; }
+.statusBanner__pill--healthy { color: var(--semantic-healthy); }
+.statusBanner__pill--warning { color: var(--semantic-warning); }
+.statusBanner__pill--critical { color: var(--semantic-critical); }
+.statusBanner__pill--ai { color: var(--semantic-ai); }
+
+.statusBanner__alertCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 510;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  border: 1px solid var(--border-subtle);
+}
+.statusBanner__alertCount:hover { background: var(--bg-hover); }
+.statusBanner__alertCount .count { color: var(--text-primary); font-family: var(--font-mono); }
+.statusBanner__alertCount .count--zero { color: var(--text-quaternary); }
+
+.statusBanner__timestamp {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.02em;
+}
+
+.statusBanner__killSwitch {
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 510;
+  background: var(--semantic-critical-bg);
+  color: var(--semantic-critical);
+  border: 1px solid var(--semantic-critical-border);
+  cursor: pointer;
+}
+.statusBanner__killSwitch:hover { background: var(--semantic-critical-border); }
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* ===========================================================================
+ * Phase E2 — Layer 1: Agent Hierarchy
+ * Live tree of the actual 6-agent roster (Belion → 6 children).
+ * Each node: name + role + status dot. Hover: details. Click: expand inline.
+ * =========================================================================== */
+.agentHierarchy {
+  background: var(--bg-panel);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-1);
+  padding: var(--space-3);
+}
+
+.agentHierarchy__title {
+  font-size: 13px;
+  font-weight: 590;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-2);
+}
+
+.agentHierarchy__root {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  margin-bottom: var(--space-1);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+}
+.agentHierarchy__root .name { font-weight: 590; color: var(--text-primary); font-size: 14px; }
+.agentHierarchy__root .role { color: var(--text-tertiary); font-size: 12px; }
+
+.agentHierarchy__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--space-3);
+  border-left: 1px solid var(--border-subtle);
+}
+.agentHierarchy__list .agentHierarchy__list {
+  padding-left: var(--space-2);
+}
+
+.agentNode {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 6px var(--space-1);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  position: relative;
+}
+.agentNode:hover { background: var(--bg-elevated); }
+.agentNode__dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--semantic-neutral);
+  flex-shrink: 0;
+}
+.agentNode__dot--healthy { background: var(--semantic-healthy); }
+.agentNode__dot--warning { background: var(--semantic-warning); }
+.agentNode__dot--critical { background: var(--semantic-critical); }
+.agentNode__dot--ai { background: var(--semantic-ai); }
+.agentNode__dot--idle { background: var(--semantic-neutral); }
+
+.agentNode__name { font-weight: 510; color: var(--text-primary); font-size: 14px; }
+.agentNode__role { color: var(--text-tertiary); font-size: 12px; }
+.agentNode__detail {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-quaternary);
+  font-family: var(--font-mono);
+}
+.agentNode__busy {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: var(--radius-pill);
+  background: var(--semantic-warning-bg);
+  color: var(--semantic-warning);
+  font-size: 11px; font-weight: 510;
+}
+
+.agentNode--expandable { /* deprecated in sub-PR 1 — tree indent alone is enough */ }
+
+/* ===========================================================================
+ * Phase E2 — Layer 1: Active Missions
+ * Compact list of in-flight work sorted by priority then age.
+ * =========================================================================== */
+.activeMissions {
+  background: var(--bg-panel);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-1);
+  padding: var(--space-3);
+}
+.activeMissions__title {
+  font-size: 13px;
+  font-weight: 590;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-2);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.activeMissions__count {
+  font-family: var(--font-mono);
+  color: var(--text-quaternary);
+  font-size: 11px;
+}
+.missionRow {
+  display: flex; align-items: center; gap: var(--space-1);
+  padding: 10px var(--space-1);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.missionRow:last-child { border-bottom: none; }
+.missionRow__priority {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 510;
+  padding: 2px 6px; border-radius: var(--radius-sm);
+  flex-shrink: 0; min-width: 28px; text-align: center;
+}
+.missionRow__priority--P0 { background: var(--semantic-critical-bg); color: var(--semantic-critical); }
+.missionRow__priority--P1 { background: var(--semantic-warning-bg); color: var(--semantic-warning); }
+.missionRow__priority--P2 { background: var(--semantic-info-bg); color: var(--semantic-info); }
+.missionRow__priority--P3 { background: var(--semantic-neutral-bg); color: var(--semantic-neutral); }
+
+.missionRow__name { font-size: 13px; color: var(--text-primary); font-weight: 510; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.missionRow__agent { font-size: 12px; color: var(--text-tertiary); flex-shrink: 0; }
+.missionRow__eta { font-size: 11px; color: var(--text-quaternary); font-family: var(--font-mono); flex-shrink: 0; }
+
+/* ===========================================================================
+ * Phase E2 — Layout: Layer 1 grid (Agent Hierarchy + Active Missions side by side)
+ * =========================================================================== */
+.layer1Grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+@media (max-width: 1024px) {
+  .layer1Grid { grid-template-columns: 1fr; }
+}

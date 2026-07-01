@@ -24,7 +24,7 @@ beforeEach(() => {
 });
 
 describe('Stronghold Agentic OS default landing layout', () => {
-  it('puts the Agentic OS dashboard in the main column with Approvals/Audit/Cron in the right rail (no left rail)', async () => {
+  it('puts the Agentic OS dashboard full-width on the dashboard tab and moves approvals/audit/cron into Operations', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
@@ -39,21 +39,19 @@ describe('Stronghold Agentic OS default landing layout', () => {
     const dashboardSection = document.querySelector('#dashboard-section');
     expect(dashboardSection).toBeTruthy();
     expect(dashboardSection?.textContent).toContain('Agentic OS Dashboard');
-    // Compact dashboard (Phase E): App Health was deleted, QC Score History is
-    // the first content section rendered.
     expect(dashboardSection?.textContent).toContain('QC Score History');
     expect(dashboardSection?.textContent).toContain('Activity');
 
-    // The right rail contains operational tools only.
-    const rightRail = document.querySelector('[aria-label="Approvals, audit, and operations monitoring"]');
-    expect(rightRail).toBeTruthy();
-    expect(rightRail?.textContent).toContain('Approval Queue');
-    expect(rightRail?.textContent).toContain('Audit Trail');
-    expect(rightRail?.textContent).toContain('Cron / Schedule Manager');
+    // The right rail is gone — Approvals/Audit/Cron moved into Operations.
+    expect(document.querySelector('aside.rightRail')).toBeNull();
+    expect(document.querySelector('[aria-label="Approvals, audit, and operations monitoring"]')).toBeNull();
 
-    // Operations section contains the proposal/orchestration/mission/safety content.
+    // Operations section is now home for approvals + audit + cron + proposals + safety.
     const operationsSection = document.querySelector('#operations-section');
     expect(operationsSection).toBeTruthy();
+    expect(operationsSection?.textContent).toContain('Approval Queue');
+    expect(operationsSection?.textContent).toContain('Audit Trail');
+    expect(operationsSection?.textContent).toContain('Cron / Schedule Manager');
     expect(operationsSection?.textContent).toContain('Mission Proposal');
     expect(operationsSection?.textContent).toContain('Task Proposal');
     expect(operationsSection?.textContent).toContain('Phase 3 Agent Orchestration');
@@ -71,22 +69,30 @@ describe('Stronghold Agentic OS default landing layout', () => {
     expect(text).not.toContain('execute command');
   });
 
-  it('reduces information density with collapsed disclosures and collapsed mission details', async () => {
+  it('Approval Queue is the only disclosure open by default in Operations (Audit and Cron collapsed)', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
 
-    // Right rail has 3 disclosures (Approval Queue, Audit Trail, Cron).
-    const collapsiblePanels = Array.from(document.querySelectorAll('aside.rightRail details.uxDisclosure')) as HTMLDetailsElement[];
-    expect(collapsiblePanels.length).toBe(3);
+    // The 3 disclosures (Approval Queue, Audit Trail, Cron / Schedule Manager)
+    // now live inside the operations section, not a right rail aside.
+    const operationsSection = document.querySelector('#operations-section');
+    expect(operationsSection).toBeTruthy();
+
+    const collapsiblePanels = Array.from(
+      operationsSection?.querySelectorAll('details.uxDisclosure') ?? []
+    ) as HTMLDetailsElement[];
 
     const approvalPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Approval Queue'));
     const auditPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Audit Trail'));
     const cronPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Cron / Schedule Manager'));
 
+    expect(approvalPanel).toBeTruthy();
+    expect(auditPanel).toBeTruthy();
+    expect(cronPanel).toBeTruthy();
     expect(approvalPanel?.open).toBe(true);
     expect(auditPanel?.open).toBe(false);
-    expect(cronPanel?.open).toBe(true);
+    expect(cronPanel?.open).toBe(false);
 
     // Mission Board missions are still rendered as collapsed <details>.
     const missionDetails = document.querySelector('details.missionDisclosure') as HTMLDetailsElement | null;
