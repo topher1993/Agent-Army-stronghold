@@ -6,3 +6,6 @@ coverage/
 .env
 .env.*
 *.local
+
+# generated runtime artifacts (graphify)
+graphify-out/

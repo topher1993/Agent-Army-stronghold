@@ -169,10 +169,12 @@ describe('Agentic OS 2-tab nav CSS (Phase D — Agentic OS is default)', () => {
     expect(css).toMatch(/\.commandGrid\.active-operations\s+#operations-section/);
   });
 
-  it('commandGrid is a 2-column desktop layout (main + right rail)', () => {
+  it('commandGrid is a single-column full-width desktop layout (dashboard takeover, no right rail)', () => {
     const cmdGridBlock = css.match(/\.commandGrid\s*\{[^}]*grid-template-columns:[^}]*\}/);
     expect(cmdGridBlock, '.commandGrid grid-template-columns block should be present').toBeTruthy();
-    expect(cmdGridBlock![0]).toMatch(/grid-template-columns:\s*minmax\(0,\s*1fr\)\s+320px/);
+    expect(cmdGridBlock![0]).toMatch(/grid-template-columns:\s*minmax\(0,\s*1fr\)/);
+    // Single column — no 320px right-rail track.
+    expect(cmdGridBlock![0]).not.toMatch(/minmax\(0,\s*1fr\)\s+320px/);
   });
 });
 
@@ -359,10 +361,10 @@ describe('Agentic OS dashboard compact layout (Igris compact brief — Phase E)'
     expect(appSource).toMatch(/<section\s+id="dashboard-section"[\s\S]*?<AgenticOsDashboardPanel/);
   });
 
-  it('CSS defines a 2-column desktop layout for the .commandGrid with the dashboard as main content', () => {
+  it('CSS defines a single-column full-width desktop layout for the .commandGrid (dashboard takeover)', () => {
     const cmdGridBlock = css.match(/\.commandGrid\s*\{[^}]*grid-template-columns:[^}]*\}/);
     expect(cmdGridBlock, '.commandGrid block should be present').toBeTruthy();
-    expect(cmdGridBlock![0]).toMatch(/grid-template-columns:\s*minmax\(0,\s*1fr\)\s+320px/);
+    expect(cmdGridBlock![0]).toMatch(/grid-template-columns:\s*minmax\(0,\s*1fr\)/);
   });
 
   it('does not introduce any new framework dependency in the component', () => {

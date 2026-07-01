@@ -62,9 +62,10 @@ export function App() {
       </nav>
       {/*
         The Agentic OS Dashboard is the default main view. The commandGrid
-        is now a 2-column layout on desktop: [main | right rail]. On mobile
-        we render Dashboard or Operations as the active section and hide
-        the rest.
+        is now single-column on desktop (full-width dashboard takeover).
+        Approvals, audit, cron, and other operational panels live inside
+        #operations-section (Operations tab). On mobile we render Dashboard
+        or Operations as the active section and hide the other.
       */}
       <div className={`commandGrid active-${activeTab}`}>
         <section
@@ -76,30 +77,23 @@ export function App() {
           <AgenticOsDashboardPanel snapshot={snapshot} />
         </section>
 
-        <aside
-          className="sidePanel rightRail"
-          aria-label="Approvals, audit, and operations monitoring"
-          aria-hidden={operationsActive}
+        <section
+          id="operations-section"
+          className="mobileSection mobileOperations"
+          aria-label="Operations: proposals, approvals, audit, cron, orchestration, mission board, and safety"
+          aria-hidden={!operationsActive}
         >
+          <SafetyBoundary backendOk={backendOk} />
           <Disclosure title="Approval Queue" defaultOpen><ApprovalQueue refreshKey={refreshKey} /></Disclosure>
           <Disclosure title="Audit Trail"><AuditTrail refreshKey={refreshKey} /></Disclosure>
-          <Disclosure title="Cron / Schedule Manager" defaultOpen><CronManager snapshotJobs={snapshot.cronJobs} refreshKey={refreshKey} /></Disclosure>
-        </aside>
-
-        <section
-                  id="operations-section"
-                  className="mobileSection mobileOperations"
-                  aria-label="Operations: proposals, orchestration, mission board, and safety"
-                  aria-hidden={!operationsActive}
-                >
-                  <SafetyBoundary backendOk={backendOk} />
-                  <Disclosure title="Mission Proposal"><MissionEditor onCreated={refreshApprovals} /></Disclosure>
-                  <Disclosure title="Task Proposal"><TaskEditor onCreated={refreshApprovals} /></Disclosure>
-                  <Disclosure title="Phase 3 Agent Orchestration"><AgentOrchestration killSwitch={killSwitch} onCreatedChangeRequest={refreshApprovals} /></Disclosure>
-                  <MissionBoard missions={snapshot.missions} />
-                  <Disclosure title="Safety & Readiness" defaultOpen><Safety snapshot={snapshot} /></Disclosure>
-                  <Disclosure title="Operator Notes"><OperatorNotes snapshot={snapshot} /></Disclosure>
-                </section>
+          <Disclosure title="Cron / Schedule Manager"><CronManager snapshotJobs={snapshot.cronJobs} refreshKey={refreshKey} /></Disclosure>
+          <Disclosure title="Mission Proposal"><MissionEditor onCreated={refreshApprovals} /></Disclosure>
+          <Disclosure title="Task Proposal"><TaskEditor onCreated={refreshApprovals} /></Disclosure>
+          <Disclosure title="Phase 3 Agent Orchestration"><AgentOrchestration killSwitch={killSwitch} onCreatedChangeRequest={refreshApprovals} /></Disclosure>
+          <MissionBoard missions={snapshot.missions} />
+          <Disclosure title="Safety & Readiness" defaultOpen><Safety snapshot={snapshot} /></Disclosure>
+          <Disclosure title="Operator Notes"><OperatorNotes snapshot={snapshot} /></Disclosure>
+        </section>
       </div>
     </main>
   );

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-01T11:10:36.813Z",
+  "generatedAt": "2026-07-01T11:37:20.402Z",
   "phase": "Phase 1 MVP",
   "readOnly": true,
   "owner": "Igris",
@@ -4368,7 +4368,7 @@
       "modules": 0,
       "note": "Run `npm run health:capture` then `npm run snapshot` to populate."
     },
-    "auditEntries": 0,
+    "auditEntries": 408,
     "cronJobs": 3,
     "tunnel": {
       "publicHost": "127.0.0.1:5174",
@@ -4427,6 +4427,14 @@
     }
   ],
   "workItems": [
+    {
+      "id": "2026-07-01_tusk-qc-stronghold-agentic-os",
+      "title": "tusk-qc-stronghold-agentic-os",
+      "status": "planned",
+      "source": "hermes",
+      "modifiedAt": "2026-07-01T11:12:20.017Z",
+      "relativePath": ".hermes/plans/2026-07-01_tusk-qc-stronghold-agentic-os.md"
+    },
     {
       "id": "2026-07-01_clix-stronghold-redesign",
       "title": "clix-stronghold-redesign",
@@ -4501,7 +4509,7 @@
       {
         "path": "memories/MEMORY.md",
         "name": "MEMORY.md",
-        "sizeBytes": 2122,
+        "sizeBytes": 1936,
         "headings": []
       },
       {
@@ -4563,7 +4571,128 @@
     ],
     "totalSkills": 1551
   },
-  "activity": [],
+  "activity": [
+    {
+      "timestamp": "2026-07-01T11:36:32.418Z",
+      "actor": "Igris",
+      "capability": "changeRequest:apply",
+      "action": "apply",
+      "outcome": "applied",
+      "targetId": "7b54bb19-10a1-40b1-83a1-cfb3a0ab1ad9",
+      "targetType": "changeRequest",
+      "reason": "applied by Igris"
+    },
+    {
+      "timestamp": "2026-07-01T11:36:32.412Z",
+      "actor": "Igris",
+      "capability": "changeRequest:approve",
+      "action": "approve",
+      "outcome": "approved",
+      "targetId": "7b54bb19-10a1-40b1-83a1-cfb3a0ab1ad9",
+      "targetType": "changeRequest",
+      "reason": "approved in UI"
+    },
+    {
+      "timestamp": "2026-07-01T11:36:32.405Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "7b54bb19-10a1-40b1-83a1-cfb3a0ab1ad9",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-01T11:36:04.368Z",
+      "actor": "Igris",
+      "capability": "orchestration:disable",
+      "action": "disable",
+      "outcome": "approved",
+      "targetId": "",
+      "targetType": "system",
+      "reason": "operator disabled"
+    },
+    {
+      "timestamp": "2026-07-01T11:36:04.364Z",
+      "actor": "Chris",
+      "capability": "agentRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "a9d86cac-1863-4d2e-9808-9508a9724e7d",
+      "targetType": "changeRequest",
+      "reason": "agent request created by Chris"
+    },
+    {
+      "timestamp": "2026-07-01T11:36:04.356Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "a1a2ca8c-ee11-45d0-86ce-e8cf1d1da750",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-01T11:36:04.346Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "786ec831-a04a-4906-ae58-cac5e62f18d5",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-01T11:36:04.333Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "b2a30b4d-29de-411f-98b5-b73ea247ecbe",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-01T11:36:04.320Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "4a620ba9-acf2-4813-9404-3d917e053ce7",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-01T11:36:04.308Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "5ff9adca-2420-4a9f-84ce-d6d929c46d16",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-01T11:36:04.297Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "578466c8-1b40-4314-af41-2c9ec02e469f",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-01T11:36:04.284Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "cf8b3403-af0c-4a8f-9ce3-50ffc1bab716",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    }
+  ],
   "safetyFindings": [
     {
       "id": "read-only-ui",
