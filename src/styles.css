@@ -44,9 +44,11 @@
   --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 2px 8px rgba(0, 0, 0, 0.2);
   --shadow-elevated: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(0, 0, 0, 0.3);
 
-  /* Typography */
-  --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  /* Typography — Geist first (anti-Inter default), Inter as legacy fallback.
+     Geist is a self-hostable geometric grotesque with strong tabular figures,
+     suitable for dense mission-control displays. */
+  --font: 'Geist', 'Geist Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* ===========================================================================
    * Phase E2 — Semantic color tokens (operator-monitor overlay)

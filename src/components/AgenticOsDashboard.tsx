@@ -1,12 +1,47 @@
+// =============================================================================
+// Stronghold · Agentic OS Dashboard (Phase E2 mission-control redesign)
+//
+// Design read: "Reading this as: a mission-control single-column deck for the
+// operator (Chris), with a calm, dense, data-first language, leaning toward a
+// Linear-style dark minimalist aesthetic with one warm-emerald accent."
+//
+// Dials:
+//   DESIGN_VARIANCE:   6  (calm, not symmetric — hero row is 4 cards, app
+//                           health 3, work 3, memory 2, roadmap 3; varied
+//                           column counts keep the rhythm alive without
+//                           becoming artsy)
+//   MOTION_INTENSITY:  4  (CSS transitions on hover/active, pulse-dot for
+//                           AI / critical state; no scroll-jacking, no GSAP,
+//                           no marquee, no entry choreography)
+//   VISUAL_DENSITY:    7  (mission-control cockpit — tight paddings, mono
+//                           numbers, 1px hairlines between sections, no
+//                           card-heavy pattern; data metrics breathe in
+//                           plain layout, not in boxes)
+//
+// Anti-defaults (per taste-skill / minimalist-skill):
+//   - Font: Geist (Inter replacement) loaded via system stack — Geist first
+//     in the var(--font) chain is the v2 swap. Inter kept as final fallback
+//     for legibility, not as the primary face.
+//   - One accent: warm-emerald (#10b981) for live status. Linear violet
+//     remains the interactive accent, restricted to CTAs / links.
+//   - No "rounded-full" containers. Pills exist only for status tokens.
+//   - No shadow-md / shadow-lg / shadow-xl defaults. Shadows are tinted to
+//     the canvas hue at very low opacity.
+//   - One shape system: 8px soft radius (--radius-lg) for cards, 4px
+//     (--radius-sm) for chips, full pill for status tokens only.
+//   - WCAG AA verified for body text and CTA contrast.
+//   - prefers-reduced-motion: collapses pulse-dot animations to static.
+//   - prefers-reduced-transparency: not needed — no glassmorphism in the
+//     dashboard, surfaces are solid.
+// =============================================================================
+
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import type { ActivityEntry, QcRound, StrongholdSnapshot, WorkItem } from '../types';
-import { ActivityGraphPanel } from './ActivityGraphPanel';
-import { MemoryStatusPanel } from './MemoryStatusPanel';
-import { DiscordCoordinationPanel } from './DiscordCoordinationPanel';
-import { StatusBanner, type SystemHealth, type AlertCounts } from './StatusBanner';
-import { AgentHierarchy, type AgentNodeData } from './AgentHierarchy';
-import { ActiveMissions, type Mission } from './ActiveMissions';
+
+// -----------------------------------------------------------------------------
+// Public types (kept stable for test compatibility)
+// -----------------------------------------------------------------------------
 
 export type AgenticOsCardStatus = 'placeholder' | 'live' | 'stale' | 'empty';
 
@@ -57,20 +92,45 @@ export const AGENTIC_OS_PLACEHOLDER: AgenticOsData = {
   ],
 };
 
+// -----------------------------------------------------------------------------
+// Pure formatters
+// -----------------------------------------------------------------------------
+
 function fmtTimestamp(iso: string): string {
-  if (!iso) return '—';
+  if (!iso) return '-';
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   return d.toISOString().replace('T', ' ').slice(0, 19) + 'Z';
 }
 
 function shortDate(iso: string): string {
-  if (!iso) return '—';
+  if (!iso) return '-';
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  // 2026-06-27
   return d.toISOString().slice(0, 10);
 }
+
+function fmtKb(n: number): string {
+  if (!n) return '0 KB';
+  if (n < 1024) return `${n} KB`;
+  return `${(n / 1024).toFixed(2)} MB`;
+}
+
+function fmtMs(ms: number | undefined): string {
+  if (!ms || ms <= 0) return '0s';
+  if (ms < 1000) return `${ms}ms`;
+  return `${Math.round(ms / 1000)}s`;
+}
+
+function truncate(s: string, max: number): string {
+  if (!s) return '';
+  if (s.length <= max) return s;
+  return s.slice(0, max - 1) + '…';
+}
+
+// -----------------------------------------------------------------------------
+// Data builders (test-stable API)
+// -----------------------------------------------------------------------------
 
 export function buildAgenticOsData(snapshot: StrongholdSnapshot): AgenticOsData {
   const qcHistory = snapshot.qcHistory;
@@ -90,7 +150,7 @@ export function buildAgenticOsData(snapshot: StrongholdSnapshot): AgenticOsData 
           status: qcHistory.length === 0 ? 'placeholder' : 'live',
           primary: qcHistory.length === 0
             ? 'no QC rounds captured yet'
-            : `latest ${qcHistory[0].subject} — ${qcHistory[0].score}/100 (${qcHistory[0].verdict})`,
+            : `latest ${qcHistory[0].subject} - ${qcHistory[0].score}/100 (${qcHistory[0].verdict})`,
           secondary: qcHistory.length === 0 ? 'awaiting live wiring' : `${qcHistory.length} rounds on file`,
           bullets: ['round', 'score', 'verdict', 'reviewer'],
         },
@@ -149,12 +209,6 @@ export function buildAgenticOsData(snapshot: StrongholdSnapshot): AgenticOsData 
   return { generatedAt: snapshot.generatedAt, source: 'live', sections };
 }
 
-/**
- * Build the small set of "hero stats" that always appear at the top of the
- * dashboard regardless of whether the dashboard is rendered full-width or
- * squished inside the right rail. These are the four most important numbers
- * for an Engineering Division audience.
- */
 export type AgenticOsHeroStat = {
   id: string;
   label: string;
@@ -175,7 +229,7 @@ export function buildHeroStats(snapshot: StrongholdSnapshot): AgenticOsHeroStat[
     {
       id: 'hero.tests',
       label: 'TESTS',
-      value: tests.tests > 0 ? String(tests.tests) : '—',
+      value: tests.tests > 0 ? String(tests.tests) : '-',
       detail: tests.tests > 0
         ? `${tests.failedTests ?? 0} failed · ${Math.round((tests.durationMs || 0) / 1000)}s · ${tests.files} files`
         : 'awaiting live wiring',
@@ -184,7 +238,7 @@ export function buildHeroStats(snapshot: StrongholdSnapshot): AgenticOsHeroStat[
     {
       id: 'hero.build',
       label: 'BUILD',
-      value: build.bundleKb > 0 ? `${build.bundleKb} KB` : '—',
+      value: build.bundleKb > 0 ? `${build.bundleKb} KB` : '-',
       detail: build.bundleKb > 0
         ? `${build.modules} modules · ${build.cssKb} KB CSS · ${build.durationMs ?? 0}ms`
         : 'awaiting live wiring',
@@ -195,7 +249,7 @@ export function buildHeroStats(snapshot: StrongholdSnapshot): AgenticOsHeroStat[
       label: 'AUDIT',
       value: String(auditEntries),
       detail: latestQc
-        ? `${latestQc.subject} — ${latestQc.score}/100 (${latestQc.verdict})`
+        ? `${latestQc.subject} - ${latestQc.score}/100 (${latestQc.verdict})`
         : 'no QC rounds captured yet',
       status: latestQc ? 'live' : 'placeholder',
     },
@@ -210,9 +264,9 @@ export function buildHeroStats(snapshot: StrongholdSnapshot): AgenticOsHeroStat[
 }
 
 /**
- * The sparkline derives its 7 points from the most recent QC history (newest
- * first per the brief). If there are fewer than 7 rounds, the array is padded
- * with the earliest known score so the polyline still has 7 visible points.
+ * Sparkline derives 7 points from the most recent QC history (newest first
+ * per the brief). When fewer than 7 rounds exist, the array is padded with
+ * the earliest known score so the polyline still has 7 visible points.
  */
 export function buildSparklinePoints(qcHistory: QcRound[]): number[] {
   const scores = qcHistory.slice(0, 7).map(r => r.score);
@@ -221,12 +275,207 @@ export function buildSparklinePoints(qcHistory: QcRound[]): number[] {
   return scores.reverse(); // render oldest -> newest left-to-right
 }
 
+// -----------------------------------------------------------------------------
+// Section builders for the 7-section deck
+// -----------------------------------------------------------------------------
+
+type AppHealthRow = {
+  id: string;
+  label: string;
+  value: string;
+  detail: string;
+  status: AgenticOsCardStatus;
+};
+
+function buildAppHealthRows(snapshot: StrongholdSnapshot): AppHealthRow[] {
+  const h = snapshot.health;
+  const tests = h.tests;
+  const build = h.build;
+  const tunnel = h.tunnel;
+  return [
+    {
+      id: 'app-health.tests',
+      label: 'Test suite',
+      value: tests.status === 'passed'
+        ? `${tests.tests} pass`
+        : tests.tests > 0
+          ? `${tests.tests} (${tests.status})`
+          : 'no run captured',
+      detail: tests.tests > 0
+        ? `${tests.files} files · ${fmtMs(tests.durationMs)}${tests.failedTests ? ' · ' + tests.failedTests + ' failed' : ''}`
+        : 'run `npm run health:capture` then `npm run snapshot`',
+      status: tests.status === 'passed' ? 'live' : 'placeholder',
+    },
+    {
+      id: 'app-health.build',
+      label: 'Build',
+      value: build.status === 'clean'
+        ? `${build.bundleKb} KB`
+        : build.bundleKb > 0
+          ? `${build.bundleKb} KB (${build.status})`
+          : 'no build captured',
+      detail: build.bundleKb > 0
+        ? `${build.modules} modules · ${build.cssKb} KB CSS · ${fmtMs(build.durationMs)}`
+        : 'run `npm run build` then `npm run snapshot`',
+      status: build.status === 'clean' ? 'live' : 'placeholder',
+    },
+    {
+      id: 'app-health.tunnel',
+      label: 'Tunnel',
+      value: tunnel.publicHost || '127.0.0.1:5174',
+      detail: tunnel.note || 'localhost only by design',
+      status: 'live',
+    },
+  ];
+}
+
+type MemoryRow = {
+  id: string;
+  label: string;
+  value: string;
+  detail: string;
+  status: AgenticOsCardStatus;
+};
+
+function buildMemoryRows(snapshot: StrongholdSnapshot): MemoryRow[] {
+  const mem = snapshot.memory;
+  const fileCount = mem.files.length;
+  const skillCount = mem.skills.length;
+  return [
+    {
+      id: 'memory.entries',
+      label: 'Entries',
+      value: String(fileCount),
+      detail: fileCount > 0
+        ? mem.files.map(f => f.name).slice(0, 2).join(', ') + (fileCount > 2 ? `, +${fileCount - 2} more` : '')
+        : 'no memory files indexed',
+      status: fileCount > 0 ? 'live' : 'placeholder',
+    },
+    {
+      id: 'memory.skills',
+      label: 'Skills',
+      value: String(mem.totalSkills),
+      detail: skillCount > 0
+        ? `${skillCount} skills mapped to profiles`
+        : 'no skills mapped yet',
+      status: mem.totalSkills > 0 ? 'live' : 'placeholder',
+    },
+  ];
+}
+
+type RoadmapFix = {
+  id: string;
+  tag: string;
+  title: string;
+  status: 'tracked' | 'in-review' | 'shipped';
+};
+
+function buildRoadmapFixes(snapshot: StrongholdSnapshot): RoadmapFix[] {
+  // The roadmap is read from the 3 most-recent P2 work items that aren't
+  // already complete. Falls back to a deterministic 3-item placeholder set
+  // tied to the agentic-os redesign brief when the snapshot is sparse.
+  const p2Open = snapshot.workItems
+    .filter(w => (w.priority === 'P2' || w.priority === 'P1') && w.status !== 'complete')
+    .slice(0, 3);
+  if (p2Open.length >= 3) {
+    return p2Open.map((w, i) => ({
+      id: w.id || `roadmap-${i}`,
+      tag: w.priority || 'P2',
+      title: w.title || w.id || `P2 fix ${i + 1}`,
+      status: w.status === 'review' ? 'in-review' : 'tracked',
+    }));
+  }
+  // Defensive placeholder when the snapshot is empty.
+  return [
+    { id: 'roadmap.mission-control', tag: 'P2', title: 'Mission-control deck · 7 sections', status: 'tracked' },
+    { id: 'roadmap.sparkline',       tag: 'P2', title: 'QC sparkline · inline SVG, no libs', status: 'tracked' },
+    { id: 'roadmap.tokens',          tag: 'P2', title: 'Type + spacing + shape tokens',     status: 'tracked' },
+  ];
+}
+
+// -----------------------------------------------------------------------------
+// Status pills
+// -----------------------------------------------------------------------------
+
+type StatusPillStatus =
+  | AgenticOsCardStatus
+  | 'tracked'
+  | 'in-review'
+  | 'shipped'
+  | 'active'
+  | 'review'
+  | 'planned'
+  | 'blocked'
+  | 'complete'
+  | 'placeholder';
+
+function statusPillFor(status: StatusPillStatus, label?: string) {
+  const text = label ?? status;
+  return <span className={`status ${status}`}>{text}</span>;
+}
+
+function statusClassForWorkItem(w: WorkItem): 'active' | 'review' | 'planned' | 'blocked' | 'complete' | 'placeholder' {
+  const allowed = ['active', 'review', 'planned', 'blocked', 'complete'] as const;
+  return (allowed.includes(w.status as typeof allowed[number]) ? w.status : 'placeholder') as
+    | 'active' | 'review' | 'planned' | 'blocked' | 'complete' | 'placeholder';
+}
+
+// -----------------------------------------------------------------------------
+// Sub-views (private)
+// -----------------------------------------------------------------------------
+
+function HeroStatsRow({ stats }: { stats: AgenticOsHeroStat[] }) {
+  return (
+    <section className="agenticOsHeroRow" aria-label="Hero stats" data-section="hero-stats">
+      {stats.map(stat => (
+        <article
+          key={stat.id}
+          className="agenticOsHeroStat"
+          data-status={stat.status}
+          data-hero-id={stat.id}
+        >
+          <span className="agenticOsHeroLabel">{stat.label}</span>
+          <strong className="agenticOsHeroValue">{stat.value}</strong>
+          <p className="agenticOsHeroDetail">{stat.detail}</p>
+        </article>
+      ))}
+    </section>
+  );
+}
+
+function AppHealthSection({ rows }: { rows: AppHealthRow[] }) {
+  return (
+    <section className="agenticOsSection" aria-label="App health" data-section="app-health">
+      <header className="agenticOsSectionHeader">
+        <h3>App Health</h3>
+        <p className="agenticOsSubNote">Local build, test, and tunnel status.</p>
+      </header>
+      <div className="agenticOsHealthGrid">
+        {rows.map(row => (
+          <article
+            key={row.id}
+            className="agenticOsHealthCard"
+            data-status={row.status}
+            data-health-id={row.id}
+          >
+            <div className="agenticOsHealthTop">
+              <span className="agenticOsHeroLabel">{row.label}</span>
+              <span className={`agenticOsHealthDot ${row.status}`} aria-hidden="true" />
+            </div>
+            <strong className="agenticOsHealthValue">{row.value}</strong>
+            <p className="agenticOsHeroDetail">{row.detail}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function renderSparkline(qcHistory: QcRound[]) {
   const scores = buildSparklinePoints(qcHistory);
   if (scores.length === 0) {
     return <p className="muted">awaiting live wiring</p>;
   }
-  // Compact per the igris-compact-dashboard-brief: 240x40 instead of 280x60.
   const W = 240;
   const H = 40;
   const PAD = 4;
@@ -267,14 +516,36 @@ function renderSparkline(qcHistory: QcRound[]) {
   );
 }
 
-function statusPillFor(status: AgenticOsCardStatus | 'planned' | 'active' | 'blocked' | 'review' | 'complete', label?: string) {
-  const text = label ?? status;
-  return <span className={`status ${status}`}>{text}</span>;
+function QcHistorySection({ history }: { history: QcRound[] }) {
+  const latest = history[0];
+  return (
+    <section className="agenticOsSection agenticOsQcSection" aria-label="QC score history" data-section="qc-history">
+      <header className="agenticOsSectionHeader">
+        <h3>QC Score History</h3>
+        <p className="agenticOsSubNote">Sentinel + Tusk verdicts · last 7 rounds.</p>
+      </header>
+      <div className="agenticOsQcPanel">
+        <div className="agenticOsQcRecent">
+          {latest
+            ? (
+              <p className="agenticOsQcRecentLine">
+                <span className="agenticOsHeroValueInline">{latest.score}/100</span>
+                <span className="agenticOsQcSubject">{latest.subject}</span>
+                <span className="status live" data-qc-verdict>{latest.verdict}</span>
+              </p>
+            )
+            : <p className="muted">no QC rounds captured yet</p>}
+        </div>
+        <div className="agenticOsQcSparklineWrap">
+          {renderSparkline(history)}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function workItemCard(w: WorkItem, index: number) {
-  const statusClass = (['active', 'review', 'planned', 'blocked', 'complete'].includes(w.status) ? w.status : 'placeholder') as
-    | 'active' | 'review' | 'planned' | 'blocked' | 'complete' | 'placeholder';
+  const statusClass = statusClassForWorkItem(w);
   return (
     <article
       key={w.id || `wi-${index}`}
@@ -283,7 +554,7 @@ function workItemCard(w: WorkItem, index: number) {
       data-work-id={w.id}
     >
       <div className="agenticOsWorkTop">
-        <span className="agenticOsWorkBadge">{w.id}</span>
+        <span className="agenticOsWorkBadge">{w.id ? truncate(w.id, 16) : `WI-${String(index + 1).padStart(2, '0')}`}</span>
         {statusPillFor(statusClass, w.status)}
       </div>
       <h4 className="agenticOsWorkTitle">{w.title || 'untitled work item'}</h4>
@@ -296,16 +567,138 @@ function workItemCard(w: WorkItem, index: number) {
   );
 }
 
+function OpenWorkItemsSection({ items }: { items: WorkItem[] }) {
+  return (
+    <section className="agenticOsSection" aria-label="Open work items" data-section="work-items">
+      <header className="agenticOsSectionHeader">
+        <h3>Open Work Items</h3>
+        <p className="agenticOsSubNote">Top {items.length || 0} active or planned items.</p>
+      </header>
+      <div className="agenticOsWorkGrid">
+        {items.length > 0
+          ? items.map((w, i) => workItemCard(w, i))
+          : (
+            <>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <article key={`placeholder-wi-${i}`} className="agenticOsWorkCard" data-status="placeholder">
+                  <div className="agenticOsWorkTop">
+                    <span className="agenticOsWorkBadge">WI-00{i + 1}</span>
+                    <span className="status placeholder">placeholder</span>
+                  </div>
+                  <h4 className="agenticOsWorkTitle">awaiting live wiring</h4>
+                  <div className="agenticOsWorkMeta">
+                    <span className="muted">-</span>
+                    <time className="agenticOsMono">-</time>
+                  </div>
+                </article>
+              ))}
+            </>
+          )}
+      </div>
+    </section>
+  );
+}
+
 function activityRow(a: ActivityEntry, index: number) {
   return (
     <tr key={`${a.timestamp}-${a.targetId}-${index}`} data-activity-row="true">
       <td className="agenticOsMono">{fmtTimestamp(a.timestamp)}</td>
       <td>{a.actor}</td>
       <td>{a.action}</td>
-      <td className="agenticOsMono">{a.targetId}</td>
+      <td className="agenticOsMono" title={a.targetId}>{truncate(a.targetId, 14)}</td>
+      <td>{a.outcome || '-'}</td>
+      <td className="agenticOsActivityReason">{a.reason || '-'}</td>
     </tr>
   );
 }
+
+function ActivitySection({ entries }: { entries: ActivityEntry[] }) {
+  return (
+    <section className="agenticOsSection" aria-label="Recent activity" data-section="activity">
+      <header className="agenticOsSectionHeader">
+        <h3>Activity</h3>
+        <p className="agenticOsSubNote">Latest {entries.length || 0} dispatches, newest first.</p>
+      </header>
+      <div className="agenticOsTableWrap">
+        <table className="agenticOsTable" data-activity-table="true">
+          <thead>
+            <tr>
+              <th scope="col">When</th>
+              <th scope="col">Actor</th>
+              <th scope="col">Action</th>
+              <th scope="col">Target</th>
+              <th scope="col">Outcome</th>
+              <th scope="col">Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            {entries.length > 0
+              ? entries.map((a, i) => activityRow(a, i))
+              : (
+                <tr data-activity-placeholder="true">
+                  <td colSpan={6} className="muted">no recent activity</td>
+                </tr>
+              )}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function MemorySection({ rows }: { rows: MemoryRow[] }) {
+  return (
+    <section className="agenticOsSection" aria-label="Memory" data-section="memory">
+      <header className="agenticOsSectionHeader">
+        <h3>Memory</h3>
+        <p className="agenticOsSubNote">Indexed memory files and mapped skills.</p>
+      </header>
+      <div className="agenticOsMemoryGrid">
+        {rows.map(row => (
+          <article
+            key={row.id}
+            className="agenticOsMemoryCard"
+            data-status={row.status}
+            data-memory-id={row.id}
+          >
+            <span className="agenticOsHeroLabel">{row.label}</span>
+            <strong className="agenticOsHealthValue">{row.value}</strong>
+            <p className="agenticOsHeroDetail">{row.detail}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function RoadmapSection({ fixes }: { fixes: RoadmapFix[] }) {
+  return (
+    <section className="agenticOsSection" aria-label="Roadmap" data-section="roadmap">
+      <header className="agenticOsSectionHeader">
+        <h3>Roadmap</h3>
+        <p className="agenticOsSubNote">Tracked P2 fixes from the work queue.</p>
+      </header>
+      <ul className="agenticOsRoadmap">
+        {fixes.map(fix => (
+          <li
+            key={fix.id}
+            className="agenticOsRoadmapItem"
+            data-status={fix.status}
+            data-roadmap-id={fix.id}
+          >
+            <span className="agenticOsRoadmapTag">{fix.tag}</span>
+            <span className="agenticOsRoadmapTitle">{fix.title}</span>
+            {statusPillFor(fix.status)}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+// -----------------------------------------------------------------------------
+// Top-level component
+// -----------------------------------------------------------------------------
 
 export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSnapshot | null } = {}): ReactNode {
   const hasLive = Boolean(
@@ -351,84 +744,19 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
     [live]
   );
 
-  // Per the igris-compact-dashboard-brief: 3 work cards, 5 activity rows max.
+  // Brief: 3 work cards max, 10 activity rows max.
   const workItemsForCards = useMemo(() => (live?.workItems ?? []).slice(0, 3), [live]);
-  const activityForTable = useMemo(() => (live?.activity ?? []).slice(0, 5), [live]);
+  const activityForTable = useMemo(() => (live?.activity ?? []).slice(0, 10), [live]);
   const qcForSparkline = useMemo(() => live?.qcHistory ?? [], [live]);
-
-  const qcLatest = qcForSparkline[0];
-
-  // Phase E2 — agent roster wired from snapshot (falls back to defaults).
-  // Filter out the root (Belion) since it's already shown as the hierarchy root.
-  const agentsForHierarchy: AgentNodeData[] = useMemo(() => {
-    const rootId = 'belion';
-    const roster = (live?.roster ?? []).filter((r) => {
-      const id = r.name?.toLowerCase().replace(/\s+/g, '-');
-      return id !== rootId;
-    });
-    const liveAgents = roster.slice(0, 6).map((r) => ({
-      id: r.name?.toLowerCase().replace(/\s+/g, '-') || 'unknown',
-      name: r.name,
-      role: r.role,
-      status: (r.wrapperStatus?.available === false ? 'idle' : 'healthy') as AgentNodeData['status'],
-    }));
-    if (liveAgents.length >= 6) return liveAgents;
-    // Fallback to the canonical 6-agent roster (Belion excluded since it's the root).
-    return [
-      { id: 'igris', name: 'Igris', role: 'Engineering', status: 'healthy' },
-      { id: 'beru', name: 'Beru', role: 'Learning', status: 'healthy' },
-      { id: 'greed', name: 'GREED', role: 'Financial', status: 'idle' },
-      { id: 'kaisel', name: 'Kaisel', role: 'Tool Division', status: 'healthy' },
-      { id: 'tusk', name: 'Tusk', role: 'QC', status: 'warning', busyLabel: '1 QC in flight' },
-      { id: 'sensei', name: 'Sensei', role: 'Japanese Tutor', status: 'ai' },
-    ];
-  }, [live]);
-
-  // Phase E2 — derive banner state from snapshot (defensive against partial data).
-  const e2Health: SystemHealth = live
-    && live.health?.tests?.status === 'pass'
-    && live.health?.build?.status === 'pass'
-    ? 'healthy' : 'warning';
-  const e2Alerts: AlertCounts = useMemo(() => {
-    const critical = qcForSparkline[0] && qcForSparkline[0].verdict?.toLowerCase().includes('fail') ? 1 : 0;
-    const failed = live?.health?.tests?.failedTests ?? 0;
-    const warning = failed > 0 ? failed : 0;
-    const info = Math.min(99, activityForTable.length);
-    return { critical, warning, info };
-  }, [qcForSparkline, live?.health?.tests?.failedTests, activityForTable.length]);
-  const e2AiOpsActive = agentsForHierarchy.filter(a => a.status !== 'idle').length;
-
-  // Phase E2 — active missions derived from work items (open = active).
-  const missionsForList: Mission[] = useMemo(() => {
-    if (!workItemsForCards || workItemsForCards.length === 0) return [];
-    return workItemsForCards.map((w, i) => ({
-      id: w?.id || `mission-${i}`,
-      name: w?.title || w?.id || `mission-${i}`,
-      priority: w?.priority === 'P0' ? 'P0' : w?.priority === 'P1' ? 'P1' : w?.priority === 'P2' ? 'P2' : 'P3',
-      assignedAgent: w?.owner,
-      eta: w?.modifiedAt ? shortDate(w.modifiedAt) : undefined,
-    }));
-  }, [workItemsForCards]);
+  const appHealthRows = useMemo(() => live ? buildAppHealthRows(live) : [], [live]);
+  const memoryRows = useMemo(() => live ? buildMemoryRows(live) : [], [live]);
+  const roadmapFixes = useMemo(() => live ? buildRoadmapFixes(live) : [], [live]);
 
   return (
     <section className="panel wide agenticOsPanel" aria-label="Agentic OS dashboard" data-agentic-os-panel>
-      {/* Phase E2 — Layer 0: Status Banner (always visible, full-width) */}
-      <StatusBanner
-        health={e2Health}
-        alerts={e2Alerts}
-        aiOpsActive={e2AiOpsActive}
-        onOpenAlertCenter={() => { /* wired in sub-PR 2 */ }}
-        onActivateKillSwitch={() => { /* wired in sub-PR 2 */ }}
-      />
-
-      {/* Phase E2 — Layer 1: Agent Hierarchy + Active Missions side by side */}
-      <div className="layer1Grid" data-section="layer1">
-        <AgentHierarchy agents={agentsForHierarchy} />
-        <ActiveMissions missions={missionsForList} />
-      </div>
-
       <header className="agenticOsHeader">
         <div className="agenticOsHeaderTitle">
+          <p className="eyebrow">Mission Control</p>
           <h2>Agentic OS Dashboard</h2>
           <p className="subtitle">
             {data.source === 'live'
@@ -444,114 +772,20 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
         </div>
       </header>
 
-      {/* Hero stats row: 4 equal cards across the full width */}
-      <section className="agenticOsHeroRow" aria-label="Hero stats">
-        {heroStats.map(stat => (
-          <article
-            key={stat.id}
-            className="agenticOsHeroStat"
-            data-status={stat.status}
-            data-hero-id={stat.id}
-          >
-            <span className="agenticOsHeroLabel">{stat.label}</span>
-            <strong className="agenticOsHeroValue">{stat.value}</strong>
-            <p className="agenticOsHeroDetail">{stat.detail}</p>
-          </article>
-        ))}
-      </section>
-
-      {/* QC Score History: full width with compact sparkline */}
-      <section className="agenticOsSection agenticOsQcSection" aria-label="QC score history" data-section="qc-history">
-        <header className="agenticOsSectionHeader">
-          <h3>QC Score History</h3>
-        </header>
-        <div className="agenticOsQcPanel">
-          <div className="agenticOsQcRecent">
-            {qcLatest
-              ? <p className="agenticOsQcRecentLine">
-                  {qcLatest.subject} — <span className="agenticOsHeroValueInline">{qcLatest.score}/100</span>
-                  {' '}<span className="status live" data-qc-verdict>{qcLatest.verdict}</span>
-                </p>
-              : <p className="muted">no QC rounds captured yet</p>}
-          </div>
-          <div className="agenticOsQcSparklineWrap">
-            {renderSparkline(qcForSparkline)}
-          </div>
-        </div>
-      </section>
-
-      {/* Work Items (3 cards) + Activity (5 rows) side-by-side */}
-      <div className="agenticOsTwoCol">
-        {/* Open Work Items: 3 separate cards */}
-        <section className="agenticOsSection" aria-label="Open work items" data-section="work-items">
-          <header className="agenticOsSectionHeader">
-            <h3>Open Work Items</h3>
-          </header>
-          <div className="agenticOsWorkGrid">
-            {workItemsForCards.length > 0
-              ? workItemsForCards.map((w, i) => workItemCard(w, i))
-              : (
-                <>
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <article key={`placeholder-wi-${i}`} className="agenticOsWorkCard" data-status="placeholder">
-                      <div className="agenticOsWorkTop">
-                        <span className="agenticOsWorkBadge">WI-00{i + 1}</span>
-                        <span className="status placeholder">placeholder</span>
-                      </div>
-                      <h4 className="agenticOsWorkTitle">awaiting live wiring</h4>
-                      <div className="agenticOsWorkMeta">
-                        <span className="muted">—</span>
-                        <time className="agenticOsMono">—</time>
-                      </div>
-                    </article>
-                  ))}
-                </>
-              )}
-          </div>
-        </section>
-
-        {/* Activity table: When / Actor / Action / Target (4 columns, 5 rows max) */}
-        <section className="agenticOsSection" aria-label="Recent activity" data-section="activity">
-          <header className="agenticOsSectionHeader">
-            <h3>Activity</h3>
-          </header>
-          <div className="agenticOsTableWrap">
-            <table className="agenticOsTable" data-activity-table="true">
-              <thead>
-                <tr>
-                  <th scope="col">When</th>
-                  <th scope="col">Actor</th>
-                  <th scope="col">Action</th>
-                  <th scope="col">Target</th>
-                </tr>
-              </thead>
-              <tbody>
-                {activityForTable.length > 0
-                  ? activityForTable.map((a, i) => activityRow(a, i))
-                  : (
-                    <tr data-activity-placeholder="true">
-                      <td colSpan={4} className="muted">no recent activity</td>
-                    </tr>
-                  )}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </div>
-
-      {/* Discord #agent-army coordination panel (Phase D1).
-          Self-contained read-only feed; polls every 60s, pausable. */}
-      <DiscordCoordinationPanel />
-
-      {/* Routing Flow — Phase D4 activity graph (read-only).
-          Polls /api/activity-graph every 60s and renders the hand-off graph
-          as a pure SVG with three rows of nodes (Belion top, Igris middle,
-          specialists bottom) and pulse-animated edges for active routes. */}
-      <ActivityGraphPanel />
-      <MemoryStatusPanel />
+      <HeroStatsRow stats={heroStats} />
+      <AppHealthSection rows={appHealthRows} />
+      <QcHistorySection history={qcForSparkline} />
+      <OpenWorkItemsSection items={workItemsForCards} />
+      <ActivitySection entries={activityForTable} />
+      <MemorySection rows={memoryRows} />
+      <RoadmapSection fixes={roadmapFixes} />
     </section>
   );
 }
+
+// -----------------------------------------------------------------------------
+// Empty-snapshot helper (preserves the prior API for tests)
+// -----------------------------------------------------------------------------
 
 function emptySnapshotForHero(): StrongholdSnapshot {
   return {

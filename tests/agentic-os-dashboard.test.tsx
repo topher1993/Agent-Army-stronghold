@@ -23,14 +23,13 @@ describe('Agentic OS dashboard placeholder (compact Phase E baseline)', () => {
   it('renders the placeholder panel without throwing when no snapshot is provided', () => {
     const html = renderToStaticMarkup(<AgenticOsDashboardPanel />);
     expect(html).toContain('Agentic OS');
-    // The activity section is still rendered (now with a 4-column table).
+    // The activity section is still rendered.
     expect(html).toContain('data-section="activity"');
-    // No "Memory & Skills" or "Roadmap" sections — those were deleted.
-    // Note: "Memory Status" is now a real panel (Phase D3) — only the
-    // removed sections' specific copy is asserted absent.
-    expect(html).not.toContain('Memory &amp; Skills');
-    expect(html).not.toContain('Roadmap');
-    expect(html).not.toContain('App Health');
+    // Per igris-agentic-os-layout-brief: App Health, Memory, and Roadmap
+    // are now full sections of the redesigned dashboard (not deleted).
+    expect(html).toContain('data-section="app-health"');
+    expect(html).toContain('data-section="memory"');
+    expect(html).toContain('data-section="roadmap"');
     // Placeholder copy should still be present so users see clear empty-state.
     expect(html).toContain('awaiting live wiring');
   });
@@ -305,20 +304,18 @@ describe('Agentic OS dashboard compact layout (Igris compact brief — Phase E)'
     expect(points.length).toBe(7);
   });
 
-  it('renders the compact activity table with 4 columns (When/Actor/Action/Target) and ≤ 5 rows', () => {
+  it('renders the full-width activity table with 6 columns (When/Actor/Action/Target/Outcome/Reason) and ≤ 10 rows', () => {
     const html = renderToStaticMarkup(<AgenticOsDashboardPanel snapshot={captured} />);
     expect(html).toContain('data-activity-table="true"');
     expect(html).toMatch(/<table[^>]*class="agenticOsTable"/);
-    // 4 columns: When / Actor / Action / Target (Reason + Outcome removed).
-    expect(html).toMatch(/<thead>[\s\S]*?<th[^>]*>When<\/th>[\s\S]*?<th[^>]*>Actor<\/th>[\s\S]*?<th[^>]*>Action<\/th>[\s\S]*?<th[^>]*>Target<\/th>[\s\S]*?<\/thead>/);
-    // The "Reason" and "Outcome" column headers should be gone.
-    expect(html).not.toMatch(/<th[^>]*>Reason<\/th>/);
-    expect(html).not.toMatch(/<th[^>]*>Outcome<\/th>/);
+    // 6 columns: When / Actor / Action / Target / Outcome / Reason
+    // (igris-agentic-os-layout-brief requirement #8).
+    expect(html).toMatch(/<thead>[\s\S]*?<th[^>]*>When<\/th>[\s\S]*?<th[^>]*>Actor<\/th>[\s\S]*?<th[^>]*>Action<\/th>[\s\S]*?<th[^>]*>Target<\/th>[\s\S]*?<th[^>]*>Outcome<\/th>[\s\S]*?<th[^>]*>Reason<\/th>[\s\S]*?<\/thead>/);
     // Activity rows are tagged with data-activity-row
     const rowMatches = html.match(/data-activity-row="true"/g) || [];
     expect(rowMatches.length).toBeGreaterThan(0);
-    expect(rowMatches.length).toBeLessThanOrEqual(5);
-    expect(rowMatches.length).toBe(captured.activity.slice(0, 5).length);
+    expect(rowMatches.length).toBeLessThanOrEqual(10);
+    expect(rowMatches.length).toBe(captured.activity.slice(0, 10).length);
   });
 
   it('renders work items as up to 3 separate cards with badges, status pills and meta', () => {
@@ -331,42 +328,27 @@ describe('Agentic OS dashboard compact layout (Igris compact brief — Phase E)'
     expect(html).toMatch(/data-work-id="[^"]+"/);
   });
 
-  it('wraps Work Items + Activity in a side-by-side 2-column grid', () => {
+  it('renders Work Items and Activity as separate full-width sections (not a 2-col wrapper)', () => {
     const html = renderToStaticMarkup(<AgenticOsDashboardPanel snapshot={captured} />);
-    // The two sections share a single parent .agenticOsTwoCol wrapper.
-    expect(html).toMatch(/<div[^>]*class="agenticOsTwoCol"[\s\S]*?data-section="work-items"[\s\S]*?data-section="activity"[\s\S]*?<\/div>/);
-    // CSS defines the 2-column desktop grid with Work on the left + Activity on the right.
-    const twoColBlock = css.match(/\.agenticOsTwoCol\s*\{[^}]+\}/);
-    expect(twoColBlock, '.agenticOsTwoCol block should be present').toBeTruthy();
-    expect(twoColBlock![0]).toMatch(/grid-template-columns:\s*minmax\(280px,\s*1fr\)\s+minmax\(0,\s*1\.5fr\)/);
+    // Per igris-agentic-os-layout-brief, Work Items and Activity are
+    // separate full-width sections of the redesigned dashboard.
+    expect(html).toMatch(/data-section="work-items"/);
+    expect(html).toMatch(/data-section="activity"/);
+    // The two sections must NOT share an .agenticOsTwoCol wrapper anymore.
+    expect(html).not.toMatch(/<div[^>]*class="agenticOsTwoCol"/);
   });
 
-  it('does not render the deleted App Health, Memory & Skills, or Roadmap sections', () => {
+  it('renders all 7 redesigned sections: hero-stats, app-health, qc-history, work-items, activity, memory, roadmap', () => {
     const html = renderToStaticMarkup(<AgenticOsDashboardPanel snapshot={captured} />);
-    expect(html).not.toContain('data-section="app-health"');
-    expect(html).not.toContain('data-section="memory"');
-    expect(html).not.toContain('data-section="roadmap"');
-    // No "Phase B · live data wiring" eyebrow text (it was deleted).
-    expect(html).not.toContain('Phase B · live data wiring');
-    // No "Audit log: …" footer counter line.
-    expect(html).not.toMatch(/Audit log:\s+\d+\s+entries/);
-    // No "agenticOsFooter" wrapper.
-    expect(html).not.toMatch(/class="muted agenticOsFooter"/);
-  });
-
-  it('keeps the hero row + QC + work-items + activity + discord-coordination as the only rendered sections', () => {
-    const html = renderToStaticMarkup(<AgenticOsDashboardPanel snapshot={captured} />);
-    const sectionMarkers = html.match(/data-section="[^"]+"/g) || [];
-    // 6 data-section markers: layer1 (Phase E2), qc-history, work-items,
-    // activity, discord-coordination (Phase D1), routing-flow (Phase D4).
-    expect(sectionMarkers.sort()).toEqual([
-      'data-section="activity"',
-      'data-section="discord-coordination"',
-      'data-section="layer1"',
-      'data-section="qc-history"',
-      'data-section="routing-flow"',
-      'data-section="work-items"',
-    ].sort());
+    // Per igris-agentic-os-layout-brief requirement #1 (Hero Stats) through
+    // #7 (Roadmap). Each section must render with a data-section marker.
+    expect(html).toContain('data-section="hero-stats"');
+    expect(html).toContain('data-section="app-health"');
+    expect(html).toContain('data-section="qc-history"');
+    expect(html).toContain('data-section="work-items"');
+    expect(html).toContain('data-section="activity"');
+    expect(html).toContain('data-section="memory"');
+    expect(html).toContain('data-section="roadmap"');
   });
 
   it('App.tsx renders the Agentic OS dashboard as the default main view (no tab click required)', () => {
@@ -393,9 +375,9 @@ describe('Agentic OS dashboard compact layout (Igris compact brief — Phase E)'
     expect(componentSource).toMatch(/useEffect\([\s\S]*?\[hasLive,\s+snapshot\?\.generatedAt\][\s\S]*?\)/);
   });
 
-  it('component source uses .slice(0, 5) for activity and .slice(0, 3) for work items', () => {
-    // Brief says: activity 5 rows max, work items 3 cards max.
-    expect(componentSource).toMatch(/\.slice\(0,\s*5\)/);
+  it('component source uses .slice(0, 10) for activity and .slice(0, 3) for work items', () => {
+    // igris-agentic-os-layout-brief: activity table 10 rows max, work items 3 cards max.
+    expect(componentSource).toMatch(/\.slice\(0,\s*10\)/);
     expect(componentSource).toMatch(/\.slice\(0,\s*3\)/);
   });
 });

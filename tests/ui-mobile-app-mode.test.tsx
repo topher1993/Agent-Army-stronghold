@@ -58,10 +58,11 @@ describe('Stronghold Agentic OS default + Operations tab layout', () => {
     // The Agentic OS dashboard hero is rendered in the main area by default.
     const text = document.body.textContent || '';
     expect(text).toContain('Agentic OS Dashboard');
-    // Compact dashboard (Phase E — igris-compact-dashboard-brief): the App
-    // Health section was deleted. QC Score History is still rendered.
+    // Per igris-agentic-os-layout-brief: App Health is a real section of the
+    // redesigned dashboard (was a deleted section in the prior Phase E compact
+    // layout). QC Score History is still rendered.
     expect(text).toContain('QC Score History');
-    expect(text).not.toContain('App Health');
+    expect(text).toContain('App Health');
 
     // No fake/stale static components.
     expect(text).not.toContain('Stronghold Telemetry');
