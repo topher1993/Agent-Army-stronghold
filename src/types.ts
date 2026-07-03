@@ -57,6 +57,25 @@ export type Mission = {
   specialists: string[];
 };
 
+export type WorkCardRisk = 'GREEN' | 'YELLOW' | 'RED';
+
+export type WorkCardStatus = Mission['status'];
+
+export type WorkCard = {
+  workCardId: string;
+  project: string;
+  risk: WorkCardRisk;
+  owner: string;
+  qc: string;
+  created: string;
+  status: WorkCardStatus;
+  schedule?: string;
+  mode?: string;
+  title: string;
+  filePath: string;
+  lastUpdated: string;
+};
+
 export type SafetyFinding = {
   id: string;
   level: 'ok' | 'warn' | 'blocker';

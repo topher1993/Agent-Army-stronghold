@@ -18,6 +18,7 @@ import { callHermesCron, validateCronInput, type CronAction, type CronDispatchEr
 import { fetchRecentAgentArmyMessages } from './services/discordFeed';
 import { buildActivityGraph } from './services/activityGraph';
 import { readMemoryStatus, defaultMemoryPath } from './services/memoryStatus';
+import { readWorkCards, resolveWorkCardDirectoryOverride } from './services/workCardService';
 
 // Stronghold is a localhost-only dashboard. The Vite dev server binds to
 // 127.0.0.1:5174 (see vite.config.ts). CORS is restricted to that exact origin
@@ -49,6 +50,13 @@ function corsHeaders(origin: string | undefined | null): Record<string, string> 
   };
 }
 
+function corsPreflightHeaders(origin: string | undefined | null): Record<string, string> {
+  return {
+    ...corsHeaders(origin),
+    'access-control-allow-headers': process.env.NODE_ENV !== 'production' ? 'content-type,x-work-card-dir' : 'content-type',
+  };
+}
+
 function corsDenialHeaders(): Record<string, string> {
   // No Access-Control-Allow-Origin header => browser blocks the response.
   return {
@@ -69,6 +77,15 @@ function extractOrigin(headers: http.IncomingHttpHeaders | Record<string, string
   const raw = (headers as Record<string, string | string[] | undefined>)['origin'];
   if (Array.isArray(raw)) return raw[0];
   return raw || undefined;
+}
+
+function extractHeader(headers: http.IncomingHttpHeaders | Record<string, string | string[] | undefined> | undefined, name: string): string | string[] | undefined {
+  if (!headers) return undefined;
+  const lowerName = name.toLowerCase();
+  for (const [key, value] of Object.entries(headers)) {
+    if (key.toLowerCase() === lowerName) return value;
+  }
+  return undefined;
 }
 
 // P2 fix #2: rate limiter wiring (P2-3 from Tusk audit).
@@ -143,9 +160,9 @@ function makeRoute(limiters: RateLimiters) {
     if (code === 'INVALID') return json(400, { error: 'invalid cron request', detail: message }, origin);
     return json(502, { error: 'cron tool failure', detail: message }, origin);
   }
-  return async function route(method: string, url: string, body: unknown | undefined, origin: string | undefined | null): Promise<InjectResponse> {
+  return async function route(method: string, url: string, body: unknown | undefined, origin: string | undefined | null, headers?: http.IncomingHttpHeaders | Record<string, string | string[] | undefined>): Promise<InjectResponse> {
       try {
-        return await routeInner(method, url, body, origin);
+        return await routeInner(method, url, body, origin, headers);
       } catch (err) {
         // Defensive: any unhandled throw from a service (e.g. invalid lifecycle
         // transition) becomes a 500 instead of crashing the request handler.
@@ -156,13 +173,17 @@ function makeRoute(limiters: RateLimiters) {
         return json(500, { error: 'internal server error', detail: message }, origin);
       }
     };
-    async function routeInner(method: string, url: string, body: unknown | undefined, origin: string | undefined | null): Promise<InjectResponse> {
+    async function routeInner(method: string, url: string, body: unknown | undefined, origin: string | undefined | null, headers?: http.IncomingHttpHeaders | Record<string, string | string[] | undefined>): Promise<InjectResponse> {
     if (!isOriginAllowed(origin)) {
       return { statusCode: 403, body: JSON.stringify({ error: 'origin not allowed' }), headers: corsDenialHeaders() };
     }
-  if (method === 'OPTIONS') return json(204, {}, origin);
+  if (method === 'OPTIONS') return { statusCode: 204, body: JSON.stringify({}), headers: { 'content-type': 'application/json', ...corsPreflightHeaders(origin) } };
   if (method === 'GET' && url === '/api/health') return json(200, { ok: true, phase: 2, host: HOST, writeGate: 'approval-required' }, origin);
   if (method === 'GET' && url === '/api/snapshot') return json(200, readSnapshot(), origin);
+  if (method === 'GET' && url.split('?')[0] === '/api/workcards') {
+    const directory = resolveWorkCardDirectoryOverride(extractHeader(headers, 'x-work-card-dir'));
+    return json(200, readWorkCards(directory), origin);
+  }
   if (method === 'GET' && url === '/api/missions') return json(200, readJsonArray(approvedDataPath('missions')), origin);
   if (method === 'GET' && url.startsWith('/api/tasks')) return json(200, readJsonArray(approvedDataPath('tasks')), origin);
   if (method === 'GET' && url === '/api/change-requests') return json(200, readJsonArray(approvedDataPath('changeRequests')), origin);
@@ -657,10 +678,10 @@ export function createStrongholdServer() {
   const limiters = buildRateLimiters();
   const route = makeRoute(limiters);
   return {
-    inject: (req: InjectRequest) => route(req.method, req.url, req.body, extractOrigin(req.headers)),
+    inject: (req: InjectRequest) => route(req.method, req.url, req.body, extractOrigin(req.headers), req.headers),
     listen: () => {
       const server = http.createServer(async (req, res) => {
-        const result = await route(req.method || 'GET', req.url || '/', req.method === 'GET' ? undefined : await parseBody(req), extractOrigin(req.headers));
+        const result = await route(req.method || 'GET', req.url || '/', req.method === 'GET' ? undefined : await parseBody(req), extractOrigin(req.headers), req.headers);
         res.writeHead(result.statusCode, result.headers); res.end(result.body);
       });
       server.listen(PORT, HOST, () => console.log(`Stronghold Phase 2 API on http://${HOST}:${PORT}`));

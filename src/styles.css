@@ -1198,3 +1198,133 @@ dd { margin: 0; font-weight: 500; color: var(--text-primary); font-size: 13px; l
 .cronSchedule, .approvalMeta { color: var(--text-tertiary); font-size: 12px; font-family: var(--font-mono); }
 .cronActions, .approvalActions { display: flex; gap: 6px; flex-shrink: 0; }
 .cronActions button, .approvalActions button { padding: 4px 10px; font-size: 12px; }
+/* ===========================================================================
+ * R8 — Live Work Card Feed
+ * ===========================================================================
+ */
+.workCardFeed {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  box-shadow: var(--shadow-card);
+}
+.workCardFeedHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.workCardFeedHeader h3 { margin: 0; font-size: 0.85rem; font-weight: 590; color: var(--text-primary); }
+.workCardFeedHeader .muted { margin: 3px 0 0; color: var(--text-tertiary); font-size: 0.75rem; }
+.workCardFeedActions { display: flex; align-items: center; gap: 10px; }
+.workCardFeedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
+}
+.workCardFeedCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.workCardFeedCard[data-risk='green'] { border-color: rgba(16, 185, 129, 0.35); }
+.workCardFeedCard[data-risk='yellow'] { border-color: rgba(247, 201, 72, 0.4); }
+.workCardFeedCard[data-risk='red'] { border-color: rgba(255, 87, 87, 0.48); }
+.workCardFeedCardTop, .workCardFeedMeta, .workCardFeedFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.workCardFeedTitle {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 590;
+  line-height: 1.3;
+  color: var(--text-primary);
+  letter-spacing: -0.1px;
+}
+.workCardFeedMeta .muted {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.75rem;
+}
+.workCardFeedFooter { color: var(--text-tertiary); }
+.workCardRiskBadge {
+  white-space: nowrap;
+  border-radius: var(--radius-pill);
+  padding: 4px 9px;
+  font-size: 10px;
+  font-weight: 510;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid transparent;
+}
+.workCardRiskBadge.green {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success-emerald);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.workCardRiskBadge.yellow {
+  background: rgba(247, 201, 72, 0.12);
+  color: var(--warn);
+  border-color: rgba(247, 201, 72, 0.4);
+}
+.workCardRiskBadge.red {
+  background: rgba(255, 87, 87, 0.12);
+  color: #ff8787;
+  border-color: rgba(255, 87, 87, 0.4);
+}
+.status.planned {
+  background: rgba(113, 112, 255, 0.12);
+  color: var(--accent);
+  border-color: rgba(113, 112, 255, 0.35);
+}
+.status.active {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success-emerald);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.status.blocked, .status.complete {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+.status.review {
+  background: rgba(247, 201, 72, 0.12);
+  color: var(--warn);
+  border-color: rgba(247, 201, 72, 0.4);
+}
+.workCardFeedState {
+  padding: 18px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-tertiary);
+  font-size: 0.82rem;
+}
+.workCardFeedError {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 87, 87, 0.3);
+  background: rgba(255, 87, 87, 0.08);
+  color: #ff8787;
+  font-size: 0.82rem;
+}
+.workCardFeedLoaded { margin: 0; font-size: 0.72rem; }
+@media (max-width: 720px) {
+  .workCardFeed { padding: 14px; }
+  .workCardFeedGrid { grid-template-columns: 1fr; }
+  .workCardFeedActions { width: 100%; justify-content: space-between; }
+}
