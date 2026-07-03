@@ -1,5 +1,6 @@
 import type { ChangeRequest, AuditEvent } from '../../shared/types';
 import type { AgentArtifact, AgentRequest, AgentRun } from '../../shared/agentTypes';
+import type { WorkCard } from '../types';
 
 const API_BASE = 'http://127.0.0.1:5175/api';
 
@@ -74,6 +75,7 @@ export const strongholdApi = {
   listAgentRuns: () => apiJson<AgentRun[]>('/agent-runs'),
   listAgentArtifacts: () => apiJson<AgentArtifact[]>('/agent-artifacts'),
   promoteArtifact: (id: string) => apiJson<ChangeRequest>(`/agent-artifacts/${id}/create-change-request`, { method: 'POST', body: JSON.stringify({ actor: 'Chris' }) }),
+  fetchWorkCards: () => apiJson<WorkCard[]>('/workcards'),
   // FEATURE 2 — Cron CRUD (full surface; proxies through to hermes cron CLI).
   listCronJobs: () => apiJson<CronJobSummaryApi[]>('/cron'),
   getCronJob: (id: string) => apiJson<CronJobDetail>(`/cron/${encodeURIComponent(id)}`),

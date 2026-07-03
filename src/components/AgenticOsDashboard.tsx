@@ -4,6 +4,7 @@ import type { ActivityEntry, QcRound, StrongholdSnapshot, WorkItem } from '../ty
 import { ActivityGraphPanel } from './ActivityGraphPanel';
 import { MemoryStatusPanel } from './MemoryStatusPanel';
 import { DiscordCoordinationPanel } from './DiscordCoordinationPanel';
+import { WorkCardFeed } from './WorkCardFeed';
 
 export type AgenticOsCardStatus = 'placeholder' | 'live' | 'stale' | 'empty';
 
@@ -468,6 +469,9 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
           </div>
         </section>
       </div>
+
+      {/* Work cards: live read-only feed sourced from /api/workcards. */}
+      <WorkCardFeed />
 
       {/* Discord #agent-army coordination panel (Phase D1).
           Self-contained read-only feed; polls every 60s, pausable. */}
