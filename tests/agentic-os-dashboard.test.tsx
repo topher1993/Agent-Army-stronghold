@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { AgenticOsDashboardPanel, AGENTIC_OS_PLACEHOLDER, buildAgenticOsData } from '../src/components/AgenticOsDashboard';
+import { AgenticOsDashboardPanel, AGENTIC_OS_PLACEHOLDER, buildAgenticOsData } from '../src/components/AgenticOsDashboardPanel';
 import type { StrongholdSnapshot } from '../src/types';
 
 const root = process.cwd();
@@ -121,24 +121,25 @@ describe('Agentic OS dashboard live-data wiring (Phase B)', () => {
 describe('Agentic OS shell wiring (Phase A + Phase B regression)', () => {
   it('wires the Agentic OS dashboard as the default landing view of Stronghold', () => {
     const appSource = fs.readFileSync(path.join(root, 'src', 'App.tsx'), 'utf8');
-    // Two tabs: Dashboard (default) + Operations.
-    expect(appSource).toMatch(/id:\s*'dashboard',\s*label:\s*'Dashboard'/);
-    expect(appSource).toMatch(/id:\s*'operations',\s*label:\s*'Operations'/);
-    // The dashboard section is the dominant main column.
-    expect(appSource).toMatch(/id="dashboard-section"/);
-    expect(appSource).toMatch(/AgenticOsDashboardPanel\s+snapshot=\{snapshot\}/);
-    // Default active tab is `dashboard` so the Agentic OS panel renders
-    // without any tab click.
-    expect(appSource).toMatch(/useState<TabId>\('dashboard'\)/);
-    // No left rail, no fake intel/roster/inventory rendering.
+    const sidebarSource = fs.readFileSync(path.join(root, 'src', 'components', 'Sidebar.tsx'), 'utf8');
+    const surfacesSource = fs.readFileSync(path.join(root, 'src', 'components', 'Surfaces.tsx'), 'utf8');
+    expect(appSource).toMatch(/<SurfaceDashboard/);
+    expect(sidebarSource).toMatch(/id: 'dashboard'/);
+    expect(sidebarSource).toMatch(/id: 'operations'/);
+    // App.tsx renders the Sidebar + surfaces.
+    expect(appSource).toMatch(/<Sidebar[\s\S]+active=\{active\}[\s\S]+/);
+    expect(appSource).toMatch(/<SurfaceDashboard/);
+    // Dashboard is the default.
+    expect(appSource).toMatch(/useActiveSurface\(\)/);
+    // No fake intel/roster/inventory rendering.
     expect(appSource).not.toMatch(/Stronghold Telemetry/);
     expect(appSource).not.toMatch(/Engineering Division Roster/);
     expect(appSource).not.toMatch(/Agent Army Inventory/);
-    // Operations holds proposals/orchestration/mission/safety.
-    expect(appSource).toMatch(/id="operations-section"/);
-    expect(appSource).toMatch(/Mission Proposal/);
-    expect(appSource).toMatch(/Task Proposal/);
-    expect(appSource).toMatch(/Phase 3 Agent Orchestration/);
+    // Operations holds the proposals/orchestration/mission/safety panel.
+    expect(surfacesSource).toMatch(/SurfaceOperations/);
+    expect(surfacesSource).toMatch(/Mission Proposal/);
+    expect(surfacesSource).toMatch(/Task Proposal/);
+    expect(surfacesSource).toMatch(/Phase 3 Agent Orchestration/);
   });
 
   it('keeps the panel scoped to React + Vite + TypeScript, no new framework dependency', () => {
@@ -146,7 +147,7 @@ describe('Agentic OS shell wiring (Phase A + Phase B regression)', () => {
       dependencies: Record<string, string>;
       devDependencies: Record<string, string>;
     };
-    const componentSource = fs.readFileSync(path.join(root, 'src', 'components', 'AgenticOsDashboard.tsx'), 'utf8');
+    const componentSource = fs.readFileSync(path.join(root, 'src', 'components', 'AgenticOsDashboardPanel.tsx'), 'utf8');
     expect(componentSource).toContain("from 'react'");
     expect(componentSource).not.toMatch(/from\s+['"](recharts|chart\.js|d3|framer-motion|@mui|tailwindcss|axios)/);
     expect(pkg.dependencies['react']).toMatch(/^18\./);
@@ -165,9 +166,10 @@ describe('Agentic OS 2-tab nav CSS (Phase D — Agentic OS is default)', () => {
     expect(gridBlock!).toMatch(/grid-template-columns:\s*repeat\(\s*2\s*,/);
   });
 
-  it('reveal rules include the dashboard and operations active classes + section ids', () => {
-    expect(css).toMatch(/\.commandGrid\.active-dashboard\s+#dashboard-section/);
-    expect(css).toMatch(/\.commandGrid\.active-operations\s+#operations-section/);
+  it('reveal rules match the new shell: .appShell + .sidebar + .sidebarItem active state in CSS', () => {
+    expect(css).toMatch(/\.appShell/);
+    expect(css).toMatch(/\.sidebar/);
+    expect(css).toMatch(/\.sidebarItem--active/);
   });
 
   it('commandGrid is a 2-column desktop layout (main + right rail)', () => {
@@ -237,7 +239,7 @@ describe('Agentic OS Phase C — live test/build + activity reason + stable effe
   });
 
   it('stabilizes useEffect deps on generatedAt so object identity churn does not retrigger', () => {
-    const source = fs.readFileSync(path.join(root, 'src', 'components', 'AgenticOsDashboard.tsx'), 'utf8');
+    const source = fs.readFileSync(path.join(root, 'src', 'components', 'AgenticOsDashboardPanel.tsx'), 'utf8');
     expect(source).toMatch(/useEffect\([\s\S]*?\[hasLive,\s+snapshot\?\.generatedAt\][\s\S]*?\)/);
   });
 });
@@ -266,7 +268,7 @@ describe('Phase C capture-health script (no shell, path-safe)', () => {
 describe('Agentic OS dashboard compact layout (Igris compact brief — Phase E)', () => {
   const stylesPath = path.join(root, 'src', 'styles.css');
   const css = fs.readFileSync(stylesPath, 'utf8');
-  const componentSource = fs.readFileSync(path.join(root, 'src', 'components', 'AgenticOsDashboard.tsx'), 'utf8');
+  const componentSource = fs.readFileSync(path.join(root, 'src', 'components', 'AgenticOsDashboardPanel.tsx'), 'utf8');
   const appSource = fs.readFileSync(path.join(root, 'src', 'App.tsx'), 'utf8');
   const captured: StrongholdSnapshot = JSON.parse(fs.readFileSync(path.join(root, 'public', 'data', 'stronghold-snapshot.json'), 'utf8'));
 
@@ -370,17 +372,24 @@ describe('Agentic OS dashboard compact layout (Igris compact brief — Phase E)'
   });
 
   it('App.tsx renders the Agentic OS dashboard as the default main view (no tab click required)', () => {
-    expect(appSource).toMatch(/<AgenticOsDashboardPanel\s+snapshot=\{snapshot\}\s*\/>/);
-    expect(appSource).toMatch(/id="dashboard-section"/);
-    expect(appSource).toMatch(/useState<TabId>\('dashboard'\)/);
-    // The dashboard section is the FIRST child of .commandGrid.
-    expect(appSource).toMatch(/<section\s+id="dashboard-section"[\s\S]*?<AgenticOsDashboardPanel/);
+    // Phase 47: dashboard is rendered through SurfaceDashboard (App.tsx delegates).
+    // The dashboard surface wraps AgenticOsDashboardPanel and is mounted via
+    // the Sidebar-driven active surface state, defaulting to 'dashboard'.
+    expect(appSource).toMatch(/<SurfaceDashboard\b/);
+    expect(appSource).toMatch(/<Sidebar\b/);
+    expect(appSource).toMatch(/useActiveSurface\(\)/);
   });
 
-  it('CSS defines a 2-column desktop layout for the .commandGrid with the dashboard as main content', () => {
-    const cmdGridBlock = css.match(/\.commandGrid\s*\{[^}]*grid-template-columns:[^}]*\}/);
-    expect(cmdGridBlock, '.commandGrid block should be present').toBeTruthy();
-    expect(cmdGridBlock![0]).toMatch(/grid-template-columns:\s*minmax\(0,\s*1fr\)\s+320px/);
+  it('CSS still defines layout primitives needed for the new app shell (sidebar grid + main)', () => {
+    const appShell = css.match(/\.appShell\s*\{[^}]*\}/);
+    expect(appShell, '.appShell block should be present').toBeTruthy();
+    expect(appShell![0]).toMatch(/grid-template-columns:\s*auto\s+minmax\(0,\s*1fr\)/);
+  });
+
+  it('CSS defines the sidebar styling tokens (palette, status dot, active surface)', () => {
+    expect(css).toMatch(/\.sidebar\s*\{/);
+    expect(css).toMatch(/--sidebar-bg:/);
+    expect(css).toMatch(/\.sidebarItem--active/);
   });
 
   it('does not introduce any new framework dependency in the component', () => {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-03T04:01:47.636Z",
+  "generatedAt": "2026-07-05T15:17:33.683Z",
   "phase": "Phase 1 MVP",
   "readOnly": true,
   "owner": "Igris",
@@ -15,7 +15,7 @@
     "agents": 10,
     "profiles": 21,
     "wrappersAvailable": 10,
-    "skills": 1357,
+    "skills": 1365,
     "cronJobs": 3,
     "missions": 2,
     "blockedMissions": 0
@@ -237,7 +237,7 @@
       "name": "default",
       "pathLabel": "%LOCALAPPDATA%/hermes",
       "hasSkills": true,
-      "skillCount": 89,
+      "skillCount": 97,
       "skills": [
         {
           "name": "agent-army-governance",
@@ -283,6 +283,11 @@
           "name": "audiocraft-audio-generation",
           "description": "\"AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\"",
           "relativePath": "mlops/models/audiocraft/SKILL.md"
+        },
+        {
+          "name": "audit-fabrication-prevention",
+          "description": "\"Pre-audit verification rule for Belion and division leaders. Run before delivering any audit claim that names specific files, locales, keys, counts, or CVEs. Catches 'invented-from-mental-model' audits before they reach work-cards.\"",
+          "relativePath": "audit-fabrication-prevention/SKILL.md"
         },
         {
           "name": "baoyu-infographic",
@@ -370,6 +375,11 @@
           "relativePath": "creative/excalidraw/SKILL.md"
         },
         {
+          "name": "explain-simple-with-analogies",
+          "description": "Explain technical work to Christopher in plain English with concrete analogies. Use when summarizing what we did, what a tool/concept does, or how a system works. Trigger on \"explain\", \"what did we do\", \"what is X\", \"how does Y work\", any technical status summary, or when user signals they don't follow (e.g. \"I can't understand\", \"use simple words\").",
+          "relativePath": "explain-simple-with-analogies/SKILL.md"
+        },
+        {
           "name": "expo-metro-restart-windows",
           "description": "Restart Expo + Metro + tunnel cleanly on Windows when previous restarts left zombie node.exe processes, stale babel caches, silent npm install failures, empty-JS-exception bundle crashes, or when Metro says \"Tunnel ready\" but doesn't print the public URL. Trigger when \"Cannot find module\", \"babel-preset-expo missing\", \"base$0 unexpected token\", \"tunnel still on old process\", \"Failed to resolve plugin for module X\", \"ios.deploymentTarget needs to be at least 16.4\", \"blank white page on phone after URL loads\", \"Metro says Tunnel ready but no URL printed\", or HTTP 502 from the public tunnel symptoms recur — or when `--clear` alone doesn't fix a broken bundle. Default to **Expo's bundled @expo/ngrok** (`*.exp.direct`, with QR code on Desktop) when Chris asks for the first-beta-release flow; fall back to **cloudflared** otherwise.",
           "relativePath": "devops/expo-metro-restart-windows/SKILL.md"
@@ -428,16 +438,6 @@
           "name": "hermes-subagent-profiles",
           "description": "\"Create and verify Hermes sub-agent profiles with personas, wrapper commands, and optional shared credentials.\"",
           "relativePath": "devops/hermes-subagent-profiles/SKILL.md"
-        },
-        {
-          "name": "himalaya",
-          "description": "\"Himalaya CLI: IMAP/SMTP email from terminal.\"",
-          "relativePath": "email/himalaya/SKILL.md"
-        },
-        {
-          "name": "huggingface-hub",
-          "description": "\"HuggingFace hf CLI: search/download/upload models, datasets.\"",
-          "relativePath": "mlops/huggingface-hub/SKILL.md"
         }
       ],
       "hasCronDir": true
@@ -4384,7 +4384,7 @@
       "modules": 0,
       "note": "Run `npm run health:capture` then `npm run snapshot` to populate."
     },
-    "auditEntries": 144,
+    "auditEntries": 1876,
     "cronJobs": 3,
     "tunnel": {
       "publicHost": "127.0.0.1:5174",
@@ -4443,6 +4443,30 @@
     }
   ],
   "workItems": [
+    {
+      "id": "2026-07-05_belion-phase-47-sidebar",
+      "title": "belion-phase-47-sidebar",
+      "status": "planned",
+      "source": "hermes",
+      "modifiedAt": "2026-07-05T13:08:04.474Z",
+      "relativePath": ".hermes/plans/2026-07-05_belion-phase-47-sidebar.md"
+    },
+    {
+      "id": "2026-07-05_belion-phase-46-ux-improvements",
+      "title": "belion-phase-46-ux-improvements",
+      "status": "planned",
+      "source": "hermes",
+      "modifiedAt": "2026-07-05T12:30:01.085Z",
+      "relativePath": ".hermes/plans/2026-07-05_belion-phase-46-ux-improvements.md"
+    },
+    {
+      "id": "2026-07-05_belion-workcard-interactive-ui",
+      "title": "belion-workcard-interactive-ui",
+      "status": "planned",
+      "source": "hermes",
+      "modifiedAt": "2026-07-05T10:44:54.700Z",
+      "relativePath": ".hermes/plans/2026-07-05_belion-workcard-interactive-ui.md"
+    },
     {
       "id": "2026-07-01_atlas-12-subagent-roster",
       "title": "atlas-12-subagent-roster",
@@ -4516,16 +4540,6 @@
       "source": "missions",
       "modifiedAt": "",
       "relativePath": "data/missions.json"
-    },
-    {
-      "id": "mission:stronghold-phase-2-backlog",
-      "title": "Phase 2 write-control backlog",
-      "status": "planned",
-      "priority": "medium",
-      "owner": "Igris",
-      "source": "missions",
-      "modifiedAt": "",
-      "relativePath": "data/missions.json"
     }
   ],
   "memory": {
@@ -4533,7 +4547,7 @@
       {
         "path": "memories/MEMORY.md",
         "name": "MEMORY.md",
-        "sizeBytes": 2133,
+        "sizeBytes": 1842,
         "headings": [
           "Agent army: read AGENTS.md, never summarize. Belion=default."
         ]
@@ -4541,7 +4555,7 @@
       {
         "path": "memories/USER.md",
         "name": "USER.md",
-        "sizeBytes": 1012,
+        "sizeBytes": 1378,
         "headings": []
       }
     ],
@@ -4595,126 +4609,126 @@
         "skill": "arxiv"
       }
     ],
-    "totalSkills": 1357
+    "totalSkills": 1365
   },
   "activity": [
     {
-      "timestamp": "2026-07-03T03:56:26.686Z",
+      "timestamp": "2026-07-05T15:17:27.101Z",
+      "actor": "Stronghold",
+      "capability": "memory:read",
+      "action": "memory-status.read",
+      "outcome": "ok",
+      "targetId": "MEMORY.md",
+      "targetType": "memory-file",
+      "reason": "memory status read: 5 sections, 1855 bytes"
+    },
+    {
+      "timestamp": "2026-07-05T15:17:27.093Z",
+      "actor": "Stronghold",
+      "capability": "graph:read",
+      "action": "activity-graph.read",
+      "outcome": "ok",
+      "targetId": "main",
+      "targetType": "activity-graph",
+      "reason": "activity graph read: 0 edges across 16 divisions (window=24h)"
+    },
+    {
+      "timestamp": "2026-07-05T15:17:27.079Z",
+      "actor": "Stronghold",
+      "capability": "discord:read:agent-army",
+      "action": "discord.read",
+      "outcome": "failed",
+      "targetId": "",
+      "targetType": "discord-channel",
+      "reason": "discord read failed: DISCORD_FAILURE"
+    },
+    {
+      "timestamp": "2026-07-05T15:17:27.073Z",
+      "actor": "Stronghold",
+      "capability": "memory:read",
+      "action": "memory-status.read",
+      "outcome": "ok",
+      "targetId": "MEMORY.md",
+      "targetType": "memory-file",
+      "reason": "memory status read: 5 sections, 1855 bytes"
+    },
+    {
+      "timestamp": "2026-07-05T15:17:27.068Z",
+      "actor": "Stronghold",
+      "capability": "graph:read",
+      "action": "activity-graph.read",
+      "outcome": "ok",
+      "targetId": "main",
+      "targetType": "activity-graph",
+      "reason": "activity graph read: 0 edges across 16 divisions (window=24h)"
+    },
+    {
+      "timestamp": "2026-07-05T15:17:27.059Z",
+      "actor": "Stronghold",
+      "capability": "discord:read:agent-army",
+      "action": "discord.read",
+      "outcome": "failed",
+      "targetId": "",
+      "targetType": "discord-channel",
+      "reason": "discord read failed: DISCORD_FAILURE"
+    },
+    {
+      "timestamp": "2026-07-05T15:16:45.066Z",
+      "actor": "Stronghold",
+      "capability": "memory:read",
+      "action": "memory-status.read",
+      "outcome": "ok",
+      "targetId": "MEMORY.md",
+      "targetType": "memory-file",
+      "reason": "memory status read: 5 sections, 1855 bytes"
+    },
+    {
+      "timestamp": "2026-07-05T15:16:45.060Z",
+      "actor": "Stronghold",
+      "capability": "graph:read",
+      "action": "activity-graph.read",
+      "outcome": "ok",
+      "targetId": "main",
+      "targetType": "activity-graph",
+      "reason": "activity graph read: 0 edges across 16 divisions (window=24h)"
+    },
+    {
+      "timestamp": "2026-07-05T15:16:45.051Z",
+      "actor": "Stronghold",
+      "capability": "discord:read:agent-army",
+      "action": "discord.read",
+      "outcome": "failed",
+      "targetId": "",
+      "targetType": "discord-channel",
+      "reason": "discord read failed: DISCORD_FAILURE"
+    },
+    {
+      "timestamp": "2026-07-05T15:16:38.347Z",
       "actor": "Igris",
       "capability": "changeRequest:apply",
       "action": "apply",
       "outcome": "applied",
-      "targetId": "56aec5be-c197-4e7d-8c27-e9f4785bd014",
+      "targetId": "bc4b93d1-8901-4797-9602-9d79a0d820f9",
       "targetType": "changeRequest",
       "reason": "applied by Igris"
     },
     {
-      "timestamp": "2026-07-03T03:56:26.678Z",
+      "timestamp": "2026-07-05T15:16:38.337Z",
       "actor": "Igris",
       "capability": "changeRequest:approve",
       "action": "approve",
       "outcome": "approved",
-      "targetId": "56aec5be-c197-4e7d-8c27-e9f4785bd014",
+      "targetId": "bc4b93d1-8901-4797-9602-9d79a0d820f9",
       "targetType": "changeRequest",
       "reason": "approved in UI"
     },
     {
-      "timestamp": "2026-07-03T03:56:26.669Z",
+      "timestamp": "2026-07-05T15:16:38.326Z",
       "actor": "Chris",
       "capability": "changeRequest:create",
       "action": "create",
       "outcome": "requested",
-      "targetId": "56aec5be-c197-4e7d-8c27-e9f4785bd014",
-      "targetType": "changeRequest",
-      "reason": "change request created"
-    },
-    {
-      "timestamp": "2026-07-03T03:55:48.295Z",
-      "actor": "Igris",
-      "capability": "orchestration:disable",
-      "action": "disable",
-      "outcome": "approved",
-      "targetId": "",
-      "targetType": "system",
-      "reason": "operator disabled"
-    },
-    {
-      "timestamp": "2026-07-03T03:55:48.291Z",
-      "actor": "Chris",
-      "capability": "agentRequest:create",
-      "action": "create",
-      "outcome": "requested",
-      "targetId": "6938a1e7-6d49-4247-9021-9dc0e414ae42",
-      "targetType": "changeRequest",
-      "reason": "agent request created by Chris"
-    },
-    {
-      "timestamp": "2026-07-03T03:55:48.283Z",
-      "actor": "Chris",
-      "capability": "changeRequest:create",
-      "action": "create",
-      "outcome": "requested",
-      "targetId": "551d1989-4ee4-4db8-aa1d-9443f7fa69df",
-      "targetType": "changeRequest",
-      "reason": "change request created"
-    },
-    {
-      "timestamp": "2026-07-03T03:55:48.267Z",
-      "actor": "Chris",
-      "capability": "changeRequest:create",
-      "action": "create",
-      "outcome": "requested",
-      "targetId": "de2b17b6-391f-495b-ad32-00d4fc44dd9b",
-      "targetType": "changeRequest",
-      "reason": "change request created"
-    },
-    {
-      "timestamp": "2026-07-03T03:55:48.251Z",
-      "actor": "Chris",
-      "capability": "changeRequest:create",
-      "action": "create",
-      "outcome": "requested",
-      "targetId": "b072ac1f-eb70-4f47-9cdc-f2d3a9456c61",
-      "targetType": "changeRequest",
-      "reason": "change request created"
-    },
-    {
-      "timestamp": "2026-07-03T03:55:48.236Z",
-      "actor": "Chris",
-      "capability": "changeRequest:create",
-      "action": "create",
-      "outcome": "requested",
-      "targetId": "be746479-b7b2-40be-8e2f-2002806692ce",
-      "targetType": "changeRequest",
-      "reason": "change request created"
-    },
-    {
-      "timestamp": "2026-07-03T03:55:48.221Z",
-      "actor": "Chris",
-      "capability": "changeRequest:create",
-      "action": "create",
-      "outcome": "requested",
-      "targetId": "ab2e1365-fcfb-426c-a6cc-9da2c097bf2e",
-      "targetType": "changeRequest",
-      "reason": "change request created"
-    },
-    {
-      "timestamp": "2026-07-03T03:55:48.205Z",
-      "actor": "Chris",
-      "capability": "changeRequest:create",
-      "action": "create",
-      "outcome": "requested",
-      "targetId": "4069a19f-eaec-4154-ac7b-166663db210e",
-      "targetType": "changeRequest",
-      "reason": "change request created"
-    },
-    {
-      "timestamp": "2026-07-03T03:55:48.190Z",
-      "actor": "Chris",
-      "capability": "changeRequest:create",
-      "action": "create",
-      "outcome": "requested",
-      "targetId": "884ffb33-1f65-4105-92ca-c4fcc21159b9",
+      "targetId": "bc4b93d1-8901-4797-9602-9d79a0d820f9",
       "targetType": "changeRequest",
       "reason": "change request created"
     }

@@ -17,96 +17,99 @@ beforeEach(() => {
       '/api/audit': [],
       '/api/agent-requests': [],
       '/api/agent-runs': [],
-      '/api/agent-artifacts': []
+      '/api/agent-artifacts': [],
+      '/api/approvals': [],
     };
     return { ok: true, json: async () => responses[path] ?? [] };
   }));
 });
 
-describe('Stronghold Agentic OS default + Operations tab layout', () => {
-  it('renders the bottom mobile tab navigation with Dashboard selected by default', async () => {
+/**
+ * Phase 47: single-sidebar render — only the active surface is in the DOM.
+ * Clicking a different sidebar item removes the current surface and mounts the
+ * new one. Mobile uses a hamburger trigger; the test uses the sidebar items
+ * directly to sidestep the overlay-trigger.
+ */
+describe('Stronghold shell sidebar-driven surface swap (Phase 47)', () => {
+  it('renders the sidebar with 6 surfaces and Dashboard selected by default', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
 
-    const nav = document.querySelector('[aria-label="Stronghold sections"]');
-    expect(nav).toBeTruthy();
+    const sidebar = document.querySelector('.sidebar');
+    expect(sidebar).toBeTruthy();
 
-    const tabs = Array.from(nav?.querySelectorAll('button') ?? []);
-    expect(tabs).toHaveLength(2);
-    expect(tabs.map(tab => tab.textContent)).toEqual(['Dashboard', 'Operations']);
-
-    expect(document.querySelector('.commandGrid')?.className).toContain('active-dashboard');
-    const dashboardTab = tabs.find(tab => tab.textContent === 'Dashboard');
-    expect(dashboardTab?.getAttribute('aria-selected')).toBe('true');
-    expect(dashboardTab?.getAttribute('aria-controls')).toBe('dashboard-section');
+    const items = Array.from(sidebar?.querySelectorAll('[data-surface-id]') ?? []);
+    expect(items.map(i => i.getAttribute('data-surface-id'))).toEqual([
+      'dashboard', 'work', 'missions', 'operations', 'approvals', 'cron',
+    ]);
+    expect(sidebar?.querySelector('.sidebarItem--active')?.getAttribute('data-surface-id')).toBe('dashboard');
   });
 
-  it('shows the Agentic OS dashboard by default with no tab click required', async () => {
+  it('shows the Dashboard surface by default; other surfaces are not in the DOM', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
 
-    // The dashboard section is visible by default; the operations section is hidden.
-    const dashboardSection = document.querySelector('#dashboard-section');
-    const operationsSection = document.querySelector('#operations-section');
-    expect(dashboardSection).toBeTruthy();
-    expect(operationsSection).toBeTruthy();
-    expect(dashboardSection?.getAttribute('aria-hidden')).toBe('false');
-    expect(operationsSection?.getAttribute('aria-hidden')).toBe('true');
+    const dashboardSurface = document.querySelector('#dashboard-section');
+    expect(dashboardSurface).toBeTruthy();
+    expect(document.querySelector('#operations-section')).toBeNull();
+    expect(document.querySelector('#work-section')).toBeNull();
+    expect(document.querySelector('#approvals-section')).toBeNull();
 
-    // The Agentic OS dashboard hero is rendered in the main area by default.
     const text = document.body.textContent || '';
     expect(text).toContain('Agentic OS Dashboard');
-    // Compact dashboard (Phase E — igris-compact-dashboard-brief): the App
-    // Health section was deleted. QC Score History is still rendered.
     expect(text).toContain('QC Score History');
     expect(text).not.toContain('App Health');
 
-    // No fake/stale static components.
     expect(text).not.toContain('Stronghold Telemetry');
     expect(text).not.toContain('Engineering Division Roster');
     expect(text).not.toContain('Agent Army Inventory');
 
-    // Guarded posture is still present.
     expect(text).toContain('GUARDED');
     expect(text).toContain('No shell');
-    expect(text).toContain('Approval Queue');
-    expect(text).toContain('Audit Trail');
-    expect(text).toContain('Cron / Schedule Manager');
+
+    // D4: approval queue / audit / cron manager are NOT on the Dashboard surface.
+    expect(text).not.toContain('Approval Queue');
+    expect(text).not.toContain('Audit Trail');
+    expect(text).not.toContain('Cron / Schedule Manager');
+
     expect(text.toLowerCase()).not.toContain('execute command');
     expect(text.toLowerCase()).not.toContain('shell command');
   });
 
-  it('switches to the Operations section when the Operations tab is clicked', async () => {
+  it('switches to the Operations surface when its sidebar item is clicked', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
 
-    const tabs = Array.from(document.querySelectorAll('[aria-label="Stronghold sections"] button'));
-    const operationsTab = tabs.find(tab => tab.textContent === 'Operations')!;
-    expect(operationsTab).toBeTruthy();
+    const sidebar = document.querySelector('.sidebar');
+    const opsItem = sidebar?.querySelector('[data-surface-id="operations"]') as HTMLButtonElement | null;
+    expect(opsItem).toBeTruthy();
+    await act(async () => { opsItem!.click(); });
 
-    await act(async () => { operationsTab.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
-    expect(document.querySelector('.commandGrid')?.className).toContain('active-operations');
-    expect(document.querySelector('#operations-section')?.getAttribute('aria-hidden')).toBe('false');
-    expect(document.querySelector('#dashboard-section')?.getAttribute('aria-hidden')).toBe('true');
+    expect(document.querySelector('#operations-section')).toBeTruthy();
+    expect(document.querySelector('#dashboard-section')).toBeNull();
 
     const text = document.body.textContent || '';
-    expect(text).toContain('Phase 2 Guarded Controls');
     expect(text).toContain('Mission Proposal');
     expect(text).toContain('Task Proposal');
+    expect(text).toContain('Work Card Proposal');
     expect(text).toContain('Phase 3 Agent Orchestration');
-    expect(text).toContain('Mission Board');
     expect(text).toContain('Safety & Readiness');
+    // Phase 47: "Mission Board" lives on its own sidebar surface (the Missions slot),
+    // not inside Operations. Click the Missions sidebar item to reach it.
+    expect(text).not.toContain('Mission Board');
   });
 
-  it('uses mobile-specific section ids and viewport classes for app-like scrolling', async () => {
+  it('exposes a hamburger trigger for mobile sidebar overlay', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
 
-    expect(document.querySelector('#dashboard-section')?.className).toContain('mobileSection');
-    expect(document.querySelector('#operations-section')?.className).toContain('mobileSection');
+    const trigger = document.querySelector('[data-mobile-nav-trigger]');
+    expect(trigger).toBeTruthy();
+    const label = trigger?.getAttribute('aria-label')?.toLowerCase() ?? '';
+    expect(label === 'open navigation' || label === 'close navigation').toBe(true);
   });
 });

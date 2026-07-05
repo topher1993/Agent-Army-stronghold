@@ -4,7 +4,6 @@ import type { ActivityEntry, QcRound, StrongholdSnapshot, WorkItem } from '../ty
 import { ActivityGraphPanel } from './ActivityGraphPanel';
 import { MemoryStatusPanel } from './MemoryStatusPanel';
 import { DiscordCoordinationPanel } from './DiscordCoordinationPanel';
-import { WorkCardFeed } from './WorkCardFeed';
 
 export type AgenticOsCardStatus = 'placeholder' | 'live' | 'stale' | 'empty';
 
@@ -281,7 +280,7 @@ function workItemCard(w: WorkItem, index: number) {
       data-work-id={w.id}
     >
       <div className="agenticOsWorkTop">
-        <span className="agenticOsWorkBadge">{w.id}</span>
+        <span className="agenticOsWorkBadge" title={w.id}>{w.id}</span>
         {statusPillFor(statusClass, w.status)}
       </div>
       <h4 className="agenticOsWorkTitle">{w.title || 'untitled work item'}</h4>
@@ -470,8 +469,8 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
         </section>
       </div>
 
-      {/* Work cards: live read-only feed sourced from /api/workcards. */}
-      <WorkCardFeed />
+      {/* Work cards: rendered by <WorkCardBoard /> in SurfaceWork (Phase 47).
+          The orphan WorkCardFeed was removed; the Work Card Board subsumes it. */}
 
       {/* Discord #agent-army coordination panel (Phase D1).
           Self-contained read-only feed; polls every 60s, pausable. */}

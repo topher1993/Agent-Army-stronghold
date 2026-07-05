@@ -12,7 +12,8 @@ const responses: Record<string, unknown> = {
   '/api/audit': [],
   '/api/agent-requests': [],
   '/api/agent-runs': [],
-  '/api/agent-artifacts': []
+  '/api/agent-artifacts': [],
+  '/api/approvals': [],
 };
 
 beforeEach(() => {
@@ -24,18 +25,41 @@ beforeEach(() => {
   }));
 });
 
-describe('Phase 3.5 interactive controls', () => {
-  it('renders real forms, buttons, and backend-backed panels', async () => {
+describe('Phase 3.5 interactive controls (Phase 47 — sidebar nav)', () => {
+  it('renders real forms, buttons, and backend-backed panels on the Operations surface', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
+
+    // Phase 47: interactive controls (proposals, audit, orchestration) live on the Operations surface.
+    // Approval Queue is now its own sidebar surface (per N7 — kill right rails).
+    const sidebar = document.querySelector('.sidebar');
+    const opsItem = sidebar?.querySelector('[data-surface-id="operations"]') as HTMLButtonElement | null;
+    expect(opsItem).toBeTruthy();
+    await act(async () => { opsItem!.click(); });
+
     const text = document.body.textContent || '';
     expect(text).toContain('Mission title');
     expect(text).toContain('Create mission proposal');
     expect(text).toContain('Task title');
     expect(text).toContain('Create task proposal');
-    expect(text).toContain('No pending approvals');
+    expect(text).toContain('Create work card proposal');
     expect(text).toContain('Create agent request');
     expect(text).toContain('No agent requests yet');
+  });
+
+  it('renders the Approval Queue separately on the Approvals surface', async () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    await act(async () => { createRoot(el).render(<App />); });
+
+    const sidebar = document.querySelector('.sidebar');
+    const approvalsItem = sidebar?.querySelector('[data-surface-id="approvals"]') as HTMLButtonElement | null;
+    expect(approvalsItem).toBeTruthy();
+    await act(async => { approvalsItem!.click(); });
+
+    const text = document.body.textContent || '';
+    expect(text).toContain('Approval Queue');
+    expect(text).toContain('No pending approvals');
   });
 });

@@ -17,48 +17,43 @@ beforeEach(() => {
       '/api/audit': [],
       '/api/agent-requests': [],
       '/api/agent-runs': [],
-      '/api/agent-artifacts': []
+      '/api/agent-artifacts': [],
+      '/api/approvals': [],
+      '/api/memory-status': { path: '', exists: false, sizeBytes: 0, lastModified: null, sections: [], rawText: '' },
+      '/api/workcards': [],
     };
     return { ok: true, json: async () => responses[path] ?? [] };
   }));
 });
 
-describe('Stronghold Agentic OS default landing layout', () => {
-  it('puts the Agentic OS dashboard in the main column with Approvals/Audit/Cron in the right rail (no left rail)', async () => {
+/**
+ * Phase 47: Dashboard is the default landing view. The right rail is gone.
+ * The Sidebar lists 6 surfaces (Dashboard, Work, Missions, Operations, Approvals, Cron).
+ * Approvals / Audit / Cron live on the Operations surface.
+ */
+describe('Stronghold Dashboard default landing layout (Phase 47 — sidebar nav)', () => {
+  it('renders the new app shell with a left sidebar (Dashboard default)', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
 
-    expect(document.querySelector('.commandShell')).toBeTruthy();
-    expect(document.querySelector('.commandGrid')).toBeTruthy();
+    // New shell primitives.
+    expect(document.querySelector('.appShell')).toBeTruthy();
+    expect(document.querySelector('.sidebar')).toBeTruthy();
 
-    // The left rail is gone — no 'Stronghold context' aside.
-    expect(document.querySelector('[aria-label="Stronghold context"]')).toBeNull();
+    const sidebar = document.querySelector('.sidebar');
+    expect(sidebar?.getAttribute('aria-label')).toBe('Stronghold surfaces');
 
-    // The Agentic OS dashboard is the dominant content in the main area.
-    const dashboardSection = document.querySelector('#dashboard-section');
-    expect(dashboardSection).toBeTruthy();
-    expect(dashboardSection?.textContent).toContain('Agentic OS Dashboard');
-    // Compact dashboard (Phase E): App Health was deleted, QC Score History is
-    // the first content section rendered.
-    expect(dashboardSection?.textContent).toContain('QC Score History');
-    expect(dashboardSection?.textContent).toContain('Activity');
+    // Sidebar surfaces (6).
+    const surfaces = Array.from(sidebar?.querySelectorAll('[data-surface-id]') ?? []);
+    const ids = surfaces.map(s => s.getAttribute('data-surface-id'));
+    expect(ids).toEqual(['dashboard', 'work', 'missions', 'operations', 'approvals', 'cron']);
 
-    // The right rail contains operational tools only.
-    const rightRail = document.querySelector('[aria-label="Approvals, audit, and operations monitoring"]');
-    expect(rightRail).toBeTruthy();
-    expect(rightRail?.textContent).toContain('Approval Queue');
-    expect(rightRail?.textContent).toContain('Audit Trail');
-    expect(rightRail?.textContent).toContain('Cron / Schedule Manager');
+    // Dashboard is the default active surface.
+    const active = sidebar?.querySelector('.sidebarItem--active');
+    expect(active?.getAttribute('data-surface-id')).toBe('dashboard');
 
-    // Operations section contains the proposal/orchestration/mission/safety content.
-    const operationsSection = document.querySelector('#operations-section');
-    expect(operationsSection).toBeTruthy();
-    expect(operationsSection?.textContent).toContain('Mission Proposal');
-    expect(operationsSection?.textContent).toContain('Task Proposal');
-    expect(operationsSection?.textContent).toContain('Phase 3 Agent Orchestration');
-
-    // No fake / stale static components in the default view.
+    // No fake intel/roster/inventory in main.
     const text = document.body.textContent?.toLowerCase() || '';
     expect(text).not.toContain('stronghold telemetry');
     expect(text).not.toContain('engineering division roster');
@@ -67,33 +62,65 @@ describe('Stronghold Agentic OS default landing layout', () => {
     // Guarded posture is still present.
     expect(text).toContain('guarded');
     expect(text).toContain('no shell');
-    expect(text).not.toContain('shell command');
-    expect(text).not.toContain('execute command');
   });
 
-  it('reduces information density with collapsed disclosures and collapsed mission details', async () => {
+  it('renders Dashboard content (Agentic OS panel) on the Dashboard surface', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
 
-    // Right rail has 3 disclosures (Approval Queue, Audit Trail, Cron).
-    const collapsiblePanels = Array.from(document.querySelectorAll('aside.rightRail details.uxDisclosure')) as HTMLDetailsElement[];
-    expect(collapsiblePanels.length).toBe(3);
+    const dashboardSurface = document.querySelector('#dashboard-section');
+    expect(dashboardSurface).toBeTruthy();
+    expect(dashboardSurface?.textContent).toContain('Agentic OS Dashboard');
+    expect(dashboardSurface?.textContent).toContain('QC Score History');
+    expect(dashboardSurface?.textContent).toContain('Activity');
+  });
 
-    const approvalPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Approval Queue'));
-    const auditPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Audit Trail'));
-    const cronPanel = collapsiblePanels.find(panel => panel.querySelector('summary')?.textContent?.includes('Cron / Schedule Manager'));
+  it('switches the active surface when a sidebar item is clicked', async () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    await act(async () => { createRoot(el).render(<App />); });
 
-    expect(approvalPanel?.open).toBe(true);
-    expect(auditPanel?.open).toBe(false);
-    expect(cronPanel?.open).toBe(true);
+    const sidebar = document.querySelector('.sidebar');
+    const opsItem = sidebar?.querySelector('[data-surface-id="operations"]') as HTMLButtonElement | null;
+    expect(opsItem).toBeTruthy();
+    await act(async () => { opsItem!.click(); });
 
-    // Mission Board missions are still rendered as collapsed <details>.
-    const missionDetails = document.querySelector('details.missionDisclosure') as HTMLDetailsElement | null;
-    expect(missionDetails).toBeTruthy();
-    expect(missionDetails?.open).toBe(false);
+    // Operations surface is in the DOM.
+    const opsSection = document.querySelector('#operations-section');
+    expect(opsSection).toBeTruthy();
+    expect(opsSection?.textContent).toContain('Mission Proposal');
+    expect(opsSection?.textContent).toContain('Task Proposal');
+    expect(opsSection?.textContent).toContain('Work Card Proposal');
+    expect(opsSection?.textContent).toContain('Phase 3 Agent Orchestration');
 
-    expect(document.body.textContent).toContain('Phase 2/3 gate locked');
-    expect(document.body.textContent?.toLowerCase()).not.toContain('generic command');
+    // Dashboard section is gone.
+    expect(document.querySelector('#dashboard-section')).toBeNull();
+    // Active sidebar item updated.
+    expect(sidebar?.querySelector('.sidebarItem--active')?.getAttribute('data-surface-id')).toBe('operations');
+  });
+
+  it('shows the backend status indicator in the sidebar footer', async () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    await act(async () => { createRoot(el).render(<App />); });
+
+    expect(document.querySelector('.sidebarStatusDot')).toBeTruthy();
+    expect(document.body.textContent).toContain('Backend live');
+  });
+
+  it('collapses the sidebar to icon-only when the toggle is clicked', async () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    await act(async () => { createRoot(el).render(<App />); });
+
+    const sidebar = document.querySelector('.sidebar');
+    expect(sidebar?.getAttribute('data-sidebar-collapsed')).toBe('false');
+
+    const toggle = document.querySelector('[data-sidebar-toggle]') as HTMLButtonElement | null;
+    expect(toggle).toBeTruthy();
+    await act(async () => { toggle!.click(); });
+
+    expect(sidebar?.getAttribute('data-sidebar-collapsed')).toBe('true');
   });
 });

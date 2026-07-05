@@ -67,8 +67,13 @@ describe('Engineering Division Phase 3 label mode', () => {
     // snapshot-driven counts via the Agentic OS hero stats, so we assert that
     // path instead.
     const appSource = fs.readFileSync('src/App.tsx', 'utf8');
-    const dashboardSource = fs.readFileSync('src/components/AgenticOsDashboard.tsx', 'utf8');
-    expect(appSource).toContain('AgenticOsDashboardPanel');
+    const sidebarSource = fs.readFileSync('src/components/Sidebar.tsx', 'utf8');
+    const surfacesSource = fs.readFileSync('src/components/Surfaces.tsx', 'utf8');
+    const dashboardSource = fs.readFileSync('src/components/AgenticOsDashboardPanel.tsx', 'utf8');
+    // Phase 47: AgenticOsDashboardPanel is mounted inside the Sidebar-driven surface tree.
+    expect(appSource).toMatch(/<SurfaceDashboard\s/);
+    expect(sidebarSource).toMatch(/id: 'dashboard'/);
+    expect(surfacesSource).toMatch(/SurfaceDashboard/);
     expect(dashboardSource).toContain('buildHeroStats');
     expect(dashboardSource).toContain('snapshot.health');
 

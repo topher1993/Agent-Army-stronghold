@@ -12,11 +12,18 @@ beforeEach(() => {
   }));
 });
 
-describe('Phase 2 UI approval posture', () => {
+describe('Phase 2 UI approval posture (Phase 47 — sidebar nav)', () => {
   it('renders guarded proposal language without execute controls', async () => {
     const el = document.createElement('div');
     document.body.appendChild(el);
     await act(async () => { createRoot(el).render(<App />); });
+
+    // Phase 47: SafetyBoundary / approval language lives on the Operations surface.
+    const sidebar = document.querySelector('.sidebar');
+    const opsItem = sidebar?.querySelector('[data-surface-id="operations"]') as HTMLButtonElement | null;
+    expect(opsItem).toBeTruthy();
+    await act(async () => { opsItem!.click(); });
+
     const text = document.body.textContent || '';
     expect(text).toContain('Phase 2 Guarded Controls');
     expect(text).toContain('Propose mission/task changes');

@@ -95,41 +95,84 @@ describe('<MemoryStatusPanel />', () => {
     unmount(handle);
   });
 
-  it('renders one list item per section with title + first sentence', async () => {
-    stubFetchOk(SAMPLE);
-    const handle = mountPanel();
-    await act(async () => {
-      handle.root.render(React.createElement(MemoryStatusPanel));
-      await Promise.resolve();
+  it('renders one list item per section with title + first sentence after expanding details', async () => {
+      stubFetchOk(SAMPLE);
+      const handle = mountPanel();
+      await act(async () => {
+        handle.root.render(React.createElement(MemoryStatusPanel));
+        await Promise.resolve();
+      });
+      // Phase 46 (D5): collapsed-by-default settings tile. Click "Show details" to expand.
+      const toggle = document.body.querySelector('.memory-status-toggle') as HTMLButtonElement | null;
+      expect(toggle).toBeTruthy();
+      await act(async () => {
+        toggle!.click();
+        await Promise.resolve();
+      });
+      const items = document.body.querySelectorAll('[data-testid="memory-status-section"]');
+      expect(items.length).toBe(2);
+      expect(items[0].textContent).toContain('Audit governance');
+      expect(items[0].textContent).toContain('MiniMax M3');
+      expect(items[1].textContent).toContain('Pitfalls');
+      expect(items[1].textContent).toContain('QC_REPORTS_DIR');
+      unmount(handle);
     });
-    const items = document.body.querySelectorAll('[data-testid="memory-status-section"]');
-    expect(items.length).toBe(2);
-    expect(items[0].textContent).toContain('Audit governance');
-    expect(items[0].textContent).toContain('MiniMax M3');
-    expect(items[1].textContent).toContain('Pitfalls');
-    expect(items[1].textContent).toContain('QC_REPORTS_DIR');
-    unmount(handle);
-  });
 
-  it('copy button calls navigator.clipboard.writeText with rawText', async () => {
-    stubFetchOk(SAMPLE);
-    const writeText = vi.fn(async () => {});
-    vi.stubGlobal('navigator', { clipboard: { writeText } satisfies Clipboard });
-    const handle = mountPanel();
-    await act(async () => {
-      handle.root.render(React.createElement(MemoryStatusPanel));
-      await Promise.resolve();
+    it('copy button calls navigator.clipboard.writeText with rawText after expanding details', async () => {
+      stubFetchOk(SAMPLE);
+      const writeText = vi.fn(async () => {});
+      vi.stubGlobal('navigator', { clipboard: { writeText } satisfies Clipboard });
+      const handle = mountPanel();
+      await act(async () => {
+        handle.root.render(React.createElement(MemoryStatusPanel));
+        await Promise.resolve();
+      });
+      // Phase 46 (D5): details panel is collapsed by default; expand before clicking copy.
+      const toggle = document.body.querySelector('.memory-status-toggle') as HTMLButtonElement | null;
+      expect(toggle).toBeTruthy();
+      await act(async () => {
+        toggle!.click();
+        await Promise.resolve();
+      });
+      const btn = document.body.querySelector('[data-testid="memory-status-copy"]') as HTMLButtonElement | null;
+      expect(btn).toBeTruthy();
+      await act(async () => {
+        btn!.click();
+        await Promise.resolve();
+      });
+      expect(writeText).toHaveBeenCalledTimes(1);
+      expect(writeText.mock.calls[0][0]).toContain('Audit governance');
+      unmount(handle);
     });
-    const btn = document.body.querySelector('[data-testid="memory-status-copy"]') as HTMLButtonElement | null;
-    expect(btn).toBeTruthy();
-    await act(async () => {
-      btn!.click();
-      await Promise.resolve();
+
+    it('starts collapsed: section list and copy button are not rendered until "Show details" is clicked', async () => {
+      stubFetchOk(SAMPLE);
+      const handle = mountPanel();
+      await act(async () => {
+        handle.root.render(React.createElement(MemoryStatusPanel));
+        await Promise.resolve();
+      });
+      // Before clicking: preview stats are visible, but the per-section list and
+      // the copy button are not in the DOM.
+      expect(document.body.textContent ?? '').toContain('1856 bytes');
+      expect(document.body.textContent ?? '').toContain('2 sections');
+      expect(document.body.querySelector('[data-testid="memory-status-details"]')).toBeNull();
+      expect(document.body.querySelector('[data-testid="memory-status-sections"]')).toBeNull();
+      expect(document.body.querySelector('[data-testid="memory-status-copy"]')).toBeNull();
+
+      // The toggle button announces the collapsed state via aria-expanded.
+      const toggle = document.body.querySelector('.memory-status-toggle') as HTMLButtonElement | null;
+      expect(toggle?.getAttribute('aria-expanded')).toBe('false');
+
+      await act(async () => {
+        toggle!.click();
+        await Promise.resolve();
+      });
+
+      expect(document.body.querySelector('[data-testid="memory-status-details"]')).toBeTruthy();
+      expect(toggle?.getAttribute('aria-expanded')).toBe('true');
+      unmount(handle);
     });
-    expect(writeText).toHaveBeenCalledTimes(1);
-    expect(writeText.mock.calls[0][0]).toContain('Audit governance');
-    unmount(handle);
-  });
 
   it('shows error state with retry button on HTTP failure', async () => {
     stubFetchError(500);

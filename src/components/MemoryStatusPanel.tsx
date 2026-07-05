@@ -6,6 +6,10 @@
 //
 // Read-only by design: this panel never writes to MEMORY.md. The
 // memory tool itself is the only writer.
+//
+// Phase 46 (D5): Settings-tile preview by default. Shows the file path,
+// size, last-modified timestamp, and section count. Click "Show details"
+// to expand into the full per-section breakdown + raw text copy.
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -48,6 +52,8 @@ export function MemoryStatusPanel() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
+  // Phase 46 (D5): collapsed by default — preview tile only.
+  const [expanded, setExpanded] = useState(false);
 
   const fetchStatus = useCallback(async () => {
     try {
@@ -97,14 +103,25 @@ export function MemoryStatusPanel() {
     <div data-testid="memory-status-panel" className="memory-status-panel">
       <div className="memory-status-header">
         <h3>Memory Status</h3>
-        <button
-          type="button"
-          className="memory-status-refresh"
-          onClick={fetchStatus}
-          aria-label="Refresh memory status"
-        >
-          Refresh
-        </button>
+        <div className="memory-status-actions">
+          <button
+            type="button"
+            className="memory-status-toggle"
+            onClick={() => setExpanded(current => !current)}
+            aria-expanded={expanded}
+            aria-controls="memory-status-details"
+          >
+            {expanded ? 'Hide details' : 'Show details'}
+          </button>
+          <button
+            type="button"
+            className="memory-status-refresh"
+            onClick={fetchStatus}
+            aria-label="Refresh memory status"
+          >
+            Refresh
+          </button>
+        </div>
       </div>
       {loading && !status && <p className="memory-status-loading">Loading…</p>}
       {error && (
@@ -125,28 +142,32 @@ export function MemoryStatusPanel() {
               last refreshed {relativeTime(refreshedAt)}
             </p>
           )}
-          <ul className="memory-status-sections" data-testid="memory-status-sections">
-            {status.sections.map((section, idx) => (
-              <li key={`${section.lineStart}-${idx}`} className="memory-status-section" data-testid="memory-status-section">
-                <strong>{section.title}</strong>
-                <span className="memory-status-section-meta">
-                  {' '}{section.charCount} chars · lines {section.lineStart}–{section.lineEnd}
-                </span>
-                <p className="memory-status-section-sentence">
-                  <em>{section.firstSentence}</em>
-                </p>
-              </li>
-            ))}
-          </ul>
-          <button
-            type="button"
-            className="memory-status-copy"
-            data-testid="memory-status-copy"
-            onClick={onCopy}
-            disabled={!status.rawText}
-          >
-            {copied ? 'Copied!' : 'Copy raw text'}
-          </button>
+          {expanded ? (
+            <div id="memory-status-details" data-testid="memory-status-details">
+              <ul className="memory-status-sections" data-testid="memory-status-sections">
+                {status.sections.map((section, idx) => (
+                  <li key={`${section.lineStart}-${idx}`} className="memory-status-section" data-testid="memory-status-section">
+                    <strong>{section.title}</strong>
+                    <span className="memory-status-section-meta">
+                      {' '}{section.charCount} chars · lines {section.lineStart}–{section.lineEnd}
+                    </span>
+                    <p className="memory-status-section-sentence">
+                      <em>{section.firstSentence}</em>
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                className="memory-status-copy"
+                data-testid="memory-status-copy"
+                onClick={onCopy}
+                disabled={!status.rawText}
+              >
+                {copied ? 'Copied!' : 'Copy raw text'}
+              </button>
+            </div>
+          ) : null}
         </>
       )}
     </div>

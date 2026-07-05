@@ -843,7 +843,7 @@ dd { margin: 0; font-weight: 500; color: var(--text-primary); font-size: 13px; l
 
 .agenticOsWorkGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 10px;
 }
 .agenticOsWorkCard {
@@ -1328,3 +1328,858 @@ dd { margin: 0; font-weight: 500; color: var(--text-primary); font-size: 13px; l
   .workCardFeedGrid { grid-template-columns: 1fr; }
   .workCardFeedActions { width: 100%; justify-content: space-between; }
 }
+
+/* ===========================================================================
+ * Work Card Board — lane-grouped interactive board
+ * Wraps WorkCardFeed with status lanes + owner/risk filters + clickable cards
+ * that open a detail drawer.
+ * =========================================================================== */
+.workCardBoard {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-panel);
+}
+.workCardBoardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.workCardBoardHeader h3 { margin: 0; font-size: 0.95rem; font-weight: 590; color: var(--text-primary); }
+.workCardBoardHeader .muted { margin: 4px 0 0; color: var(--text-tertiary); font-size: 0.78rem; }
+.workCardBoardActions { display: flex; align-items: center; gap: 10px; }
+.workCardBoardFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+.workCardBoardFilter { display: flex; flex-direction: column; gap: 4px; min-width: 140px; }
+.workCardBoardFilter span { font-size: 0.7rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
+.workCardBoardFilter select {
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.82rem;
+}
+.workCardBoardLanes {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+.workCardBoardLane {
+  padding: 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.015);
+  min-height: 80px;
+}
+.workCardBoardLaneHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.workCardBoardLaneHeader h4 {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  font-weight: 590;
+}
+.workCardBoardLaneHeader .muted { font-size: 0.72rem; color: var(--text-tertiary); }
+.workCardBoardLaneCards { display: flex; flex-direction: column; gap: 8px; }
+.workCardBoardCard {
+  text-align: left;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  cursor: pointer;
+  font: inherit;
+  transition: background 0.12s, border-color 0.12s, transform 0.12s;
+}
+.workCardBoardCard:not(:disabled):hover { background: var(--bg-hover); border-color: rgba(255, 255, 255, 0.15); transform: translateY(-1px); }
+.workCardBoardCard:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.workCardBoardCard[data-risk='green'] { border-left: 3px solid rgba(16, 185, 129, 0.6); }
+.workCardBoardCard[data-risk='yellow'] { border-left: 3px solid rgba(247, 201, 72, 0.65); }
+.workCardBoardCard[data-risk='red'] { border-left: 3px solid rgba(255, 87, 87, 0.7); }
+.workCardBoardCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.workCardBoardCardTitle {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  font-weight: 540;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+.workCardBoardCardMeta { display: flex; justify-content: space-between; font-size: 0.7rem; }
+
+@media (max-width: 1100px) {
+  .workCardBoardLanes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .workCardBoardLanes { grid-template-columns: 1fr; }
+  .workCardBoardFilters { flex-direction: column; align-items: stretch; }
+}
+
+/* ===========================================================================
+ * Work Card Drawer — click-to-open modal-style detail
+ * =========================================================================== */
+.workCardDrawerBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+.workCardDrawer {
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+}
+.workCardDrawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.workCardDrawerHeader > div { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.workCardDrawerTitle { margin: 4px 0 14px; font-size: 1.05rem; font-weight: 590; color: var(--text-primary); }
+.workCardDrawerMeta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px 16px;
+  margin: 0 0 18px;
+}
+.workCardDrawerMeta div { display: flex; flex-direction: column; gap: 2px; }
+.workCardDrawerMeta dt {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+}
+.workCardDrawerMeta dd { margin: 0; font-size: 0.82rem; color: var(--text-primary); }
+.workCardDrawerBody h4 {
+  margin: 0 0 6px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+  font-weight: 590;
+}
+.workCardDrawerBody .muted { font-size: 0.78rem; color: var(--text-tertiary); }
+
+/* ===========================================================================
+ * Work Card Editor — proposal form
+ * =========================================================================== */
+.workCardEditor .controlForm {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+/* ===========================================================================
+ * Phase 47 — Persistent Left Sidebar Navigation
+ * Visual design (Phase 47 polish pass):
+ *  - 244px expanded / 60px collapsed
+ *  - Inactive surfaces are ghost-text on transparent; active gets a soft
+ *    indigo wash + indigo icon + indigo accent bar on the left edge
+ *  - Footer carries a backend-status pill, not dead space
+ * =========================================================================== */
+:root {
+  --sidebar-w-expanded: 244px;
+  --sidebar-w-collapsed: 60px;
+  --sidebar-bg: #0c0d0e;
+  --sidebar-bg-elevated: #15161a;
+  --sidebar-divider: rgba(255, 255, 255, 0.06);
+  --sidebar-text: #c8cdd6;
+  --sidebar-text-muted: #6a7080;
+  --sidebar-text-faint: #4a4f5a;
+  --sidebar-hover: rgba(255, 255, 255, 0.04);
+  --sidebar-active-bg: rgba(113, 112, 255, 0.12);
+  --sidebar-active-border: rgba(113, 112, 255, 0.45);
+  --sidebar-icon-active: #b8b6ff;
+  --sidebar-icon: #8a8f99;
+  --sidebar-icon-hover: #d3d6dd;
+  --sidebar-status-live: #10b981;
+  --sidebar-status-down: #ff5757;
+}
+
+.appShell {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-height: 100vh;
+  width: 100%;
+}
+
+.appShellMain {
+  display: grid;
+  gap: 14px;
+  padding: 22px 32px 40px;
+  min-width: 0;
+  background: var(--bg-canvas);
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Sidebar — flat panel with subtle right-border, no box-shadow.
+   Height pinned to fit-content (driven by nav + footer), so the sidebar
+   shrinks to whatever its content needs and the main area scrolls
+   independently rather than leaving a tall dead zone. */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-divider);
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  flex-shrink: 0;
+  transition: width 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+  z-index: 50;
+  font-feature-settings: 'cv11';
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 18px 16px;
+  border-bottom: 1px solid var(--sidebar-divider);
+  min-height: 64px;
+}
+
+.sidebarLogo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(113, 112, 255, 0.22), rgba(113, 112, 255, 0.08));
+  color: var(--sidebar-icon-active);
+  flex-shrink: 0;
+}
+
+.sidebarBrandBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.sidebarBrand {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  line-height: 1.1;
+}
+.sidebarSubBrand {
+  font-size: 0.66rem;
+  color: var(--sidebar-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+.sidebarNav {
+  flex: 1 1 auto;
+  padding: 14px 12px;
+  overflow-y: auto;
+}
+
+.sidebarList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebarItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--sidebar-text);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  min-width: 0;
+  position: relative;
+  letter-spacing: -0.1px;
+}
+
+.sidebarItem:hover {
+  background: var(--sidebar-hover);
+  color: var(--text-primary);
+}
+.sidebarItem:hover .sidebarIconSvg { color: var(--sidebar-icon-hover); }
+.sidebarItem:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Defeat Phase E's `button:not(.ghost):not(.subtle):not(.secondary)` rule
+   which paints every bare <button> indigo. Sidebar items are clickable
+   navigation, not primary CTAs. */
+.sidebar button.sidebarItem,
+.sidebar button.sidebarItem:focus,
+.sidebar button.sidebarItem:active {
+  background: transparent !important;
+  color: var(--sidebar-text) !important;
+  border-color: transparent !important;
+}
+.sidebar button.sidebarItem:hover {
+  background: var(--sidebar-hover) !important;
+  color: var(--text-primary) !important;
+  border-color: transparent !important;
+}
+
+/* Active surface — soft indigo wash, accent border on left edge, brighter icon */
+.sidebarItem--active {
+  background: var(--sidebar-active-bg);
+  color: var(--text-primary);
+  border-color: var(--sidebar-active-border);
+  font-weight: 540;
+}
+.sidebarItem--active .sidebarIconSvg { color: var(--sidebar-icon-active); }
+.sidebarItem--active::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.sidebarIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--sidebar-icon);
+}
+.sidebarIconSvg { display: block; }
+.sidebarLabel {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebarBadge {
+  flex-shrink: 0;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(113, 112, 255, 0.18);
+  border: 1px solid rgba(113, 112, 255, 0.35);
+  border-radius: var(--radius-pill);
+  line-height: 1;
+}
+.sidebarBadgeDot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px var(--sidebar-bg);
+}
+
+/* Footer: status pill + collapse toggle, no dead space */
+.sidebarFooter {
+  border-top: 1px solid var(--sidebar-divider);
+  padding: 12px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebarStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+  min-height: 22px;
+}
+.sidebarStatusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+}
+.sidebarStatusDot--live {
+  background: var(--sidebar-status-live);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+.sidebarStatusDot--live::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  animation: sidebarPulse 2.4s ease-in-out infinite;
+}
+@keyframes sidebarPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.6); opacity: 0; }
+}
+.sidebarStatusDot--down { background: var(--sidebar-status-down); }
+.sidebarStatusDot--center { margin: 0 auto; }
+.sidebarStatusLabel {
+  font-size: 0.74rem;
+  color: var(--sidebar-text-muted);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.sidebarToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--sidebar-divider);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--sidebar-text-muted);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.sidebarToggle:hover {
+  background: var(--sidebar-hover);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Hamburger trigger — desktop hidden */
+.mobileNavTrigger {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 60;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+.mobileNavBackdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+}
+
+/* Surface content — uniform spacing inside the active surface */
+.surfaceContent {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* Mobile: sidebar becomes a slide-in overlay triggered by the hamburger */
+@media (max-width: 720px) {
+  .appShell { grid-template-columns: 1fr; }
+  .appShellMain { padding: 64px 14px 32px; }
+  .mobileNavTrigger { display: inline-flex; }
+  .mobileNavBackdrop { display: block; }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.18s ease;
+    width: 244px !important;
+    z-index: 55;
+  }
+  .sidebar .sidebarLabel,
+  .sidebar .sidebarBrand,
+  .sidebar .sidebarSubBrand { display: inline; }
+  .sidebar .sidebarBadgeDot { display: none; }
+  .appShell--mobile-open .sidebar { transform: translateX(0); }
+  .appShell--mobile-open .mobileNavBackdrop { display: block; }
+  .sidebarToggle { display: none; }
+}
+
+/* Hero ribbon — fix dark-on-dark-on-dark contrast problem */
+.heroGuarded {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border: 1px solid rgba(113, 112, 255, 0.4);
+  border-radius: var(--radius-pill);
+  background: rgba(113, 112, 255, 0.12);
+  color: #d6d5ff;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: help;
+}
+
+/* Sub-nav — softer, quieter so it doesn't compete with the sidebar.
+   Also defeat Phase E's bare-button indigo rule so the pills stay neutral. */
+.dashboardSubNav {
+  margin-top: 0 !important;
+  padding: 8px 14px !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: var(--border-subtle) !important;
+}
+.dashboardSubNav button.dashboardSubNavLink,
+.dashboardSubNav button.dashboardSubNavLink:focus,
+.dashboardSubNav button.dashboardSubNavLink:active {
+  background: transparent !important;
+  color: var(--text-tertiary) !important;
+  border-color: transparent !important;
+}
+.dashboardSubNav button.dashboardSubNavLink:hover {
+  background: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+}
+.dashboardSubNavLink {
+  font-size: 0.74rem !important;
+  font-weight: 500 !important;
+  padding: 4px 10px !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Open Work Items — truncate IDs cleanly, full ID on title hover */
+.agenticOsWorkTop .agenticOsWorkBadge {
+  cursor: help;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.agenticOsWorkCard { min-width: 0; overflow: hidden; }
+
+/* ===========================================================================
+ * Phase 46 — UI/UX Improvements
+ * Hero refresh, sub-nav, dashboard footer, hero meta restyle, board
+ * horizontal scroll, lane card overflow fix, memory-status collapse.
+ * =========================================================================== */
+
+/* Hero: split into title block (left), refresh button (right), meta strip (full width below).
+   The old .readOnlyBadge was a floating chip; we now render it as an inline eyebrow ribbon. */
+.hero {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title    refresh"
+    "meta     meta";
+  row-gap: 16px;
+}
+.heroTitleBlock { grid-area: title; min-width: 0; }
+.heroTitleRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.heroTitleRow .eyebrow { margin: 0; }
+.heroGuarded {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 10.5px;
+  font-weight: 510;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: help;
+}
+.heroRefreshAll {
+  grid-area: refresh;
+  align-self: start;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 510;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, transform 0.12s;
+}
+.heroRefreshAll:hover { background: var(--bg-hover); border-color: rgba(255, 255, 255, 0.18); transform: translateY(-1px); }
+.heroRefreshAll:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.heroMeta {
+  grid-area: meta;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px 12px;
+  margin: 0;
+}
+.heroMeta > div {
+  padding: 8px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.heroMeta dt { color: var(--text-tertiary); font-size: 10.5px; font-weight: 510; letter-spacing: 0.06em; text-transform: uppercase; }
+.heroMeta dd { margin: 0; font-weight: 500; color: var(--text-primary); font-size: 0.82rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Hide the old .readOnlyBadge (replaced by .heroGuarded eyebrow ribbon above) */
+.readOnlyBadge { display: none !important; }
+
+/* Sub-nav (Phase 46 / C1): in-page anchor jump bar. Desktop = horizontal list,
+   mobile (<720px) = <select> jump menu. */
+.dashboardSubNav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 4px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-panel);
+}
+.dashboardSubNavList {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 1 1 auto;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.dashboardSubNavLink {
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.dashboardSubNavLink:hover { background: var(--bg-elevated); color: var(--text-primary); border-color: var(--border); }
+.dashboardSubNavLink:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.dashboardSubNavSelect { display: none; }
+@media (max-width: 720px) {
+  .dashboardSubNavList { display: none; }
+  .dashboardSubNavSelect {
+    display: block;
+    flex: 1 1 auto;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 0.82rem;
+  }
+}
+
+/* Dashboard footer (C5): single Last-refresh stamp instead of per-section ones. */
+.dashboardFooter {
+  margin: 18px 0 0;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.72rem;
+  text-align: right;
+}
+
+/* Override .commandGrid for the dashboard tab now that there's no right rail.
+   The grid still exists in case future right-rail components are re-introduced. */
+.dashboardSection { display: grid; gap: 18px; min-width: 0; }
+
+/* Activity table: fixed layout + proportional widths so columns don't collapse. */
+.agenticOsTable { table-layout: fixed; width: 100%; }
+.agenticOsTable th:nth-child(1),
+.agenticOsTable td:nth-child(1) { width: 24%; }
+.agenticOsTable th:nth-child(2),
+.agenticOsTable td:nth-child(2) { width: 14%; }
+.agenticOsTable th:nth-child(3),
+.agenticOsTable td:nth-child(3) { width: 14%; }
+.agenticOsTable th:nth-child(4),
+.agenticOsTable td:nth-child(4) { width: 48%; }
+.agenticOsTable th, .agenticOsTable td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.agenticOsTable tbody tr { line-height: 1.5; }
+.agenticOsTable td[data-copy-target] {
+  cursor: pointer;
+  border-bottom: 1px dashed var(--border-subtle);
+}
+.agenticOsTable td[data-copy-target]:hover { color: var(--accent); }
+
+/* Work Card Board (Phase 46 / A1): force lane content to clamp + add horizontal scroll
+   inside the board so lanes don't squish or overlap at narrow viewports. */
+.workCardBoardLanes {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(220px, 1fr);
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  scroll-snap-type: x proximity;
+}
+.workCardBoardLane {
+  scroll-snap-align: start;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+/* Defeat Phase E's `button:not(.ghost):not(.subtle):not(.secondary)` rule.
+   !important is the right tool here: this is a clickable card, not a
+   primary CTA button, and Phase E's rule has higher specificity than any
+   reasonable override. */
+.workCardBoard button.workCardBoardCard,
+.workCardBoard button.workCardBoardCard:focus,
+.workCardBoard button.workCardBoardCard:active {
+  background: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+}
+.workCardBoard button.workCardBoardCard:not(:disabled):hover {
+  background: var(--bg-hover) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-1px);
+}
+.workCardBoardLaneCards { min-width: 0; }
+.workCardBoardCard {
+  min-width: 0;
+  overflow: hidden;
+}
+.workCardBoardCardTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+.workCardBoardCardMeta { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Hero stat cards (Phase 46 / A3): muted treatment for "no data" state. */
+.agenticOsHeroStat[data-status="placeholder"] {
+  opacity: 0.55;
+  border-style: dashed;
+}
+.agenticOsHeroStat[data-state="empty"] { opacity: 0.55; }
+.agenticOsHeroStat[data-state="warn"] { border-color: rgba(247, 201, 72, 0.4); }
+
+/* Open Work Items: monospace IDs + ellipsis on overflow (A4). */
+.agenticOsWorkCard { min-width: 0; }
+.agenticOsWorkTop .agenticOsWorkBadge { font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: 0.7rem; }
+.agenticOsWorkTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Memory status: collapsed-by-default settings tile (D5). */
+.memory-status-panel { padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-panel); }
+.memory-status-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.memory-status-header h3 { margin: 0; font-size: 0.95rem; font-weight: 590; color: var(--text-primary); }
+.memory-status-actions { display: flex; align-items: center; gap: 8px; }
+.memory-status-toggle,
+.memory-status-refresh {
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.memory-status-toggle:hover,
+.memory-status-refresh:hover { background: var(--bg-hover); color: var(--text-primary); }
+.memory-status-toggle:focus-visible,
+.memory-status-refresh:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.memory-status-path { margin: 4px 0 2px; font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: 0.78rem; color: var(--text-secondary); word-break: break-all; }
+.memory-status-stats { margin: 0 0 6px; color: var(--text-tertiary); font-size: 0.82rem; }
+.memory-status-refreshed { margin: 0 0 8px; color: var(--text-tertiary); font-size: 0.72rem; }
+.memory-status-sections { margin: 8px 0; padding: 0; list-style: none; }
+.memory-status-section { padding: 8px 10px; margin-bottom: 6px; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: rgba(255, 255, 255, 0.02); }
+.memory-status-section-meta { display: block; margin-top: 2px; color: var(--text-tertiary); font-size: 0.72rem; }
+.memory-status-section-sentence { margin: 4px 0 0; font-size: 0.8rem; color: var(--text-secondary); }
+.memory-status-copy { padding: 5px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-elevated); color: var(--text-primary); font: inherit; font-size: 0.78rem; cursor: pointer; }
+.memory-status-copy:disabled { opacity: 0.5; cursor: not-allowed; }
