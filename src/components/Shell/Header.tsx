@@ -1,0 +1,3 @@
+
+import { ThemeToggle } from '../ThemeToggle';
+export function Header({ onRefresh, lastRefreshAt }: { onRefresh?: () => void; lastRefreshAt?: string }) { return <header className="strongholdHeader"><div><p className="eyebrow">Stronghold</p><h1>Agent Army Control</h1></div><div className="heroHeaderActions"><button type="button" className="btn-secondary" onClick={() => { window.dispatchEvent(new CustomEvent('snapshot:refresh')); onRefresh?.(); }}>Recheck</button><ThemeToggle /><span className="statusPill statusPill--neutral statusPill--sm">{lastRefreshAt ? new Date(lastRefreshAt).toLocaleTimeString() : 'ready'}</span></div></header>; }

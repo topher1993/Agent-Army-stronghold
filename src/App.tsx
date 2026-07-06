@@ -18,6 +18,9 @@ import {
   SurfaceApprovals,
   SurfaceCron,
 } from './components/Surfaces';
+import Subagents from './components/Surfaces/Subagents';
+import { ToastProvider } from './components/Controls/Toast';
+import { ToastHost } from './components/Shell/ToastHost';
 
 export function App() {
   const [snapshot, setSnapshot] = useState<StrongholdSnapshot | null>(null);
@@ -80,6 +83,8 @@ export function App() {
         return <SurfaceWork refreshMs={60_000} />;
       case 'missions':
         return <SurfaceMissions missions={snapshot.missions} />;
+      case 'subagents':
+        return <Subagents snapshot={snapshot} />;
       case 'operations':
         return (
           <SurfaceOperations
@@ -98,6 +103,7 @@ export function App() {
   };
 
   return (
+    <ToastProvider>
     <div className={`appShell ${collapsed ? 'appShell--sidebar-collapsed' : ''} ${mobileNavOpen ? 'appShell--mobile-open' : ''}`}>
       {/* Mobile-only hamburger trigger */}
       <button
@@ -139,6 +145,8 @@ export function App() {
           </p>
         ) : null}
       </main>
+      <ToastHost />
     </div>
+    </ToastProvider>
   );
 }

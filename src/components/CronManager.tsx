@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { strongholdApi, type CronJobDetail, type CronJobSummaryApi, type CronJobCreateInput } from '../api/strongholdApi';
+import { StatusPill } from './Feedback/StatusPill';
+import { EmptyState } from './Feedback/EmptyState';
+import { cronPreviewLabels, validateCronExpression } from '../lib/cronPreview';
+import { useToast } from './Controls/Toast';
 
 // FEATURE 2 — Cron Manager (right rail)
 //
@@ -27,6 +31,7 @@ export function CronManager({ snapshotJobs = [] as CronJobSummaryApi[], refreshK
   const [editing, setEditing] = useState<CronJobDetail | null>(null);
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   async function load() {
     setError(null);
@@ -66,9 +71,12 @@ export function CronManager({ snapshotJobs = [] as CronJobSummaryApi[], refreshK
     try {
       const result = await fn();
       setBanner(`${action} ok`);
+      showToast({ tone: 'success', title: `${action} ok` });
       return result;
     } catch (err) {
-      setError(err instanceof Error ? err.message : `${action} failed`);
+      const message = err instanceof Error ? err.message : `${action} failed`;
+      setError(message);
+      showToast({ tone: 'danger', title: `${action} failed`, description: message });
       throw err;
     } finally {
       setBusyId(null);
@@ -106,10 +114,10 @@ export function CronManager({ snapshotJobs = [] as CronJobSummaryApi[], refreshK
         <button type="button" className="btn-primary" data-cron-new onClick={() => setCreating(true)}>+ New</button>
       </header>
       <p>Live view of <code>hermes cron</code> jobs. Pause/resume, edit, and delete with confirm.</p>
-      {banner && <p className="statusLine" data-cron-banner>{banner}</p>}
-      {error && <p className="statusLine danger" data-cron-error>{error}</p>}
+      {banner && <div className="visuallyInlineStatus" data-cron-banner>{banner}</div>}
+      {error && <div className="visuallyInlineStatus danger" role="alert" data-cron-error>{error}</div>}
       {sorted.length === 0 ? (
-        <p className="muted">No cron jobs configured.</p>
+        <EmptyState title="No cron jobs" description="Schedule recurring work" action={{ label: 'New cron job', onClick: () => setCreating(true) }} />
       ) : (
         <div className="list">
           {sorted.map(job => {
@@ -120,6 +128,7 @@ export function CronManager({ snapshotJobs = [] as CronJobSummaryApi[], refreshK
                 <div className="cronRowBody">
                   <strong>{job.name}</strong>
                   <p className="muted">{job.schedule}{job.profile ? ` · ${job.profile}` : ''}{job.deliver ? ` · deliver:${job.deliver}` : ''}</p>
+                  <div className="cronMetaGrid"><StatusPill tone={job.enabled ? 'success' : 'neutral'} label={job.enabled ? 'enabled' : 'paused'} /><StatusPill tone={job.lastStatus === 'ok' || job.lastStatus === 'success' ? 'success' : job.lastStatus === 'failed' || job.lastStatus === 'error' ? 'danger' : job.lastStatus ? 'warning' : 'neutral'} label={job.lastStatus || 'never run'} />{job.nextRun ? <span className="muted">Last fired: {new Date(job.nextRun).toLocaleString()}</span> : <span className="muted">Last fired: —</span>}</div>
                   {job.promptSnippet && <p className="cronPromptSnippet muted">“{job.promptSnippet}”</p>}
                 </div>
                 <div className="actions cronActions">
@@ -195,11 +204,19 @@ function CronJobForm({ mode, initial, onCancel, onSubmit, busy }: { mode: 'creat
   const [model, setModel] = useState(initial?.raw?.model as string || '');
   const [submitting, setSubmitting] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [validation, setValidation] = useState<string | null>(null);
+  const preview = useMemo(() => { try { return schedule.trim() ? cronPreviewLabels(schedule.trim(), new Date(), 3) : []; } catch { return []; } }, [schedule]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     setErr(null);
+    const scheduleError = validateCronExpression(schedule.trim());
+    const skillsError = skills.split(',').map(s => s.trim()).filter(Boolean).some(s => /\s/.test(s)) ? 'Skills must be comma-separated identifiers without spaces' : null;
+    const modelError = (provider.trim() && !model.trim()) || (!provider.trim() && model.trim()) ? 'Provider and model must be paired' : null;
+    const validationError = scheduleError || skillsError || modelError;
+    if (validationError) { setValidation(validationError); setSubmitting(false); return; }
+    setValidation(null);
     const payload: CronJobCreateInput = {
       name: name.trim(),
       schedule: schedule.trim(),
@@ -222,7 +239,7 @@ function CronJobForm({ mode, initial, onCancel, onSubmit, busy }: { mode: 'creat
     <form className="cronJobForm" data-cron-form={mode} onSubmit={handleSubmit}>
       <h3>{mode === 'create' ? 'New cron job' : `Edit: ${initial?.name || ''}`}</h3>
       <label>Name (1-80 chars)<input type="text" value={name} required minLength={1} maxLength={80} onChange={e => setName(e.target.value)} data-cron-field="name" /></label>
-      <label>Schedule (5 or 6-field cron)<input type="text" value={schedule} required placeholder="*/15 * * * *" onChange={e => setSchedule(e.target.value)} data-cron-field="schedule" /></label>
+      <label>Schedule (5 or 6-field cron)<input type="text" value={schedule} required placeholder="*/15 * * * *" onBlur={() => setValidation(validateCronExpression(schedule.trim()))} onChange={e => setSchedule(e.target.value)} data-cron-field="schedule" /></label>
       <label>Prompt (1-10000 chars)<textarea value={prompt} required minLength={1} maxLength={10000} onChange={e => setPrompt(e.target.value)} data-cron-field="prompt" rows={4} /></label>
       <label>Skills (comma-separated, must be allowlisted)<input type="text" value={skills} placeholder="jisho-phrase-verification, github-code-review" onChange={e => setSkills(e.target.value)} data-cron-field="skills" /></label>
       <label>Deliver
@@ -239,7 +256,8 @@ function CronJobForm({ mode, initial, onCancel, onSubmit, busy }: { mode: 'creat
         <label>Provider<input type="text" value={provider} placeholder="custom:anthropic-claude or openai" onChange={e => setProvider(e.target.value)} data-cron-field="model.provider" /></label>
         <label>Model<input type="text" value={model} placeholder="claude-sonnet-4" onChange={e => setModel(e.target.value)} data-cron-field="model.model" /></label>
       </fieldset>
-      {err && <p className="statusLine danger" data-cron-form-error>{err}</p>}
+      {preview.length > 0 ? <ol className="cronPreviewList" aria-label="Next 3 firings">{preview.map(item => <li key={item}>{item}</li>)}</ol> : null}
+      {(validation || err) && <p className="visuallyInlineStatus danger" role="alert" data-cron-form-error>{validation || err}</p>}
       <div className="cronFormActions">
         <button type="submit" className="btn-primary" disabled={busy || submitting} data-cron-submit={mode}>
           {submitting ? 'Saving…' : mode === 'create' ? 'Create job' : 'Save changes'}

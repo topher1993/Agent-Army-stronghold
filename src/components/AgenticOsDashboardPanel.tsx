@@ -524,5 +524,6 @@ function emptySnapshotForHero(): StrongholdSnapshot {
     workItems: [],
     memory: { files: [], skills: [], totalSkills: 0 },
     activity: [],
+    subagentsStats: { costToday: null, tokensToday: null, activeRuns: 0, lastWrapperSyncAt: null },
   };
 }

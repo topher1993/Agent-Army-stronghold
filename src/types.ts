@@ -69,11 +69,23 @@ export type WorkCard = {
   qc: string;
   created: string;
   status: WorkCardStatus;
+  laneId?: WorkCardStatus;
   schedule?: string;
   mode?: string;
   title: string;
   filePath: string;
   lastUpdated: string;
+};
+
+export function getWorkCardLaneId(card: WorkCard): WorkCardStatus {
+  return card.laneId ?? card.status;
+}
+
+export type SubagentsStats = {
+  costToday: number | null;
+  tokensToday: number | null;
+  activeRuns: number;
+  lastWrapperSyncAt: string | null;
 };
 
 export type SafetyFinding = {
@@ -170,4 +182,5 @@ export type StrongholdSnapshot = {
   workItems: WorkItem[];
   memory: MemoryBlock;
   activity: ActivityEntry[];
+  subagentsStats: SubagentsStats;
 };

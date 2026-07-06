@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { strongholdApi } from '../api/strongholdApi';
 import type { WorkCard, WorkCardRisk, WorkCardStatus } from '../types';
+import { getWorkCardLaneId } from '../types';
+import { WorkCard as WorkCardPrimitive } from './Cards/WorkCard';
+import { EmptyState } from './Feedback/EmptyState';
 import { WorkCardDrawer } from './WorkCardDrawer';
 
 const LANES: WorkCardStatus[] = ['planned', 'active', 'blocked', 'review', 'complete'];
@@ -18,7 +21,8 @@ export function groupCardsByStatus(cards: WorkCard[]): Record<WorkCardStatus, Wo
     planned: [], active: [], blocked: [], review: [], complete: [],
   };
   for (const card of cards) {
-    if (out[card.status]) out[card.status].push(card);
+    const laneId = getWorkCardLaneId(card);
+    if (out[laneId]) out[laneId].push(card);
   }
   return out;
 }
@@ -157,38 +161,20 @@ export function WorkCardBoard({ refreshMs }: WorkCardBoardProps = {}) {
             </header>
             <div className="workCardBoardLaneCards">
               {grouped[lane].length === 0 ? (
-                <p className="workCardFeedState" data-lane-empty={lane}>No cards in {lane}.</p>
+                <EmptyState title="Lane is empty" />
               ) : grouped[lane].map(card => (
-                <button
-                  type="button"
+                <WorkCardPrimitive
                   key={card.workCardId}
-                  className="workCardBoardCard"
-                  data-risk={card.risk.toLowerCase()}
-                  data-status={card.status}
-                  data-card-id={card.workCardId}
-                  onClick={() => setSelectedCardId(card.workCardId)}
-                  onKeyDown={event => {
-                    // Buttons activate on Enter/Space natively, but we want
-                    // a single explicit handler so Pulse's keyboard test
-                    // can assert the behavior without depending on browser
-                    // defaults.
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      event.preventDefault();
-                      setSelectedCardId(card.workCardId);
-                    }
-                  }}
-                  aria-label={`Open work card ${card.workCardId}`}
-                >
-                  <div className="workCardBoardCardTop">
-                    <span className="agenticOsWorkBadge">{card.workCardId}</span>
-                    <span className={`workCardRiskBadge ${card.risk.toLowerCase()}`}>{card.risk.toLowerCase()}</span>
-                  </div>
-                  <h5 className="workCardBoardCardTitle">{card.title}</h5>
-                  <div className="workCardBoardCardMeta">
-                    <span className="muted">{card.owner}</span>
-                    <span className="muted">qc {card.qc}</span>
-                  </div>
-                </button>
+                  id={card.workCardId}
+                  title={card.title}
+                  subtitle={`risk ${card.risk.toLowerCase()} · qc ${card.qc}`}
+                  laneId={getWorkCardLaneId(card)}
+                  owner={card.owner}
+                  status={card.status}
+                  dueAt={card.schedule}
+                  priority={card.risk === 'RED' ? 'critical' : card.risk === 'YELLOW' ? 'high' : 'normal'}
+                  onOpen={setSelectedCardId}
+                />
               ))}
             </div>
           </div>

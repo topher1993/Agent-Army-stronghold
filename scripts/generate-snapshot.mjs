@@ -331,6 +331,19 @@ function collectActivity() {
   }
   return entries.sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || '')).slice(0, 12);
 }
+
+function collectSubagentsStats({ wrappers, generatedAt }) {
+  // dataSources.usageTelemetry: no authoritative per-profile usage source exists in Phase 2, so costToday/tokensToday stay null.
+  const costToday = null;
+  const tokensToday = null;
+  // dataSources.wrapperRuntimeStates: no reliable active/throttled runtime-state source exists yet; wrapper availability is install state, not runtime state.
+  const activeRuns = 0;
+  // dataSources.wrappers: wrapper statuses are collected during this snapshot run; generatedAt is the wrapper-status collection timestamp.
+  const lastWrapperSyncAt = generatedAt;
+  void wrappers;
+  return { costToday, tokensToday, activeRuns, lastWrapperSyncAt };
+}
+
 function safetyFindings({ cronJobs }) {
   return [
     { id: 'read-only-ui', level: 'ok', title: 'Read-only UI boundary', detail: 'Phase 1 has no browser write controls or command execution controls.' },
@@ -350,8 +363,10 @@ const qcHistory = collectQcHistory();
 const workItems = collectWorkItems();
 const memory = collectMemory(profiles);
 const activity = collectActivity();
+const generatedAt = new Date().toISOString();
+const subagentsStats = collectSubagentsStats({ wrappers, generatedAt });
 const snapshot = {
-  generatedAt: new Date().toISOString(),
+  generatedAt,
   phase: 'Phase 1 MVP',
   readOnly: true,
   owner: 'Igris',
@@ -362,6 +377,8 @@ const snapshot = {
     cronJobs: '%LOCALAPPDATA%/hermes/cron/jobs.json',
     wrappers: '~/.local/bin',
     missionRegistry: 'data/missions.json',
+    usageTelemetry: 'unavailable in Phase 2',
+    wrapperRuntimeStates: 'unavailable in Phase 2',
   },
   counts: {
     agents: roster.length,
@@ -382,6 +399,7 @@ const snapshot = {
   workItems,
   memory,
   activity,
+  subagentsStats,
   safetyFindings: safetyFindings({ cronJobs }),
 };
 

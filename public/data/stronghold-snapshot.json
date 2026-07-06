@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T04:27:42.882Z",
+  "generatedAt": "2026-07-06T15:56:07.999Z",
   "phase": "Phase 1 MVP",
   "readOnly": true,
   "owner": "Igris",
@@ -9,11 +9,13 @@
     "profilesRoot": "%LOCALAPPDATA%/hermes/profiles",
     "cronJobs": "%LOCALAPPDATA%/hermes/cron/jobs.json",
     "wrappers": "~/.local/bin",
-    "missionRegistry": "data/missions.json"
+    "missionRegistry": "data/missions.json",
+    "usageTelemetry": "unavailable in Phase 2",
+    "wrapperRuntimeStates": "unavailable in Phase 2"
   },
   "counts": {
     "agents": 10,
-    "profiles": 21,
+    "profiles": 22,
     "wrappersAvailable": 10,
     "skills": 1354,
     "cronJobs": 3,
@@ -286,7 +288,7 @@
         },
         {
           "name": "audit-fabrication-prevention",
-          "description": "\"Pre-audit verification rule for Belion and division leaders. Run before delivering any audit claim that names specific files, locales, keys, counts, or CVEs. Catches 'invented-from-mental-model' audits before they reach work-cards.\"",
+          "description": "\"Pre-audit verification rule for Belion and division leaders. Run before delivering any audit claim that names specific files, locales, keys, counts, or CVEs. Also run before delivering any subagent brief that names file paths, component names, or data fields. Also run before claiming any 'verified-on-disk' status on a subagent's handoff — must include actual command outputs in the claim, not the orchestrator's recollection. Catches 'invented-from-mental-model' audits, fabricated briefs, and verification-theater claims. For UI/theme work also enforces a two-screenshot visual-QC gate (dark + light mode) before claiming shipped.\"",
           "relativePath": "audit-fabrication-prevention/SKILL.md"
         },
         {
@@ -2549,6 +2551,14 @@
       "hasCronDir": false
     },
     {
+      "name": "lyra",
+      "pathLabel": "%LOCALAPPDATA%/hermes/profiles/lyra",
+      "hasSkills": true,
+      "skillCount": 0,
+      "skills": [],
+      "hasCronDir": true
+    },
+    {
       "name": "nexus",
       "pathLabel": "%LOCALAPPDATA%/hermes/profiles/nexus",
       "hasSkills": true,
@@ -4384,7 +4394,7 @@
       "modules": 0,
       "note": "Run `npm run health:capture` then `npm run snapshot` to populate."
     },
-    "auditEntries": 8502,
+    "auditEntries": 2823,
     "cronJobs": 3,
     "tunnel": {
       "publicHost": "127.0.0.1:5174",
@@ -4547,7 +4557,7 @@
       {
         "path": "memories/MEMORY.md",
         "name": "MEMORY.md",
-        "sizeBytes": 1676,
+        "sizeBytes": 2091,
         "headings": [
           "Agent army: read AGENTS.md, never summarize. Belion=default."
         ]
@@ -4555,7 +4565,7 @@
       {
         "path": "memories/USER.md",
         "name": "USER.md",
-        "sizeBytes": 1310,
+        "sizeBytes": 1297,
         "headings": []
       }
     ],
@@ -4613,97 +4623,37 @@
   },
   "activity": [
     {
-      "timestamp": "2026-07-06T04:27:27.507Z",
-      "actor": "Stronghold",
-      "capability": "memory:read",
-      "action": "memory-status.read",
-      "outcome": "ok",
-      "targetId": "MEMORY.md",
-      "targetType": "memory-file",
-      "reason": "memory status read: 6 sections, 1693 bytes"
-    },
-    {
-      "timestamp": "2026-07-06T04:27:27.495Z",
-      "actor": "Stronghold",
-      "capability": "memory:read",
-      "action": "memory-status.read",
-      "outcome": "ok",
-      "targetId": "MEMORY.md",
-      "targetType": "memory-file",
-      "reason": "memory status read: 6 sections, 1693 bytes"
-    },
-    {
-      "timestamp": "2026-07-06T04:27:27.490Z",
-      "actor": "Stronghold",
-      "capability": "graph:read",
-      "action": "activity-graph.read",
-      "outcome": "ok",
-      "targetId": "main",
-      "targetType": "activity-graph",
-      "reason": "activity graph read: 0 edges across 16 divisions (window=24h)"
-    },
-    {
-      "timestamp": "2026-07-06T04:27:27.480Z",
-      "actor": "Stronghold",
-      "capability": "discord:read:agent-army",
-      "action": "discord.read",
-      "outcome": "failed",
-      "targetId": "",
-      "targetType": "discord-channel",
-      "reason": "discord read failed: DISCORD_FAILURE"
-    },
-    {
-      "timestamp": "2026-07-06T04:27:27.473Z",
-      "actor": "Stronghold",
-      "capability": "graph:read",
-      "action": "activity-graph.read",
-      "outcome": "ok",
-      "targetId": "main",
-      "targetType": "activity-graph",
-      "reason": "activity graph read: 0 edges across 16 divisions (window=24h)"
-    },
-    {
-      "timestamp": "2026-07-06T04:27:27.458Z",
-      "actor": "Stronghold",
-      "capability": "discord:read:agent-army",
-      "action": "discord.read",
-      "outcome": "failed",
-      "targetId": "",
-      "targetType": "discord-channel",
-      "reason": "discord read failed: DISCORD_FAILURE"
-    },
-    {
-      "timestamp": "2026-07-06T04:27:13.621Z",
+      "timestamp": "2026-07-06T15:45:33.420Z",
       "actor": "Igris",
       "capability": "changeRequest:apply",
       "action": "apply",
       "outcome": "applied",
-      "targetId": "96ae0930-060b-4422-adea-2d3ee837ca49",
+      "targetId": "fed9374e-314f-4012-9cf2-01a50d276e7e",
       "targetType": "changeRequest",
       "reason": "applied by Igris"
     },
     {
-      "timestamp": "2026-07-06T04:27:13.612Z",
+      "timestamp": "2026-07-06T15:45:33.411Z",
       "actor": "Igris",
       "capability": "changeRequest:approve",
       "action": "approve",
       "outcome": "approved",
-      "targetId": "96ae0930-060b-4422-adea-2d3ee837ca49",
+      "targetId": "fed9374e-314f-4012-9cf2-01a50d276e7e",
       "targetType": "changeRequest",
       "reason": "approved in UI"
     },
     {
-      "timestamp": "2026-07-06T04:27:13.601Z",
+      "timestamp": "2026-07-06T15:45:33.400Z",
       "actor": "Chris",
       "capability": "changeRequest:create",
       "action": "create",
       "outcome": "requested",
-      "targetId": "96ae0930-060b-4422-adea-2d3ee837ca49",
+      "targetId": "fed9374e-314f-4012-9cf2-01a50d276e7e",
       "targetType": "changeRequest",
       "reason": "change request created"
     },
     {
-      "timestamp": "2026-07-06T04:26:29.552Z",
+      "timestamp": "2026-07-06T15:44:40.713Z",
       "actor": "Igris",
       "capability": "orchestration:disable",
       "action": "disable",
@@ -4713,26 +4663,92 @@
       "reason": "operator disabled"
     },
     {
-      "timestamp": "2026-07-06T04:26:29.545Z",
+      "timestamp": "2026-07-06T15:44:40.706Z",
       "actor": "Chris",
       "capability": "agentRequest:create",
       "action": "create",
       "outcome": "requested",
-      "targetId": "cf61108d-0acd-417e-a171-95e2df472c9b",
+      "targetId": "9bdcbc61-f391-4745-aa40-b47bd5755ad6",
       "targetType": "changeRequest",
       "reason": "agent request created by Chris"
     },
     {
-      "timestamp": "2026-07-06T04:26:29.532Z",
+      "timestamp": "2026-07-06T15:44:40.694Z",
       "actor": "Chris",
       "capability": "changeRequest:create",
       "action": "create",
       "outcome": "requested",
-      "targetId": "691b5963-582d-4225-b3bc-c890f070914d",
+      "targetId": "f237f8ed-6892-4a60-b09a-6c0d74f2061c",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-06T15:44:40.678Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "4b745a38-d75b-4759-8aee-d22618ea4202",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-06T15:44:40.663Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "b1c95fd5-4f22-48f8-af60-66b42a4d34ae",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-06T15:44:40.648Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "c51ba94c-8e47-4d37-a946-21501c08119c",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-06T15:44:40.632Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "d7dfe260-d98b-438c-ab98-93412594358e",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-06T15:44:40.616Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "362db485-4ca8-468d-a5eb-2c0dc0e10c78",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-06T15:44:40.599Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "1d614f24-8e3a-4423-9881-39c01f457df9",
       "targetType": "changeRequest",
       "reason": "change request created"
     }
   ],
+  "subagentsStats": {
+    "costToday": null,
+    "tokensToday": null,
+    "activeRuns": 0,
+    "lastWrapperSyncAt": "2026-07-06T15:56:07.999Z"
+  },
   "safetyFindings": [
     {
       "id": "read-only-ui",

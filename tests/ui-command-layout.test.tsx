@@ -47,7 +47,7 @@ describe('Stronghold Dashboard default landing layout (Phase 47 — sidebar nav)
     // Sidebar surfaces (6).
     const surfaces = Array.from(sidebar?.querySelectorAll('[data-surface-id]') ?? []);
     const ids = surfaces.map(s => s.getAttribute('data-surface-id'));
-    expect(ids).toEqual(['dashboard', 'work', 'missions', 'operations', 'approvals', 'cron']);
+    expect(ids).toEqual(['dashboard', 'work', 'missions', 'subagents', 'operations', 'approvals', 'cron']);
 
     // Dashboard is the default active surface.
     const active = sidebar?.querySelector('.sidebarItem--active');

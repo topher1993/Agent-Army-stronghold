@@ -5,6 +5,7 @@ export type SurfaceId =
   | 'dashboard'
   | 'work'
   | 'missions'
+  | 'subagents'
   | 'operations'
   | 'approvals'
   | 'cron';
@@ -24,6 +25,8 @@ const ICON = {
   work: 'M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
   // Missions = target / bullseye
   missions: 'M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zM12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zM12 14a2 2 0 1 1 0-4 2 2 0 0 1 0 4z',
+  // Subagents = users
+  subagents: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
   // Operations = gear
   operations: 'M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
   // Approvals = check circle
@@ -36,6 +39,7 @@ export const SURFACES: SurfaceDef[] = [
   { id: 'dashboard', label: 'Dashboard', icon: ICON.dashboard, description: 'Hero stats, QC, work items, activity, memory' },
   { id: 'work', label: 'Work', icon: ICON.work, description: 'Work Card Board — lane-grouped, filterable' },
   { id: 'missions', label: 'Missions', icon: ICON.missions, description: 'Mission Board — planned through complete' },
+  { id: 'subagents', label: 'Subagents', icon: ICON.subagents, description: 'Profiles, wrappers, skills, and missions' },
   { id: 'operations', label: 'Operations', icon: ICON.operations, description: 'Proposals, audit, orchestration, safety' },
   { id: 'approvals', label: 'Approvals', icon: ICON.approvals, description: 'Pending change requests awaiting decision' },
   { id: 'cron', label: 'Cron', icon: ICON.cron, description: 'Scheduled jobs — pause, edit, run, delete' },

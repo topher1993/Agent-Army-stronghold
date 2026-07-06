@@ -1,0 +1,3 @@
+
+import { useId, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
+export function FormField({ label, hint, error, children }: { label: string; hint?: string; error?: string | null; children: ReactNode }) { const id = useId(); const child = isValidElement(children) ? cloneElement(children as ReactElement<{ id?: string; 'aria-describedby'?: string }>, { id, 'aria-describedby': hint || error ? `${id}-meta` : undefined }) : children; return <div className="formField"><label htmlFor={id}>{label}</label>{child}{hint || error ? <p id={`${id}-meta`} className={error ? 'formFieldError' : 'formFieldHint'}>{error || hint}</p> : null}</div>; }

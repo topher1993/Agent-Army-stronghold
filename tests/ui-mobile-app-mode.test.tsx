@@ -41,7 +41,7 @@ describe('Stronghold shell sidebar-driven surface swap (Phase 47)', () => {
 
     const items = Array.from(sidebar?.querySelectorAll('[data-surface-id]') ?? []);
     expect(items.map(i => i.getAttribute('data-surface-id'))).toEqual([
-      'dashboard', 'work', 'missions', 'operations', 'approvals', 'cron',
+      'dashboard', 'work', 'missions', 'subagents', 'operations', 'approvals', 'cron',
     ]);
     expect(sidebar?.querySelector('.sidebarItem--active')?.getAttribute('data-surface-id')).toBe('dashboard');
   });

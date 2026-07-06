@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 import { strongholdApi, type ApprovalCard } from '../api/strongholdApi';
+import { Panel } from './Cards/Panel';
+import { EmptyState } from './Feedback/EmptyState';
+import { StatusPill } from './Feedback/StatusPill';
+import { useToast } from './Controls/Toast';
 
 // FEATURE 1 — Approval Queue (right rail)
 // Audit-log-only: every click hits POST /api/approvals/:id/{approve|reject}.
@@ -22,6 +26,8 @@ export function ApprovalQueue({ refreshKey = 0 }: { refreshKey?: number }) {
   const [reasonDrafts, setReasonDrafts] = useState<Record<string, string>>({});
   const [reasonsOpen, setReasonsOpen] = useState<Record<string, boolean>>({});
   const [resolvedBanner, setResolvedBanner] = useState<string | null>(null);
+  const [showResolved, setShowResolved] = useState(false);
+  const { showToast } = useToast();
 
   async function load() {
     try {
@@ -43,11 +49,15 @@ export function ApprovalQueue({ refreshKey = 0 }: { refreshKey?: number }) {
     const reason = reasonDrafts[card.id]?.trim() || undefined;
     try {
       const updated = await strongholdApi.decideApproval(card.id, action, { reason });
-      setResolvedBanner(`${action === 'approve' ? 'Approved' : 'Rejected'}: ${updated.title}`);
+      const message = `${action === 'approve' ? 'Approved' : 'Rejected'}: ${updated.title}`;
+      setResolvedBanner(message);
+      showToast({ tone: 'success', title: message });
       // Re-fetch the list so the card drops out of the active list cleanly.
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : `${action} failed`);
+      const message = err instanceof Error ? err.message : `${action} failed`;
+      setError(message);
+      showToast({ tone: 'danger', title: `${action} failed`, description: message });
     } finally {
       setPendingId(null);
       setPendingAction(null);
@@ -61,19 +71,19 @@ export function ApprovalQueue({ refreshKey = 0 }: { refreshKey?: number }) {
     <section className="panel" data-approval-queue>
       <h2>Approval Queue</h2>
       <p>Audit-log only — every resolve writes one immutable entry. No cascading writes.</p>
-      {resolvedBanner && <p className="statusLine" data-approval-resolved>{resolvedBanner}</p>}
-      {error && <p className="statusLine danger" data-approval-error>{error}</p>}
+      <label className="cronInline"><input type="checkbox" checked={showResolved} onChange={e => setShowResolved(e.target.checked)} /> Show resolved</label>
+      {resolvedBanner && <div className="visuallyInlineStatus" data-approval-resolved>{resolvedBanner}</div>}
+      {error && <div className="visuallyInlineStatus danger" role="alert" data-approval-error>{error}</div>}
       {active.length === 0
-        ? <p className="muted">No pending approvals</p>
+        ? <EmptyState title="All caught up" description="No pending approvals" />
         : (
           <div className="list">
             {active.map(card => {
               const isPending = pendingId === card.id;
               const reasonOpen = !!reasonsOpen[card.id];
               return (
-                <article className="row approvalCard" key={card.id} data-approval-id={card.id} data-approval-status={card.status}>
+                <Panel as="article" key={card.id} title={card.title} actions={<StatusPill tone="info" label="request" />}><div className="row approvalCard" data-approval-id={card.id} data-approval-status={card.status}>
                   <div className="approvalCardBody">
-                    <strong>{card.title}</strong>
                     <p className="muted">{card.requestedBy ? `requested by ${card.requestedBy}` : 'pending'} · {card.status}</p>
                     <button
                       type="button"
@@ -114,12 +124,12 @@ export function ApprovalQueue({ refreshKey = 0 }: { refreshKey?: number }) {
                       {isPending && pendingAction === 'reject' ? 'Rejecting…' : 'Reject'}
                     </button>
                   </div>
-                </article>
+                </div></Panel>
               );
             })}
           </div>
         )}
-      {recentlyResolved.length > 0 && (
+      {showResolved && recentlyResolved.length > 0 && (
         <details className="resolvedStack" data-approval-resolved-stack>
           <summary>Recently resolved ({recentlyResolved.length})</summary>
           <ul>

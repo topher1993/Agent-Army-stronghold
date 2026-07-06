@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { WorkCard } from '../types';
 
 export type WorkCardDrawerProps = {
@@ -17,13 +17,26 @@ export type WorkCardDrawerProps = {
  * endpoint with pathGuard allowlist expansion (out of scope for this PR).
  */
 export function WorkCardDrawer({ card, onClose }: WorkCardDrawerProps) {
+  const drawerRef = useRef<HTMLDivElement | null>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
     if (!card) return;
+    triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const focusables = () => Array.from(drawerRef.current?.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])') || []).filter(el => !el.hasAttribute('disabled'));
+    window.setTimeout(() => focusables()[0]?.focus(), 0);
     function onKey(event: KeyboardEvent) {
       if (event.key === 'Escape') onClose();
+      if (event.key === 'Tab') {
+        const items = focusables();
+        if (items.length === 0) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
     }
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); triggerRef.current?.focus(); };
   }, [card, onClose]);
 
   if (!card) return null;
@@ -32,7 +45,7 @@ export function WorkCardDrawer({ card, onClose }: WorkCardDrawerProps) {
 
   return (
     <div className="workCardDrawerBackdrop" role="dialog" aria-modal="true" aria-label={`Work card ${card.workCardId}`} onClick={onClose}>
-      <div className="workCardDrawer" onClick={event => event.stopPropagation()} data-work-card-drawer={card.workCardId}>
+      <div ref={drawerRef} className="workCardDrawer" onClick={event => event.stopPropagation()} data-work-card-drawer={card.workCardId}>
         <header className="workCardDrawerHeader">
           <div>
             <span className="agenticOsWorkBadge">{card.workCardId}</span>
