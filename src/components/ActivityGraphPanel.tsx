@@ -210,7 +210,7 @@ export function ActivityGraphPanel(): JSX.Element {
             markerHeight="6"
             orient="auto-start-reverse"
           >
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(180, 200, 255, 0.5)" />
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-accent-text)" />
           </marker>
         </defs>
 
@@ -230,7 +230,7 @@ export function ActivityGraphPanel(): JSX.Element {
               y1={from.y}
               x2={to.x}
               y2={to.y}
-              stroke="rgba(180, 200, 255, 0.6)"
+              stroke="var(--color-accent-text)"
               strokeWidth={strokeWidthFor(e.count)}
               strokeLinecap="round"
               markerEnd="url(#activity-arrow)"
@@ -247,13 +247,13 @@ export function ActivityGraphPanel(): JSX.Element {
           const pos = positionById.get(d.id) ?? { x: 0, y: 0 };
           return (
             <g key={d.id} data-division-id={d.id} transform={`translate(${pos.x} ${pos.y})`}>
-              <circle r={22} fill={d.color} stroke="rgba(255,255,255,0.2)" strokeWidth={1.5} />
+              <circle r={22} fill={d.color} stroke="var(--color-border)" strokeWidth={1.5} />
               <text
                 textAnchor="middle"
                 dominantBaseline="central"
                 fontSize={12}
                 fontWeight={700}
-                fill="#0b1220"
+                fill="var(--color-canvas)"
               >
                 {d.label}
               </text>

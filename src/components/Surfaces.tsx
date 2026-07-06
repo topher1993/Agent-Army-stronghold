@@ -42,7 +42,7 @@ export function SurfaceDashboard({
 
   return (
     <>
-      <Hero snapshot={snapshot} backendOk={backendOk} killSwitch={killSwitch} onRefresh={onRefreshEverything} />
+      <Hero id="section-hero" snapshot={snapshot} backendOk={backendOk} killSwitch={killSwitch} onRefresh={onRefreshEverything} />
       <DashboardSubNav />
       <section
         id="dashboard-section"

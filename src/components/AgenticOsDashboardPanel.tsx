@@ -355,6 +355,18 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
 
   const qcLatest = qcForSparkline[0];
 
+  const recheck = async () => {
+    try {
+      const r = await fetch(`${import.meta.env.BASE_URL}data/stronghold-snapshot.json`, { cache: 'no-store' });
+      if (!r.ok) throw new Error(`Snapshot unavailable: ${r.status}`);
+      const json = await r.json() as StrongholdSnapshot;
+      setFetchedSnapshot(json);
+      setData(buildAgenticOsData(json));
+    } catch {
+      setData(AGENTIC_OS_PLACEHOLDER);
+    }
+  };
+
   return (
     <section className="panel wide agenticOsPanel" aria-label="Agentic OS dashboard" data-agentic-os-panel>
       <header className="agenticOsHeader">
@@ -370,12 +382,12 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
           {data.source === 'live'
             ? <span className="status live">LIVE</span>
             : <span className="status placeholder">PLACEHOLDER</span>}
-          <button type="button" className="agenticOsRecheck" onClick={() => { window.location.reload(); }}>Recheck</button>
+          <button type="button" className="agenticOsRecheck btn-secondary" onClick={() => { void recheck(); }}>Recheck</button>
         </div>
       </header>
 
       {/* Hero stats row: 4 equal cards across the full width */}
-      <section className="agenticOsHeroRow" aria-label="Hero stats">
+      <section id="section-health" className="agenticOsHeroRow" aria-label="Hero stats">
         {heroStats.map(stat => (
           <article
             key={stat.id}
@@ -474,14 +486,14 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
 
       {/* Discord #agent-army coordination panel (Phase D1).
           Self-contained read-only feed; polls every 60s, pausable. */}
-      <DiscordCoordinationPanel />
+      <div id="section-coordination"><DiscordCoordinationPanel /></div>
 
       {/* Routing Flow — Phase D4 activity graph (read-only).
           Polls /api/activity-graph every 60s and renders the hand-off graph
           as a pure SVG with three rows of nodes (Belion top, Igris middle,
           specialists bottom) and pulse-animated edges for active routes. */}
-      <ActivityGraphPanel />
-      <MemoryStatusPanel />
+      <div id="section-routing"><ActivityGraphPanel /></div>
+      <div id="section-memory"><MemoryStatusPanel /></div>
     </section>
   );
 }

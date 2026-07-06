@@ -56,7 +56,9 @@ export function App() {
 
   const refreshEverything = () => {
     setRefreshKey(value => value + 1);
-    window.location.reload();
+    loadSnapshot().then(setSnapshot).catch((err: Error) => setError(err.message));
+    backendHealth().then(result => setBackendOk(result.ok));
+    orchestrationHealth().then(result => setKillSwitch(result.killSwitch || 'unknown'));
   };
 
   const refreshApprovals = () => setRefreshKey(value => value + 1);

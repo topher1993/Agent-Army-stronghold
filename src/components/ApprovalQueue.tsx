@@ -106,7 +106,7 @@ export function ApprovalQueue({ refreshKey = 0 }: { refreshKey?: number }) {
                     </button>
                     <button
                       type="button"
-                      className="secondary"
+                      className="btn-secondary"
                       onClick={() => void decide(card, 'reject')}
                       disabled={isPending}
                       data-approval-action={`reject:${card.id}`}

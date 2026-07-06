@@ -103,7 +103,7 @@ export function CronManager({ snapshotJobs = [] as CronJobSummaryApi[], refreshK
     <section className="panel" data-cron-manager>
       <header className="cronManagerHeader">
         <h2>Cron / Schedule Manager</h2>
-        <button type="button" className="primary" data-cron-new onClick={() => setCreating(true)}>+ New</button>
+        <button type="button" className="btn-primary" data-cron-new onClick={() => setCreating(true)}>+ New</button>
       </header>
       <p>Live view of <code>hermes cron</code> jobs. Pause/resume, edit, and delete with confirm.</p>
       {banner && <p className="statusLine" data-cron-banner>{banner}</p>}
@@ -133,7 +133,7 @@ export function CronManager({ snapshotJobs = [] as CronJobSummaryApi[], refreshK
                   </button>
                   <button
                     type="button"
-                    className="secondary"
+                    className="btn-secondary"
                     onClick={async () => {
                       try {
                         const detail = await strongholdApi.getCronJob(job.id);
@@ -147,7 +147,7 @@ export function CronManager({ snapshotJobs = [] as CronJobSummaryApi[], refreshK
                   >Edit</button>
                   <button
                     type="button"
-                    className="secondary danger"
+                    className="btn-danger"
                     onClick={() => setDeletingId(job.id)}
                     disabled={isBusy}
                     data-cron-delete-trigger={job.id}
@@ -158,12 +158,12 @@ export function CronManager({ snapshotJobs = [] as CronJobSummaryApi[], refreshK
                     <span>Delete <strong>{job.name}</strong>? This cannot be undone.</span>
                     <button
                       type="button"
-                      className="danger"
+                      className="btn-danger"
                       onClick={async () => { try { await remove(job.id); setDeletingId(null); } catch { /* error already surfaced */ } }}
                       disabled={isBusy}
                       data-cron-delete-confirm={job.id}
                     >{isBusy && busyAction === 'delete' ? 'Deleting…' : 'Confirm delete'}</button>
-                    <button type="button" className="secondary" onClick={() => setDeletingId(null)} disabled={isBusy}>Cancel</button>
+                    <button type="button" className="btn-secondary" onClick={() => setDeletingId(null)} disabled={isBusy}>Cancel</button>
                   </div>
                 )}
               </article>
@@ -241,10 +241,10 @@ function CronJobForm({ mode, initial, onCancel, onSubmit, busy }: { mode: 'creat
       </fieldset>
       {err && <p className="statusLine danger" data-cron-form-error>{err}</p>}
       <div className="cronFormActions">
-        <button type="submit" className="primary" disabled={busy || submitting} data-cron-submit={mode}>
+        <button type="submit" className="btn-primary" disabled={busy || submitting} data-cron-submit={mode}>
           {submitting ? 'Saving…' : mode === 'create' ? 'Create job' : 'Save changes'}
         </button>
-        <button type="button" className="secondary" onClick={onCancel} disabled={busy || submitting}>Cancel</button>
+        <button type="button" className="btn-secondary" onClick={onCancel} disabled={busy || submitting}>Cancel</button>
       </div>
     </form>
   );

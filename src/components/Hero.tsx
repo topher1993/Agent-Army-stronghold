@@ -1,19 +1,21 @@
 import type { StrongholdSnapshot } from '../types';
+import { ThemeToggle } from './ThemeToggle';
 
 export type HeroProps = {
   snapshot: StrongholdSnapshot;
   backendOk: boolean;
   killSwitch: string;
   onRefresh: () => void;
+  id?: string;
 };
 
 /**
  * Hero header — title block, GUARDED ribbon, refresh button, metadata grid.
  * Phase 46 layout; Phase 47 keeps it identical (sidebar is the only new piece).
  */
-export function Hero({ snapshot, backendOk, killSwitch, onRefresh }: HeroProps) {
+export function Hero({ snapshot, backendOk, killSwitch, onRefresh, id }: HeroProps) {
   return (
-    <header className="hero commandHeader">
+    <header id={id} className="hero commandHeader">
       <div className="heroTitleBlock">
         <div className="heroTitleRow">
           <p className="eyebrow">Engineering Division Stronghold</p>
@@ -29,15 +31,18 @@ export function Hero({ snapshot, backendOk, killSwitch, onRefresh }: HeroProps) 
           Igris-owned Stronghold cockpit for visibility, guarded proposals, approval workflows, and safe mock agent orchestration.
         </p>
       </div>
-      <button
+      <div className="heroHeaderActions">
+        <ThemeToggle />
+        <button
         type="button"
-        className="heroRefreshAll"
+        className="heroRefreshAll btn-secondary"
         onClick={onRefresh}
         aria-label="Refresh everything"
         title="Reload snapshot + all panels"
       >
         ↻ Refresh everything
-      </button>
+        </button>
+      </div>
       <dl className="heroMeta">
         <div><dt>Owner</dt><dd>{snapshot.owner}</dd></div>
         <div><dt>Coordinator</dt><dd>{snapshot.coordinator}</dd></div>

@@ -386,9 +386,10 @@ describe('Agentic OS dashboard compact layout (Igris compact brief — Phase E)'
     expect(appShell![0]).toMatch(/grid-template-columns:\s*auto\s+minmax\(0,\s*1fr\)/);
   });
 
-  it('CSS defines the sidebar styling tokens (palette, status dot, active surface)', () => {
+  it('CSS defines sidebar styling through the canonical color token namespace', () => {
     expect(css).toMatch(/\.sidebar\s*\{/);
-    expect(css).toMatch(/--sidebar-bg:/);
+    expect(css).not.toMatch(/--sidebar-/);
+    expect(css).toMatch(/background:\s*var\(--color-surface\)/);
     expect(css).toMatch(/\.sidebarItem--active/);
   });
 

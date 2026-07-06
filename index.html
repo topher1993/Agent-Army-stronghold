@@ -3,11 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function(){
+        var t=localStorage.getItem('stronghold.theme');
+        var s=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+        var d=t||s;
+        document.documentElement.setAttribute('data-theme',d);
+        document.documentElement.style.colorScheme=d;
+      })();
+    </script>
     <title>Agent-Army Stronghold</title>
-    <meta name="color-scheme" content="dark" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;510;590;600&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>

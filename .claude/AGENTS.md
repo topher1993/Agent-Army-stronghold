@@ -13,7 +13,7 @@ Every specialist has TWO definitions:
 1. **Profile-level SOUL** at `%LOCALAPPDATA%/hermes/profiles/<name>/SOUL.md` (Windows primary; legacy `~/.hermes/` path was removed 2026-07-06) — defines behavior when Chris runs `hermes -p` with that profile. This is the broader runtime.
 2. **Project-scoped subagent def** at `.claude/agents/<name>.md` — defines behavior when Chris runs `claude --agent <name>` from this project. This is the project-specific overlay (adds Stronghold-specific owns/does-not-touch rules that the profile SOUL doesn't have).
 
-19 profile-level SOULs exist on disk. Project-scoped defs exist for a subset; this file lists which.
+20 profile-level SOULs exist on disk. Project-scoped defs exist for a subset; this file lists which.
 
 ## The Army (6 divisions)
 
@@ -48,6 +48,7 @@ Oversees software, systems, architecture, AI/LLM, coding, quality, and security.
 | Atlas | Architecture | ✅ `.claude/agents/atlas.md` | ✅ `profiles/atlas/SOUL.md` |
 | Pulse | QA | ✅ `.claude/agents/pulse.md` | ✅ `profiles/pulse/SOUL.md` |
 | Nexus | AI/LLM | ✅ `.claude/agents/nexus.md` | ✅ `profiles/nexus/SOUL.md` |
+| Lyra | UI/UX Design Lead | ✅ `.claude/agents/lyra.md` | ✅ `profiles/lyra/SOUL.md` |
 
 ### 3. Financial Division — Leader: **GREED** (Financial Strategist)
 
