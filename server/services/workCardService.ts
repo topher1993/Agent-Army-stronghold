@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { load as loadYaml } from 'js-yaml';
 import type { Mission } from '../../src/types';
@@ -38,11 +37,14 @@ function warn(message: string): void {
 }
 
 export function defaultWorkCardDirectory(): string {
+  // Chris's machine is Windows. The primary agent army lives under %LOCALAPPDATA%/hermes/.
+  // The legacy ~/.hermes/ fallback was removed 2026-07-06 (scratchpad tree deletion);
+  // if LOCALAPPDATA is somehow missing, throw rather than silently pointing at a wrong path.
   const localAppData = process.env.LOCALAPPDATA;
-  if (localAppData) {
-    return path.join(localAppData, 'hermes', 'agent-army', 'work-cards');
+  if (!localAppData) {
+    throw new Error('workCardService: LOCALAPPDATA is not set; Windows-only build');
   }
-  return path.join(os.homedir(), '.hermes', 'agent-army', 'work-cards');
+  return path.join(localAppData, 'hermes', 'agent-army', 'work-cards');
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

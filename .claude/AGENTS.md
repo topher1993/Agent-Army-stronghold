@@ -10,7 +10,7 @@ This file is the canonical index of runnable Claude Code subagent definitions fo
 ## Two-layer architecture
 
 Every specialist has TWO definitions:
-1. **Profile-level SOUL** at `~/.hermes/profiles/<name>/SOUL.md` — defines behavior when Chris runs `hermes -p` with that profile. This is the broader runtime.
+1. **Profile-level SOUL** at `%LOCALAPPDATA%/hermes/profiles/<name>/SOUL.md` (Windows primary; legacy `~/.hermes/` path was removed 2026-07-06) — defines behavior when Chris runs `hermes -p` with that profile. This is the broader runtime.
 2. **Project-scoped subagent def** at `.claude/agents/<name>.md` — defines behavior when Chris runs `claude --agent <name>` from this project. This is the project-specific overlay (adds Stronghold-specific owns/does-not-touch rules that the profile SOUL doesn't have).
 
 19 profile-level SOULs exist on disk. Project-scoped defs exist for a subset; this file lists which.

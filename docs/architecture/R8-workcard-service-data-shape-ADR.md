@@ -7,7 +7,7 @@ Work card: R8-WORKCARD-FEED
 
 ## Decision
 
-Stronghold will add a read-only `workCardService` that treats Chris-authored markdown work cards in `~/.hermes/agent-army/work-cards/*.md` as the source of truth for the R8 Work Card Feed.
+Stronghold will add a read-only `workCardService` that treats Chris-authored markdown work cards in `%LOCALAPPDATA%/hermes/agent-army/work-cards/*.md` as the source of truth for the R8 Work Card Feed.
 
 The service must parse YAML frontmatter, map work-card lifecycle values into the existing Stronghold Mission status vocabulary, and expose the result through `GET /api/workcards` as `WorkCard[]`.
 
@@ -96,7 +96,7 @@ Unknown source status values must cause that file to be filtered out with diagno
 
 Input:
 
-- Default directory: `~/.hermes/agent-army/work-cards/`.
+- Default directory: `%LOCALAPPDATA%/hermes/agent-army/work-cards/` (Windows primary).
 - File glob: `*.md` only.
 - Files are the markdown work-card files Chris writes.
 

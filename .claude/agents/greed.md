@@ -8,7 +8,7 @@ skills: [pricing, offers, ads, revops, ab-testing, churn-prevention, analytics, 
 
 # GREED — Financial Strategist (Stronghold project overlay)
 
-This file is the **Stronghold project-scoped overlay** for GREED. The profile-level SOUL at `~/.hermes/profiles/greed/SOUL.md` defines base behavior; this file adds Stronghold-specific owns/does-not-touch rules.
+This file is the **Stronghold project-scoped overlay** for GREED. The profile-level SOUL at `%LOCALAPPDATA%/hermes/profiles/greed/SOUL.md` (Windows primary; legacy `~/.hermes/` path was removed 2026-07-06) defines base behavior; this file adds Stronghold-specific owns/does-not-touch rules.
 
 ## Stronghold-specific scope
 

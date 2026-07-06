@@ -68,7 +68,7 @@ Non-responsibilities:
 - No arbitrary command invocation.
 - No git operations.
 - No direct writes to Stronghold-owned files.
-- No mutation of `~/.hermes` profiles, skills, plugins, cron, or memories.
+- No mutation of `%LOCALAPPDATA%/hermes` profiles, skills, plugins, cron, or memories.
 - No network policy bypass.
 
 ### 2. Dispatch supervisor
@@ -171,6 +171,7 @@ Denied:
 - Dispatch endpoint that accepts arbitrary command text.
 - Agent output directly mutating `data/*.json`.
 - Agent output directly modifying `src`, `server`, `docs`, `.hermes`, Git, cron, skills, plugins, memories, or user home files.
+  - Note: `.hermes` here refers to the project-local Stronghold planning tree (`~/agent-army-stronghold/.hermes/`); the primary agent army lives at `%LOCALAPPDATA%/hermes` and is also off-limits.
 - Auto-apply of patch proposals.
 - Wrapper-controlled filesystem destination paths.
 

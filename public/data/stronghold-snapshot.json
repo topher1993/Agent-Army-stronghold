@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-05T15:17:33.683Z",
+  "generatedAt": "2026-07-06T04:27:42.882Z",
   "phase": "Phase 1 MVP",
   "readOnly": true,
   "owner": "Igris",
@@ -15,7 +15,7 @@
     "agents": 10,
     "profiles": 21,
     "wrappersAvailable": 10,
-    "skills": 1365,
+    "skills": 1354,
     "cronJobs": 3,
     "missions": 2,
     "blockedMissions": 0
@@ -237,7 +237,7 @@
       "name": "default",
       "pathLabel": "%LOCALAPPDATA%/hermes",
       "hasSkills": true,
-      "skillCount": 97,
+      "skillCount": 98,
       "skills": [
         {
           "name": "agent-army-governance",
@@ -655,7 +655,7 @@
       "name": "beru",
       "pathLabel": "%LOCALAPPDATA%/hermes/profiles/beru",
       "hasSkills": true,
-      "skillCount": 71,
+      "skillCount": 69,
       "skills": [
         {
           "name": "agent-config-github-backups",
@@ -828,11 +828,6 @@
           "relativePath": "devops/kanban-worker/SKILL.md"
         },
         {
-          "name": "lesson-history",
-          "description": "Beru routing skill for Japanese learning progress. Sensei owns Japanese lesson history; Beru uses it only for high-level learning strategy.",
-          "relativePath": "japanese/lesson-history/SKILL.md"
-        },
-        {
           "name": "llama-cpp",
           "description": "llama.cpp local GGUF inference + HF Hub model discovery.",
           "relativePath": "mlops/inference/llama-cpp/SKILL.md"
@@ -856,6 +851,11 @@
           "name": "maps",
           "description": "\"Geocode, POIs, routes, timezones via OpenStreetMap/OSRM.\"",
           "relativePath": "productivity/maps/SKILL.md"
+        },
+        {
+          "name": "nano-pdf",
+          "description": "\"Edit PDF text/typos/titles via nano-pdf CLI (NL prompts).\"",
+          "relativePath": "productivity/nano-pdf/SKILL.md"
         }
       ],
       "hasCronDir": true
@@ -1491,7 +1491,7 @@
       "name": "greed",
       "pathLabel": "%LOCALAPPDATA%/hermes/profiles/greed",
       "hasSkills": true,
-      "skillCount": 69,
+      "skillCount": 62,
       "skills": [
         {
           "name": "airtable",
@@ -1584,11 +1584,6 @@
           "relativePath": "creative/excalidraw/SKILL.md"
         },
         {
-          "name": "financial-division",
-          "description": "Define the role and responsibilities of the financial division and its leader GREED.",
-          "relativePath": "financial-division/SKILL.md"
-        },
-        {
           "name": "gif-search",
           "description": "\"Search/download GIFs from Tenor via curl + jq.\"",
           "relativePath": "media/gif-search/SKILL.md"
@@ -1649,11 +1644,6 @@
           "relativePath": "data-science/jupyter-live-kernel/SKILL.md"
         },
         {
-          "name": "ledger",
-          "description": "Debt & Budget Specialist for the Financial Division.",
-          "relativePath": "ledger/SKILL.md"
-        },
-        {
           "name": "llama-cpp",
           "description": "llama.cpp local GGUF inference + HF Hub model discovery.",
           "relativePath": "mlops/inference/llama-cpp/SKILL.md"
@@ -1669,29 +1659,39 @@
           "relativePath": "creative/manim-video/SKILL.md"
         },
         {
-          "name": "mansa",
-          "description": "Investment & Wealth Building Specialist for the Financial Division.",
-          "relativePath": "mansa/SKILL.md"
-        },
-        {
           "name": "maps",
           "description": "\"Geocode, POIs, routes, timezones via OpenStreetMap/OSRM.\"",
           "relativePath": "productivity/maps/SKILL.md"
         },
         {
-          "name": "medici",
-          "description": "Financial Planning Specialist for the Financial Division.",
-          "relativePath": "medici/SKILL.md"
-        },
-        {
-          "name": "morgan",
-          "description": "Market Intelligence Specialist for the Financial Division.",
-          "relativePath": "morgan/SKILL.md"
-        },
-        {
           "name": "nano-pdf",
           "description": "\"Edit PDF text/typos/titles via nano-pdf CLI (NL prompts).\"",
           "relativePath": "productivity/nano-pdf/SKILL.md"
+        },
+        {
+          "name": "node-inspect-debugger",
+          "description": "\"Debug Node.js via --inspect + Chrome DevTools Protocol CLI.\"",
+          "relativePath": "software-development/node-inspect-debugger/SKILL.md"
+        },
+        {
+          "name": "notion",
+          "description": "\"Notion API + ntn CLI: pages, databases, markdown, Workers.\"",
+          "relativePath": "productivity/notion/SKILL.md"
+        },
+        {
+          "name": "obsidian",
+          "description": "Read, search, create, and edit notes in the Obsidian vault.",
+          "relativePath": "note-taking/obsidian/SKILL.md"
+        },
+        {
+          "name": "ocr-and-documents",
+          "description": "\"Extract text from PDFs/scans (pymupdf, marker-pdf).\"",
+          "relativePath": "productivity/ocr-and-documents/SKILL.md"
+        },
+        {
+          "name": "opencode",
+          "description": "\"Delegate coding to OpenCode CLI (features, PR review).\"",
+          "relativePath": "autonomous-ai-agents/opencode/SKILL.md"
         }
       ],
       "hasCronDir": true
@@ -2327,17 +2327,12 @@
       "name": "kamish",
       "pathLabel": "%LOCALAPPDATA%/hermes/profiles/kamish",
       "hasSkills": true,
-      "skillCount": 71,
+      "skillCount": 70,
       "skills": [
         {
           "name": "agent-config-github-backups",
           "description": "Back up an agent/Hermes profile configuration to a private GitHub repository with safe exclusions, restore helpers, and scheduled runs.",
           "relativePath": "devops/agent-config-github-backups/SKILL.md"
-        },
-        {
-          "name": "ai-cost-limit-monitoring",
-          "description": "Monitor Hermes AI usage, ChatGPT Plus efficiency, costs, quotas, limits, and budget risks.",
-          "relativePath": "monitoring/ai-cost-limit-monitoring/SKILL.md"
         },
         {
           "name": "airtable",
@@ -2528,6 +2523,11 @@
           "name": "manim-video",
           "description": "\"Manim CE animations: 3Blue1Brown math/algo videos.\"",
           "relativePath": "creative/manim-video/SKILL.md"
+        },
+        {
+          "name": "maps",
+          "description": "\"Geocode, POIs, routes, timezones via OpenStreetMap/OSRM.\"",
+          "relativePath": "productivity/maps/SKILL.md"
         }
       ],
       "hasCronDir": true
@@ -2535,18 +2535,18 @@
     {
       "name": "local-gemma",
       "pathLabel": "%LOCALAPPDATA%/hermes/profiles/local-gemma",
-      "hasSkills": true,
+      "hasSkills": false,
       "skillCount": 0,
       "skills": [],
-      "hasCronDir": true
+      "hasCronDir": false
     },
     {
       "name": "local-qwen",
       "pathLabel": "%LOCALAPPDATA%/hermes/profiles/local-qwen",
-      "hasSkills": true,
+      "hasSkills": false,
       "skillCount": 0,
       "skills": [],
-      "hasCronDir": true
+      "hasCronDir": false
     },
     {
       "name": "nexus",
@@ -3179,7 +3179,7 @@
       "name": "sensei",
       "pathLabel": "%LOCALAPPDATA%/hermes/profiles/sensei",
       "hasSkills": true,
-      "skillCount": 71,
+      "skillCount": 69,
       "skills": [
         {
           "name": "agent-config-github-backups",
@@ -3352,11 +3352,6 @@
           "relativePath": "devops/kanban-worker/SKILL.md"
         },
         {
-          "name": "lesson-history",
-          "description": "Track Chris's Japanese lessons, review items, mistakes, and next topics across Sensei sessions.",
-          "relativePath": "japanese/lesson-history/SKILL.md"
-        },
-        {
           "name": "llama-cpp",
           "description": "llama.cpp local GGUF inference + HF Hub model discovery.",
           "relativePath": "mlops/inference/llama-cpp/SKILL.md"
@@ -3380,6 +3375,11 @@
           "name": "maps",
           "description": "\"Geocode, POIs, routes, timezones via OpenStreetMap/OSRM.\"",
           "relativePath": "productivity/maps/SKILL.md"
+        },
+        {
+          "name": "nano-pdf",
+          "description": "\"Edit PDF text/typos/titles via nano-pdf CLI (NL prompts).\"",
+          "relativePath": "productivity/nano-pdf/SKILL.md"
         }
       ],
       "hasCronDir": true
@@ -4384,7 +4384,7 @@
       "modules": 0,
       "note": "Run `npm run health:capture` then `npm run snapshot` to populate."
     },
-    "auditEntries": 1876,
+    "auditEntries": 8502,
     "cronJobs": 3,
     "tunnel": {
       "publicHost": "127.0.0.1:5174",
@@ -4547,7 +4547,7 @@
       {
         "path": "memories/MEMORY.md",
         "name": "MEMORY.md",
-        "sizeBytes": 1842,
+        "sizeBytes": 1676,
         "headings": [
           "Agent army: read AGENTS.md, never summarize. Belion=default."
         ]
@@ -4555,7 +4555,7 @@
       {
         "path": "memories/USER.md",
         "name": "USER.md",
-        "sizeBytes": 1378,
+        "sizeBytes": 1310,
         "headings": []
       }
     ],
@@ -4609,21 +4609,31 @@
         "skill": "arxiv"
       }
     ],
-    "totalSkills": 1365
+    "totalSkills": 1354
   },
   "activity": [
     {
-      "timestamp": "2026-07-05T15:17:27.101Z",
+      "timestamp": "2026-07-06T04:27:27.507Z",
       "actor": "Stronghold",
       "capability": "memory:read",
       "action": "memory-status.read",
       "outcome": "ok",
       "targetId": "MEMORY.md",
       "targetType": "memory-file",
-      "reason": "memory status read: 5 sections, 1855 bytes"
+      "reason": "memory status read: 6 sections, 1693 bytes"
     },
     {
-      "timestamp": "2026-07-05T15:17:27.093Z",
+      "timestamp": "2026-07-06T04:27:27.495Z",
+      "actor": "Stronghold",
+      "capability": "memory:read",
+      "action": "memory-status.read",
+      "outcome": "ok",
+      "targetId": "MEMORY.md",
+      "targetType": "memory-file",
+      "reason": "memory status read: 6 sections, 1693 bytes"
+    },
+    {
+      "timestamp": "2026-07-06T04:27:27.490Z",
       "actor": "Stronghold",
       "capability": "graph:read",
       "action": "activity-graph.read",
@@ -4633,7 +4643,7 @@
       "reason": "activity graph read: 0 edges across 16 divisions (window=24h)"
     },
     {
-      "timestamp": "2026-07-05T15:17:27.079Z",
+      "timestamp": "2026-07-06T04:27:27.480Z",
       "actor": "Stronghold",
       "capability": "discord:read:agent-army",
       "action": "discord.read",
@@ -4643,17 +4653,7 @@
       "reason": "discord read failed: DISCORD_FAILURE"
     },
     {
-      "timestamp": "2026-07-05T15:17:27.073Z",
-      "actor": "Stronghold",
-      "capability": "memory:read",
-      "action": "memory-status.read",
-      "outcome": "ok",
-      "targetId": "MEMORY.md",
-      "targetType": "memory-file",
-      "reason": "memory status read: 5 sections, 1855 bytes"
-    },
-    {
-      "timestamp": "2026-07-05T15:17:27.068Z",
+      "timestamp": "2026-07-06T04:27:27.473Z",
       "actor": "Stronghold",
       "capability": "graph:read",
       "action": "activity-graph.read",
@@ -4663,7 +4663,7 @@
       "reason": "activity graph read: 0 edges across 16 divisions (window=24h)"
     },
     {
-      "timestamp": "2026-07-05T15:17:27.059Z",
+      "timestamp": "2026-07-06T04:27:27.458Z",
       "actor": "Stronghold",
       "capability": "discord:read:agent-army",
       "action": "discord.read",
@@ -4673,62 +4673,62 @@
       "reason": "discord read failed: DISCORD_FAILURE"
     },
     {
-      "timestamp": "2026-07-05T15:16:45.066Z",
-      "actor": "Stronghold",
-      "capability": "memory:read",
-      "action": "memory-status.read",
-      "outcome": "ok",
-      "targetId": "MEMORY.md",
-      "targetType": "memory-file",
-      "reason": "memory status read: 5 sections, 1855 bytes"
-    },
-    {
-      "timestamp": "2026-07-05T15:16:45.060Z",
-      "actor": "Stronghold",
-      "capability": "graph:read",
-      "action": "activity-graph.read",
-      "outcome": "ok",
-      "targetId": "main",
-      "targetType": "activity-graph",
-      "reason": "activity graph read: 0 edges across 16 divisions (window=24h)"
-    },
-    {
-      "timestamp": "2026-07-05T15:16:45.051Z",
-      "actor": "Stronghold",
-      "capability": "discord:read:agent-army",
-      "action": "discord.read",
-      "outcome": "failed",
-      "targetId": "",
-      "targetType": "discord-channel",
-      "reason": "discord read failed: DISCORD_FAILURE"
-    },
-    {
-      "timestamp": "2026-07-05T15:16:38.347Z",
+      "timestamp": "2026-07-06T04:27:13.621Z",
       "actor": "Igris",
       "capability": "changeRequest:apply",
       "action": "apply",
       "outcome": "applied",
-      "targetId": "bc4b93d1-8901-4797-9602-9d79a0d820f9",
+      "targetId": "96ae0930-060b-4422-adea-2d3ee837ca49",
       "targetType": "changeRequest",
       "reason": "applied by Igris"
     },
     {
-      "timestamp": "2026-07-05T15:16:38.337Z",
+      "timestamp": "2026-07-06T04:27:13.612Z",
       "actor": "Igris",
       "capability": "changeRequest:approve",
       "action": "approve",
       "outcome": "approved",
-      "targetId": "bc4b93d1-8901-4797-9602-9d79a0d820f9",
+      "targetId": "96ae0930-060b-4422-adea-2d3ee837ca49",
       "targetType": "changeRequest",
       "reason": "approved in UI"
     },
     {
-      "timestamp": "2026-07-05T15:16:38.326Z",
+      "timestamp": "2026-07-06T04:27:13.601Z",
       "actor": "Chris",
       "capability": "changeRequest:create",
       "action": "create",
       "outcome": "requested",
-      "targetId": "bc4b93d1-8901-4797-9602-9d79a0d820f9",
+      "targetId": "96ae0930-060b-4422-adea-2d3ee837ca49",
+      "targetType": "changeRequest",
+      "reason": "change request created"
+    },
+    {
+      "timestamp": "2026-07-06T04:26:29.552Z",
+      "actor": "Igris",
+      "capability": "orchestration:disable",
+      "action": "disable",
+      "outcome": "approved",
+      "targetId": "",
+      "targetType": "system",
+      "reason": "operator disabled"
+    },
+    {
+      "timestamp": "2026-07-06T04:26:29.545Z",
+      "actor": "Chris",
+      "capability": "agentRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "cf61108d-0acd-417e-a171-95e2df472c9b",
+      "targetType": "changeRequest",
+      "reason": "agent request created by Chris"
+    },
+    {
+      "timestamp": "2026-07-06T04:26:29.532Z",
+      "actor": "Chris",
+      "capability": "changeRequest:create",
+      "action": "create",
+      "outcome": "requested",
+      "targetId": "691b5963-582d-4225-b3bc-c890f070914d",
       "targetType": "changeRequest",
       "reason": "change request created"
     }
