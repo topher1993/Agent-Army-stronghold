@@ -323,15 +323,20 @@ describe('Agentic OS dashboard compact layout (Igris compact brief — Phase E)'
     expect(rowMatches.length).toBe(captured.activity.slice(0, 5).length);
   });
 
-  it('renders work items as up to 3 separate cards with badges, status pills and meta', () => {
-    const html = renderToStaticMarkup(<AgenticOsDashboardPanel snapshot={captured} />);
-    const workCards = html.match(/<article[^>]*class="agenticOsWorkCard"/g) || [];
-    expect(workCards.length).toBe(Math.min(3, captured.workItems.length));
-    // Each work card has a badge, a status pill, an owner and a date/time
-    expect(html).toContain('class="agenticOsWorkBadge"');
-    expect(html).toContain('class="agenticOsWorkMeta"');
-    expect(html).toMatch(/data-work-id="[^"]+"/);
-  });
+  it('renders work items as up to 6 WorkCard primitives with status pills', () => {
+        const html = renderToStaticMarkup(<AgenticOsDashboardPanel snapshot={captured} />);
+        // Phase 3: WorkCards render via WorkCard primitive (class workCardPrimitive). Up to 6 cards.
+        // Count unique data-card-id attributes — one per WorkCard.
+        const cardIds = html.match(/data-card-id="[^"]+"/g) || [];
+        const uniqueIds = new Set(cardIds);
+        expect(uniqueIds.size).toBeGreaterThan(0);
+        expect(uniqueIds.size).toBe(Math.min(6, captured.workItems.length));
+        // Each WorkCard has a status pill (Phase 2 StatusPill primitive renders data-status-pill)
+        const pills = html.match(/data-status-pill="[^"]+"/g) || [];
+        expect(pills.length).toBeGreaterThanOrEqual(Math.min(6, captured.workItems.length));
+        // data-work-id still threads through to the WorkCard wrapper for screenshot tool selectors
+        expect(html).toMatch(/data-work-id="[^"]+"/);
+      });
 
   it('wraps Work Items + Activity in a side-by-side 2-column grid', () => {
     const html = renderToStaticMarkup(<AgenticOsDashboardPanel snapshot={captured} />);
