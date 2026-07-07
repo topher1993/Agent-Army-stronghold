@@ -15,6 +15,7 @@
 // decision to wire a Discord write endpoint is a deliberate future phase.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { EmptyState } from './Feedback/EmptyState';
 
 type DiscordFeedMessage = {
   id: string;
@@ -144,9 +145,8 @@ export function DiscordCoordinationPanel(): JSX.Element {
     body = <p className="muted" data-state="loading">Loading…</p>;
   } else if (error && !hasFetchedOnce) {
     body = (
-      <div data-state="error">
-        <p className="muted" data-error-message>{error}</p>
-        <button type="button" onClick={onRetry}>Retry</button>
+      <div data-state="error" data-error-message>
+        <EmptyState icon={<span>!</span>} title="Discord unreachable" description={error} action={{ label: 'Retry', onClick: onRetry }} />
       </div>
     );
   } else if (messages.length === 0) {

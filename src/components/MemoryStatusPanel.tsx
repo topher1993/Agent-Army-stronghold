@@ -12,6 +12,7 @@
 // to expand into the full per-section breakdown + raw text copy.
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Skeleton } from './Feedback/Skeleton';
 
 type MemorySection = {
   title: string;
@@ -123,7 +124,7 @@ export function MemoryStatusPanel() {
           </button>
         </div>
       </div>
-      {loading && !status && <p className="memory-status-loading">Loading…</p>}
+      {loading && !status && <Skeleton count={3} />}
       {error && (
         <div className="memory-status-error">
           <p>Error: {error}</p>

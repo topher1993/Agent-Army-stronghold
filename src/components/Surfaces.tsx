@@ -11,7 +11,6 @@ import { TaskEditor } from './TaskEditor';
 import { WorkCardEditor } from './WorkCardEditor';
 import { AgentOrchestration } from './AgentOrchestration';
 import { CronManager } from './CronManager';
-import { Hero } from './Hero';
 import { DashboardSubNav } from './DashboardSubNav';
 import { AgenticOsDashboardPanel } from './AgenticOsDashboardPanel';
 import { WorkCardBoard } from './WorkCardBoard';
@@ -42,7 +41,6 @@ export function SurfaceDashboard({
 
   return (
     <>
-      <Hero id="section-hero" snapshot={snapshot} backendOk={backendOk} killSwitch={killSwitch} onRefresh={onRefreshEverything} />
       <DashboardSubNav />
       <section
         id="dashboard-section"

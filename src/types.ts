@@ -61,6 +61,14 @@ export type WorkCardRisk = 'GREEN' | 'YELLOW' | 'RED';
 
 export type WorkCardStatus = Mission['status'];
 
+export const WORK_CARD_STATUSES: ReadonlySet<WorkCardStatus> = new Set([
+  'planned', 'active', 'blocked', 'review', 'complete',
+]);
+
+export function isWorkCardStatus(value: unknown): value is WorkCardStatus {
+  return typeof value === 'string' && (WORK_CARD_STATUSES as Set<string>).has(value);
+}
+
 export type WorkCard = {
   workCardId: string;
   project: string;

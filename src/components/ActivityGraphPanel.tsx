@@ -13,6 +13,7 @@
 // This panel is READ-ONLY. There is no post/patch/delete affordance.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { EmptyState } from './Feedback/EmptyState';
 
 type ActivityGraphDivision = {
   id: string;
@@ -171,6 +172,7 @@ export function ActivityGraphPanel(): JSX.Element {
   // --- render --------------------------------------------------------------
 
   const edges = (graph?.edges ?? []).filter(e => e.count > 0);
+  const windowLabel = windowHours === 168 ? '168h' : `${windowHours}h`;
 
   let body: JSX.Element;
   if (loading && !hasFetchedOnce) {
@@ -185,8 +187,7 @@ export function ActivityGraphPanel(): JSX.Element {
   } else if (edges.length === 0) {
     body = (
       <div data-state="empty">
-        <p className="muted">No hand-offs in this window</p>
-        <button type="button" data-testid="activity-graph-refresh" onClick={onRetry}>Refresh</button>
+        <EmptyState icon={<span>◷</span>} title={`No hand-offs in the last ${windowLabel}`} description={`Showing the last ${windowLabel}. Widen the window to see more.`} />
       </div>
     );
   } else {

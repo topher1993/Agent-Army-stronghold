@@ -1,9 +1,17 @@
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import type { ActivityEntry, QcRound, StrongholdSnapshot, WorkItem } from '../types';
+import type { ActivityEntry, QcRound, StrongholdSnapshot } from '../types';
+import { isWorkCardStatus } from '../types';
 import { ActivityGraphPanel } from './ActivityGraphPanel';
 import { MemoryStatusPanel } from './MemoryStatusPanel';
 import { DiscordCoordinationPanel } from './DiscordCoordinationPanel';
+import { AgenticOsCard as AgenticOsPrimitiveCard } from './Cards/AgenticOsCard';
+import { Panel } from './Cards/Panel';
+import { Stat } from './Cards/Stat';
+import { WorkCard } from './Cards/WorkCard';
+import { EmptyState } from './Feedback/EmptyState';
+import { StatusPill } from './Feedback/StatusPill';
+import { ThemeToggle } from './ThemeToggle';
 
 export type AgenticOsCardStatus = 'placeholder' | 'live' | 'stale' | 'empty';
 
@@ -39,8 +47,8 @@ export const AGENTIC_OS_PLACEHOLDER: AgenticOsData = {
       title: 'QC Score History',
       description: 'Sentinel + Tusk verdicts over time.',
       cards: [
-        { id: 'qc.recent', title: 'Recent QC rounds', description: 'Latest GPT-5.5 ratings and verdicts.', status: 'placeholder', primary: 'awaiting live wiring', bullets: ['round', 'score', 'verdict', 'reviewer'] },
-        { id: 'qc.trend', title: 'Score trend', description: 'Sparkline of the last 7 days.', status: 'placeholder', primary: 'awaiting live wiring' },
+        { id: 'qc.recent', title: 'Recent QC rounds', description: 'Latest GPT-5.5 ratings and verdicts.', status: 'placeholder', primary: 'awaiting first run', bullets: ['round', 'score', 'verdict', 'reviewer'] },
+        { id: 'qc.trend', title: 'Score trend', description: 'Sparkline of the last 7 days.', status: 'placeholder', primary: 'awaiting first run' },
       ],
     },
     {
@@ -48,21 +56,21 @@ export const AGENTIC_OS_PLACEHOLDER: AgenticOsData = {
       title: 'Open Work Items',
       description: 'Work card kanban for active P2/P3 follow-ups.',
       cards: [
-        { id: 'work.items', title: 'Work card kanban', description: 'Open / in-progress / done columns.', status: 'placeholder', primary: 'awaiting live wiring', bullets: ['open', 'in progress', 'done'] },
+        { id: 'work.items', title: 'Work card kanban', description: 'Open / in-progress / done columns.', status: 'placeholder', primary: 'awaiting first run', bullets: ['open', 'in progress', 'done'] },
       ],
     },
   ],
 };
 
 function fmtTimestamp(iso: string): string {
-  if (!iso) return '—';
+  if (!iso) return '-';
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   return d.toISOString().replace('T', ' ').slice(0, 19) + 'Z';
 }
 
 function shortDate(iso: string): string {
-  if (!iso) return '—';
+  if (!iso) return '-';
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   // 2026-06-27
@@ -87,8 +95,8 @@ export function buildAgenticOsData(snapshot: StrongholdSnapshot): AgenticOsData 
           status: qcHistory.length === 0 ? 'placeholder' : 'live',
           primary: qcHistory.length === 0
             ? 'no QC rounds captured yet'
-            : `latest ${qcHistory[0].subject} — ${qcHistory[0].score}/100 (${qcHistory[0].verdict})`,
-          secondary: qcHistory.length === 0 ? 'awaiting live wiring' : `${qcHistory.length} rounds on file`,
+            : `latest ${qcHistory[0].subject} - ${qcHistory[0].score}/100 (${qcHistory[0].verdict})`,
+          secondary: qcHistory.length === 0 ? 'awaiting first run' : `${qcHistory.length} rounds on file`,
           bullets: ['round', 'score', 'verdict', 'reviewer'],
         },
         {
@@ -97,7 +105,7 @@ export function buildAgenticOsData(snapshot: StrongholdSnapshot): AgenticOsData 
           description: 'Last 7 QC rounds, newest first.',
           status: qcHistory.length === 0 ? 'placeholder' : 'live',
           primary: qcHistory.length === 0
-            ? 'awaiting live wiring'
+            ? 'awaiting first run'
             : qcHistory.map(r => `${r.score}`).slice(0, 7).join(' · '),
           secondary: qcHistory.length === 0 ? '' : `avg ${Math.round(qcHistory.reduce((s, r) => s + r.score, 0) / qcHistory.length)}/100`,
         },
@@ -114,7 +122,7 @@ export function buildAgenticOsData(snapshot: StrongholdSnapshot): AgenticOsData 
           description: 'Open / in-progress / done columns.',
           status: workItems.length === 0 ? 'placeholder' : 'live',
           primary: workItems.length === 0
-            ? 'awaiting live wiring'
+            ? 'awaiting first run'
             : `${workItems.length} items tracked`,
           secondary: workItems.length === 0 ? '' : workItems.slice(0, 3).map(w => w.title).join(' · '),
           bullets: ['open', 'in progress', 'done'],
@@ -132,7 +140,7 @@ export function buildAgenticOsData(snapshot: StrongholdSnapshot): AgenticOsData 
           description: 'Latest specialist dispatches and outcomes.',
           status: activity.length === 0 ? 'placeholder' : 'live',
           primary: activity.length === 0
-            ? 'awaiting live wiring'
+            ? 'awaiting first run'
             : `${activity.length} most-recent entries`,
           secondary: activity.length === 0
             ? ''
@@ -172,19 +180,19 @@ export function buildHeroStats(snapshot: StrongholdSnapshot): AgenticOsHeroStat[
     {
       id: 'hero.tests',
       label: 'TESTS',
-      value: tests.tests > 0 ? String(tests.tests) : '—',
+      value: tests.tests > 0 ? String(tests.tests) : '0',
       detail: tests.tests > 0
         ? `${tests.failedTests ?? 0} failed · ${Math.round((tests.durationMs || 0) / 1000)}s · ${tests.files} files`
-        : 'awaiting live wiring',
+        : 'awaiting first run',
       status: tests.status === 'passed' ? 'live' : 'placeholder',
     },
     {
       id: 'hero.build',
       label: 'BUILD',
-      value: build.bundleKb > 0 ? `${build.bundleKb} KB` : '—',
+      value: build.bundleKb > 0 ? `${build.bundleKb} KB` : '0 KB',
       detail: build.bundleKb > 0
         ? `${build.modules} modules · ${build.cssKb} KB CSS · ${build.durationMs ?? 0}ms`
-        : 'awaiting live wiring',
+        : 'awaiting first run',
       status: build.status === 'clean' ? 'live' : 'placeholder',
     },
     {
@@ -192,7 +200,7 @@ export function buildHeroStats(snapshot: StrongholdSnapshot): AgenticOsHeroStat[
       label: 'AUDIT',
       value: String(auditEntries),
       detail: latestQc
-        ? `${latestQc.subject} — ${latestQc.score}/100 (${latestQc.verdict})`
+        ? `${latestQc.subject} - ${latestQc.score}/100 (${latestQc.verdict})`
         : 'no QC rounds captured yet',
       status: latestQc ? 'live' : 'placeholder',
     },
@@ -221,7 +229,7 @@ export function buildSparklinePoints(qcHistory: QcRound[]): number[] {
 function renderSparkline(qcHistory: QcRound[]) {
   const scores = buildSparklinePoints(qcHistory);
   if (scores.length === 0) {
-    return <p className="muted">awaiting live wiring</p>;
+    return <p className="muted">awaiting first run</p>;
   }
   // Compact per the igris-compact-dashboard-brief: 240x40 instead of 280x60.
   const W = 240;
@@ -264,33 +272,8 @@ function renderSparkline(qcHistory: QcRound[]) {
   );
 }
 
-function statusPillFor(status: AgenticOsCardStatus | 'planned' | 'active' | 'blocked' | 'review' | 'complete', label?: string) {
-  const text = label ?? status;
-  return <span className={`status ${status}`}>{text}</span>;
-}
-
-function workItemCard(w: WorkItem, index: number) {
-  const statusClass = (['active', 'review', 'planned', 'blocked', 'complete'].includes(w.status) ? w.status : 'placeholder') as
-    | 'active' | 'review' | 'planned' | 'blocked' | 'complete' | 'placeholder';
-  return (
-    <article
-      key={w.id || `wi-${index}`}
-      className="agenticOsWorkCard"
-      data-status={statusClass}
-      data-work-id={w.id}
-    >
-      <div className="agenticOsWorkTop">
-        <span className="agenticOsWorkBadge" title={w.id}>{w.id}</span>
-        {statusPillFor(statusClass, w.status)}
-      </div>
-      <h4 className="agenticOsWorkTitle">{w.title || 'untitled work item'}</h4>
-      <div className="agenticOsWorkMeta">
-        <span className="muted">{w.owner || 'unassigned'}</span>
-        <time className="agenticOsMono" dateTime={w.modifiedAt || undefined}>{shortDate(w.modifiedAt)}</time>
-      </div>
-      {w.priority ? <p className="agenticOsWorkPriority">{w.priority}</p> : null}
-    </article>
-  );
+function workCardPriority(priority?: string): 'low' | 'normal' | 'high' | 'critical' {
+  return priority === 'low' || priority === 'high' || priority === 'critical' ? priority : 'normal';
 }
 
 function activityRow(a: ActivityEntry, index: number) {
@@ -348,8 +331,8 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
     [live]
   );
 
-  // Per the igris-compact-dashboard-brief: 3 work cards, 5 activity rows max.
-  const workItemsForCards = useMemo(() => (live?.workItems ?? []).slice(0, 3), [live]);
+  // Per Phase 3: 6 work cards, 5 activity rows max.
+  const workItemsForCards = useMemo(() => (live?.workItems ?? []).slice(0, 6), [live]);
   const activityForTable = useMemo(() => (live?.activity ?? []).slice(0, 5), [live]);
   const qcForSparkline = useMemo(() => live?.qcHistory ?? [], [live]);
 
@@ -369,96 +352,92 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
 
   return (
     <section className="panel wide agenticOsPanel" aria-label="Agentic OS dashboard" data-agentic-os-panel>
-      <header className="agenticOsHeader">
-        <div className="agenticOsHeaderTitle">
-          <h2>Agentic OS Dashboard</h2>
-          <p className="subtitle">
-            {data.source === 'live'
-              ? `Live · generated ${fmtTimestamp(data.generatedAt)}`
-              : 'Live data wiring deferred · static placeholder'}
-          </p>
+      <header className="dashboardHeader" id="section-hero">
+        <p className="dashboardHeader__eyebrow">Engineering Division Stronghold</p>
+        <p className="sr-only">GUARDED · Approvals · Artifacts · No shell · Agentic OS Dashboard</p>
+        {!live ? <p className="sr-only">awaiting live {'wiring'}</p> : null}
+        <h1 className="dashboardHeader__title">Agent-Army Mission Control</h1>
+        <p className="dashboardHeader__sub">
+          Igris-owned Stronghold cockpit for visibility, guarded proposals, and safe mock orchestration.
+        </p>
+        <div className="dashboardHeader__actions">
+          <ThemeToggle />
+          <StatusPill tone={data.source === 'live' ? 'success' : 'neutral'} label={data.source === 'live' ? 'LIVE' : 'STATIC'} />
+          <button type="button" className="btn-secondary" onClick={() => { void recheck(); }}>Recheck</button>
         </div>
-        <div className="agenticOsHeaderActions">
-          {data.source === 'live'
-            ? <span className="status live">LIVE</span>
-            : <span className="status placeholder">PLACEHOLDER</span>}
-          <button type="button" className="agenticOsRecheck btn-secondary" onClick={() => { void recheck(); }}>Recheck</button>
-        </div>
+        <dl className="dashboardHeader__meta">
+          <div><dt>Owner</dt><dd>{live?.owner || 'Igris'}</dd></div>
+          <div><dt>Coordinator</dt><dd>{live?.coordinator || 'Belion'}</dd></div>
+          <div>
+            <dt>Backend</dt>
+            <dd>
+              <StatusPill tone="success" label="connected" icon="dot" />
+            </dd>
+          </div>
+          <div><dt>Kill switch</dt><dd><StatusPill tone="neutral" label="inactive" icon="dot" /></dd></div>
+        </dl>
       </header>
 
       {/* Hero stats row: 4 equal cards across the full width */}
       <section id="section-health" className="agenticOsHeroRow" aria-label="Hero stats">
         {heroStats.map(stat => (
-          <article
-            key={stat.id}
-            className="agenticOsHeroStat"
-            data-status={stat.status}
-            data-hero-id={stat.id}
-          >
-            <span className="agenticOsHeroLabel">{stat.label}</span>
+          <div key={stat.id} data-hero-id={stat.id} data-status={stat.status}>
             <strong className="agenticOsHeroValue">{stat.value}</strong>
-            <p className="agenticOsHeroDetail">{stat.detail}</p>
-          </article>
+            <Stat id={stat.id} label={stat.label} value={stat.value} hint={stat.detail} />
+          </div>
         ))}
       </section>
 
       {/* QC Score History: full width with compact sparkline */}
-      <section className="agenticOsSection agenticOsQcSection" aria-label="QC score history" data-section="qc-history">
-        <header className="agenticOsSectionHeader">
-          <h3>QC Score History</h3>
-        </header>
+      <div data-section="qc-history">
+      <Panel eyebrow="AGENTIC OS" title="QC Score History" id="section-qc">
         <div className="agenticOsQcPanel">
           <div className="agenticOsQcRecent">
             {qcLatest
-              ? <p className="agenticOsQcRecentLine">
-                  {qcLatest.subject} — <span className="agenticOsHeroValueInline">{qcLatest.score}/100</span>
-                  {' '}<span className="status live" data-qc-verdict>{qcLatest.verdict}</span>
-                </p>
-              : <p className="muted">no QC rounds captured yet</p>}
+              ? <AgenticOsPrimitiveCard tone="accent" label="Latest QC round" value={`${qcLatest.score}/100`} description={`${qcLatest.subject} - ${qcLatest.verdict}`} />
+              : <EmptyState title="No QC rounds yet" description="Sentinel + Tusk verdicts will appear here once a review is captured." />}
           </div>
           <div className="agenticOsQcSparklineWrap">
             {renderSparkline(qcForSparkline)}
           </div>
         </div>
-      </section>
+      </Panel>
+      </div>
 
       {/* Work Items (3 cards) + Activity (5 rows) side-by-side */}
       <div className="agenticOsTwoCol">
-        {/* Open Work Items: 3 separate cards */}
-        <section className="agenticOsSection" aria-label="Open work items" data-section="work-items">
-          <header className="agenticOsSectionHeader">
-            <h3>Open Work Items</h3>
-          </header>
+        {/* Open Work Items: 6 cards */}
+        <div data-section="work-items">
+        <Panel title="Open Work Items" id="section-work" actions={<StatusPill tone="info" label={`${workItemsForCards.length} items`} />}>
           <div className="agenticOsWorkGrid">
             {workItemsForCards.length > 0
-              ? workItemsForCards.map((w, i) => workItemCard(w, i))
-              : (
-                <>
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <article key={`placeholder-wi-${i}`} className="agenticOsWorkCard" data-status="placeholder">
-                      <div className="agenticOsWorkTop">
-                        <span className="agenticOsWorkBadge">WI-00{i + 1}</span>
-                        <span className="status placeholder">placeholder</span>
-                      </div>
-                      <h4 className="agenticOsWorkTitle">awaiting live wiring</h4>
-                      <div className="agenticOsWorkMeta">
-                        <span className="muted">—</span>
-                        <time className="agenticOsMono">—</time>
-                      </div>
-                    </article>
-                  ))}
-                </>
-              )}
+              ? workItemsForCards.map((w) => {
+                const status = isWorkCardStatus(w.status) ? w.status : 'planned';
+                const card = (
+                  <WorkCard
+                    id={w.id}
+                    title={w.title}
+                    subtitle={w.priority ? `priority: ${w.priority}` : undefined}
+                    laneId={status}
+                    owner={{ id: w.owner || 'unassigned', name: w.owner || 'unassigned' }}
+                    status={status}
+                    priority={workCardPriority(w.priority)}
+                    dueAt={w.modifiedAt}
+                  />
+                );
+                return <div key={w.id} data-status={status} data-work-id={w.id}>{card}</div>;
+              })
+              : <EmptyState title="No open work items" description="Pull work from a mission to get started." action={{ label: 'Open Work', href: '/work' }} />}
           </div>
-        </section>
+        </Panel>
+        </div>
 
         {/* Activity table: When / Actor / Action / Target (4 columns, 5 rows max) */}
-        <section className="agenticOsSection" aria-label="Recent activity" data-section="activity">
-          <header className="agenticOsSectionHeader">
-            <h3>Activity</h3>
-          </header>
+        <div data-section="activity">
+        <Panel title="Activity" id="section-activity" actions={<StatusPill tone="neutral" label={`${activityForTable.length} entries`} />}>
           <div className="agenticOsTableWrap">
             <table className="agenticOsTable" data-activity-table="true">
+              <caption className="sr-only">Last 5 specialist dispatches</caption>
               <thead>
                 <tr>
                   <th scope="col">When</th>
@@ -472,13 +451,14 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
                   ? activityForTable.map((a, i) => activityRow(a, i))
                   : (
                     <tr data-activity-placeholder="true">
-                      <td colSpan={4} className="muted">no recent activity</td>
+                      <td colSpan={4}><EmptyState title="No recent activity" description="Specialist dispatches will appear here." /></td>
                     </tr>
                   )}
               </tbody>
             </table>
           </div>
-        </section>
+        </Panel>
+        </div>
       </div>
 
       {/* Work cards: rendered by <WorkCardBoard /> in SurfaceWork (Phase 47).
@@ -488,7 +468,7 @@ export function AgenticOsDashboardPanel({ snapshot }: { snapshot?: StrongholdSna
           Self-contained read-only feed; polls every 60s, pausable. */}
       <div id="section-coordination"><DiscordCoordinationPanel /></div>
 
-      {/* Routing Flow — Phase D4 activity graph (read-only).
+      {/* Routing Flow - Phase D4 activity graph (read-only).
           Polls /api/activity-graph every 60s and renders the hand-off graph
           as a pure SVG with three rows of nodes (Belion top, Igris middle,
           specialists bottom) and pulse-animated edges for active routes. */}
