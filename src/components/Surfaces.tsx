@@ -122,7 +122,6 @@ function SafetyBoundaryWrapper() {
 function SafetyNote() {
   return (
     <section className="panel">
-      <h2>Safety & Readiness</h2>
       <div className="lockbox"><strong>Phase 2/3 gate locked:</strong> profile edits, cron edits, real wrapper dispatch, and command execution controls are not exposed in Stronghold.</div>
     </section>
   );
@@ -131,7 +130,6 @@ function SafetyNote() {
 function OperatorNotes() {
   return (
     <section className="panel">
-      <h2>Operator Notes</h2>
       <ul className="notes">
         <li>The Dashboard is the default landing view — it surfaces live test/build/audit/cron numbers.</li>
         <li>Use the <strong>Work</strong> surface for the lane-grouped Work Card Board.</li>
@@ -167,8 +165,18 @@ export function SurfaceCron({
 }
 
 function Disclosure({ title, children, defaultOpen = false }: { title: string; children: ReactNode; defaultOpen?: boolean }) {
-  return <details className="uxDisclosure" open={defaultOpen}>
-    <summary>{title}<span aria-hidden="true">▾</span></summary>
-    <div className="uxDisclosureContent">{children}</div>
-  </details>;
+  // Controlled open state — passing `open={defaultOpen}` directly to <details>
+  // is uncontrolled on initial mount but React re-renders would clobber the
+  // user's click toggles. Local state survives re-renders.
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <details
+      className="uxDisclosure"
+      open={open}
+      onToggle={event => setOpen((event.target as HTMLDetailsElement).open)}
+    >
+      <summary>{title}</summary>
+      <div className="uxDisclosureContent">{children}</div>
+    </details>
+  );
 }

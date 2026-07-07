@@ -15,7 +15,10 @@ afterEach(() => {
 describe('WorkCardEditor form', () => {
   it('renders all required fields with sensible defaults', () => {
     const html = renderToStaticMarkup(<WorkCardEditor />);
-    expect(html).toContain('Work Card Proposal');
+    // The disclosure carries the section title now; the editor itself
+    // renders the prose description + labelled FormFields.
+    expect(html).toMatch(/aria-label="Work card proposal form"/);
+    expect(html).toMatch(/Submit a new work card as a proposal/);
     expect(html).toContain('Work card ID');
     expect(html).toContain('Project');
     expect(html).toContain('Title');
