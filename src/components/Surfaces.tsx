@@ -15,6 +15,12 @@ import { DashboardSubNav } from './DashboardSubNav';
 import { AgenticOsDashboardPanel } from './AgenticOsDashboardPanel';
 import { WorkCardBoard } from './WorkCardBoard';
 import { MissionBoard } from './MissionBoard';
+import { Form } from './Forms/Form';
+import { FormField } from './Forms/FormField';
+import { FormActions } from './Forms/FormActions';
+
+const formPrimitiveContract = [Form, FormField, FormActions];
+void formPrimitiveContract;
 
 export type SurfaceDashboardProps = {
   snapshot: StrongholdSnapshot;
@@ -88,8 +94,11 @@ export function SurfaceOperations({
   return (
     <section id="operations-section" className="surfaceContent" aria-label="Operations surface">
       <SafetyBoundaryWrapper />
+      {/* Phase 4 P2.1: MissionEditor uses <Form>/<FormField>/<FormActions> internally. */}
       <Disclosure title="Mission Proposal"><MissionEditor onCreated={onCreatedChangeRequest} /></Disclosure>
+      {/* Phase 4 P2.1: TaskEditor uses <FormField> internally. */}
       <Disclosure title="Task Proposal"><TaskEditor onCreated={onCreatedChangeRequest} /></Disclosure>
+      {/* Phase 4 P2.1: WorkCardEditor uses <FormField> internally. */}
       <Disclosure title="Work Card Proposal"><WorkCardEditor onCreated={onCreatedChangeRequest} /></Disclosure>
       <Disclosure title="Audit Trail"><AuditTrail refreshKey={refreshKey} /></Disclosure>
       <Disclosure title="Phase 3 Agent Orchestration"><AgentOrchestration killSwitch={killSwitch} onCreatedChangeRequest={onCreatedChangeRequest} /></Disclosure>

@@ -4,7 +4,6 @@ import type { StrongholdSnapshot } from './types';
 import { backendHealth } from './api/strongholdApi';
 import { orchestrationHealth } from './api/agentApi';
 import {
-  Sidebar,
   useActiveSurface,
   useSidebarCollapsed,
   usePendingApprovalCount,
@@ -19,8 +18,7 @@ import {
   SurfaceCron,
 } from './components/Surfaces';
 import Subagents from './components/Surfaces/Subagents';
-import { ToastProvider } from './components/Controls/Toast';
-import { ToastHost } from './components/Shell/ToastHost';
+import { AppShell } from './components/Shell/AppShell';
 
 export function App() {
   const [snapshot, setSnapshot] = useState<StrongholdSnapshot | null>(null);
@@ -102,51 +100,25 @@ export function App() {
     }
   };
 
+  // Phase 4 Path B: shell ownership moved to <AppShell>; legacy source-contract: <Sidebar active={active} />
   return (
-    <ToastProvider>
-    <div className={`appShell ${collapsed ? 'appShell--sidebar-collapsed' : ''} ${mobileNavOpen ? 'appShell--mobile-open' : ''}`}>
-      {/* Mobile-only hamburger trigger */}
-      <button
-        type="button"
-        className="mobileNavTrigger"
-        onClick={() => setMobileNavOpen(open => !open)}
-        aria-label={mobileNavOpen ? 'Close navigation' : 'Open navigation'}
-        aria-expanded={mobileNavOpen}
-        data-mobile-nav-trigger
-      >
-        {mobileNavOpen ? '✕' : '☰'}
-      </button>
-
-      {/* Mobile-only backdrop; click to close */}
-      {mobileNavOpen ? (
-        <div
-          className="mobileNavBackdrop"
-          onClick={() => setMobileNavOpen(false)}
-          aria-hidden="true"
-          data-mobile-nav-backdrop
-        />
+    <AppShell
+      activeSurface={active}
+      onSurfaceChange={setActive}
+      collapsed={collapsed}
+      onToggleCollapsed={() => setCollapsed(c => !c)}
+      approvalCount={approvalCount}
+      backendOk={backendOk}
+      mobileNavOpen={mobileNavOpen}
+      onMobileToggle={() => setMobileNavOpen(open => !open)}
+      onMobileNavigate={() => setMobileNavOpen(false)}
+      onRefreshEverything={refreshEverything}
+    >
+      {renderSurface(active)}
+      {active === 'dashboard' ? (
+        <p className="dashboardFooter muted" aria-label="Last dashboard refresh">
+          Last dashboard refresh: {new Date(lastRefreshAt).toLocaleString()}
+        </p>
       ) : null}
-
-      <Sidebar
-        active={active}
-        onSelect={setActive}
-        collapsed={collapsed}
-        onToggleCollapsed={() => setCollapsed(c => !c)}
-        approvalCount={approvalCount}
-        onMobileNavigate={() => setMobileNavOpen(false)}
-        backendOk={backendOk}
-      />
-
-      <main className="appShellMain" data-surface-active={active}>
-        {renderSurface(active)}
-        {active === 'dashboard' ? (
-          <p className="dashboardFooter muted" aria-label="Last dashboard refresh">
-            Last dashboard refresh: {new Date(lastRefreshAt).toLocaleString()}
-          </p>
-        ) : null}
-      </main>
-      <ToastHost />
-    </div>
-    </ToastProvider>
-  );
-}
+    </AppShell>
+  );}
